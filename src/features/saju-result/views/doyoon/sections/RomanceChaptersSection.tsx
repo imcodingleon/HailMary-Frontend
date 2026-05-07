@@ -49,7 +49,7 @@ function LockedChapterCard({ label, title }: { label: string; title: string }) {
       <span
         style={{
           display: "inline-block",
-          fontSize: "11px",
+          fontSize: "13px",
           background: LOCKED_PILL_BG,
           color: LOCKED_PILL_TEXT,
           borderRadius: "9999px",
@@ -151,7 +151,7 @@ export default function RomanceChaptersSection({ pillars, displayName }: Props) 
           <span
             style={{
               display: "inline-block",
-              fontSize: "11px",
+              fontSize: "13px",
               background: FREE_PILL_BG,
               color: FREE_PILL_TEXT,
               borderRadius: "9999px",
@@ -219,7 +219,7 @@ export default function RomanceChaptersSection({ pillars, displayName }: Props) 
       <p
         style={{
           textAlign: "center",
-          fontSize: "12px",
+          fontSize: "13px",
           fontFamily: "Pretendard, sans-serif",
           fontWeight: 400,
           color: FOOTER_COLOR,

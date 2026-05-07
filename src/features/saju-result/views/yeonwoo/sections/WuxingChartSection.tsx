@@ -96,17 +96,19 @@ export function WuxingChartSection({ wuxing, dayMaster, pillars }: Props) {
               >
                 {dayHanja}
               </span>
+              <span
+                style={{ color: dayHue, opacity: 0.6, fontSize: "16px", fontWeight: 700 }}
+              >
+                ({dayMaster.stem}{dayEl})
+              </span>
             </div>
-            <p className="mt-1.5" style={{ color: dayHue, opacity: 0.6, fontSize: "13px" }}>
-              ({dayMaster.stem}{dayEl})
-            </p>
             <p className="text-[12px] tracking-widest mt-1" style={{ color: "#856C51" }}>
               일간
             </p>
           </div>
 
           <p
-            className="text-[13px] tracking-widest mt-5"
+            className="text-[16px] tracking-widest mt-5"
             style={{ color: "#c9a96e", marginBottom: "22px" }}
           >
             오행 강약
@@ -148,7 +150,7 @@ export function WuxingChartSection({ wuxing, dayMaster, pillars }: Props) {
                   </div>
                   <span
                     className="mt-1.5"
-                    style={{ color: hue, opacity: 0.8, fontSize: "14px" }}
+                    style={{ color: hue, opacity: 0.8, fontSize: "16px" }}
                   >
                     {el}
                   </span>

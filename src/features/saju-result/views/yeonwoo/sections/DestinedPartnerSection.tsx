@@ -43,7 +43,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function BlurredRow({ label, widthPct = 60 }: { label: string; widthPct?: number }) {
   return (
     <div className="flex items-center justify-between py-3 gap-4">
-      <span className="text-[12px] flex-shrink-0" style={{ color: LABEL_COLOR }}>
+      <span className="text-[13px] flex-shrink-0" style={{ color: LABEL_COLOR }}>
         {label}
       </span>
       <div
@@ -63,7 +63,7 @@ function BlurredRow({ label, widthPct = 60 }: { label: string; widthPct?: number
 
 function CtaLockIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="16" height="16" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3.5 6.5V4.5C3.5 2.567 5.067 1 7 1C8.933 1 10.5 2.567 10.5 4.5V6.5M3 6.5H11C11.5523 6.5 12 6.94772 12 7.5V12.5C12 13.0523 11.5523 13 11 13H3C2.44772 13 2 13.0523 2 12.5V7.5C2 6.94772 2.44772 6.5 3 6.5Z"
         stroke="#E05C6A"
@@ -88,7 +88,7 @@ export function DestinedPartnerSection({ spouseMatch }: Props) {
       >
         곧 다가올 인연
       </h2>
-      <p className="text-center text-[12px] tracking-[0.08em] mb-3" style={{ color: LABEL_COLOR }}>
+      <p className="text-center text-[14px] tracking-[0.08em] mb-3" style={{ color: LABEL_COLOR }}>
         네 사주에서 읽히는 그 사람의 윤곽
       </p>
       <div className="flex justify-center mb-6">
@@ -162,7 +162,7 @@ export function DestinedPartnerSection({ spouseMatch }: Props) {
 
       <button
         type="button"
-        className="w-full rounded-xl py-3.5 mt-7 flex items-center justify-center gap-2 text-[14px] font-semibold tracking-[0.05em]"
+        className="w-full rounded-xl py-3.5 mt-7 flex items-center justify-center gap-2 text-[16px] font-medium tracking-[0.05em]"
         style={{
           border: "1px solid #5a2026",
           background: "#1a0a0c",
@@ -173,7 +173,7 @@ export function DestinedPartnerSection({ spouseMatch }: Props) {
         }}
       >
         <CtaLockIcon />
-        <span>이 사람을 알아보는 법은 풀결과에서</span>
+        <span>이 사람을 알아보는 법은 전체결과에서</span>
       </button>
     </div>
   );

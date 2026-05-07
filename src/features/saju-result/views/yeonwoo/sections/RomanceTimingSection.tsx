@@ -166,7 +166,7 @@ export function RomanceTimingSection({ flow }: Props) {
         인연이 오는 시간
       </h2>
       <p
-        className="text-center text-[12px] tracking-[0.08em] mb-3"
+        className="text-center text-[14px] tracking-[0.08em] mb-3"
         style={{ color: "#998f82" }}
       >
         향후 12개월 연애운 흐름
@@ -263,17 +263,17 @@ export function RomanceTimingSection({ flow }: Props) {
       </div>
 
       <button
-        className="w-full rounded-xl py-3 text-[12px] tracking-[0.2em]"
+        className="w-full rounded-xl py-3 flex items-center justify-center text-[16px] tracking-[0.05em] font-medium"
         style={{
           border: "1px solid #5a4a30",
           background: "#1a1410",
           color: GOLD,
         }}
         onClick={() => {
-          alert("풀결과에서 확인할 수 있어요.");
+          alert("전체결과에서 확인할 수 있어요.");
         }}
       >
-        🔒 피크 시기 전체 확인은 풀결과에서
+        🔒 피크 시기 전체 확인은 전체결과에서
       </button>
     </div>
   );

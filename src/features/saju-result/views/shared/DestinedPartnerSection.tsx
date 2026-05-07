@@ -340,7 +340,7 @@ export default function DestinedPartnerSection({
       <p
         className="text-center"
         style={{
-          fontSize: "13px",
+          fontSize: "14px",
           fontFamily: "Pretendard, sans-serif",
           fontWeight: 500,
           color: SUBTITLE_COLOR,
@@ -495,7 +495,7 @@ export default function DestinedPartnerSection({
             border: `1.5px solid ${CTA_COLOR}55`,
             background: "transparent",
             color: CTA_COLOR,
-            fontSize: "14px",
+            fontSize: "16px",
             fontFamily: "Pretendard, sans-serif",
             fontWeight: 600,
             display: "flex",
@@ -505,7 +505,7 @@ export default function DestinedPartnerSection({
           }}
           onClick={handleLocked}
         >
-          <LockIcon size={14} color={CTA_COLOR} />
+          <LockIcon size={18} color={CTA_COLOR} />
           {ctaLabel}
         </button>
       </div>

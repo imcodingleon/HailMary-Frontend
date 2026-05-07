@@ -157,7 +157,7 @@ function CardShell({
           </p>
           {badge && (
             <span
-              className="text-[11px] tracking-wider px-2.5 py-1 rounded-full"
+              className="text-[13px] tracking-wider px-2.5 py-1 rounded-full"
               style={{ border: `1px solid ${borderColor}`, color: borderColor }}
             >
               {badge}
@@ -192,7 +192,6 @@ function CharmTypeCard({
   return (
     <CardShell
       label="매력 유형"
-      badge="무료"
       borderColor={tokens.typeBorderColor}
       bgColor={tokens.typeBg}
       glowColor={tokens.typeGlow}
@@ -232,7 +231,6 @@ function DohwaCard({
   return (
     <CardShell
       label="도화살"
-      badge="무료"
       borderColor={hasDohwa ? dohwaHue : tokens.typeBorderColor}
       bgColor={hasDohwa ? `${dohwaHue}14` : `${tokens.typeBorderColor}0f`}
       glowColor={hasDohwa ? `${dohwaHue}33` : "transparent"}
@@ -272,7 +270,6 @@ function StrengthCard({
   return (
     <CardShell
       label="매력 강도"
-      badge="무료"
       borderColor={hue}
       bgColor={`${hue}14`}
       glowColor={`${hue}33`}
@@ -297,14 +294,14 @@ function StrengthCard({
 
       {charm.showPercent ? (
         <p
-          className="text-[11px] tracking-widest"
+          className="text-[13px] tracking-widest"
           style={{ color: tokens.percentLabelColor }}
         >
           {charm.charmStrength}/100 · 상위 {100 - charm.charmPercentile}%
         </p>
       ) : (
         <p
-          className="text-[11px] tracking-widest"
+          className="text-[13px] tracking-widest"
           style={{ color: tokens.percentLabelColor }}
         >
           {label}
@@ -332,7 +329,6 @@ function ManifestationCard({
   return (
     <CardShell
       label="매력 발현"
-      badge="무료"
       borderColor={tokens.manifestBorderColor}
       bgColor={tokens.manifestBg}
       glowColor={tokens.manifestGlow}

@@ -138,7 +138,7 @@ export default function BlockingSection({
         >
           <p
             style={{
-              fontSize: "13px",
+              fontSize: "16px",
               fontFamily: "Pretendard, sans-serif",
               fontWeight: 700,
               color: RED_ACCENT,
@@ -215,7 +215,7 @@ export default function BlockingSection({
         >
           <p
             style={{
-              fontSize: "13px",
+              fontSize: "16px",
               fontFamily: "Pretendard, sans-serif",
               fontWeight: 700,
               color: GOLDEN_ACCENT,
