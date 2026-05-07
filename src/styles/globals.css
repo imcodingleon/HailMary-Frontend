@@ -23,6 +23,16 @@
 
   /* 메인·깨비 페이지 shine 애니메이션 */
   --animate-shine: shine 3s infinite;
+
+  /* 연우 유료 (paid) 디자인 토큰 — v1.8 */
+  --color-yeonwoo-gold: #e8c9a0;
+  --color-yeonwoo-pink: #d4537e;
+  --color-yeonwoo-bg: #151513;
+  --color-yeonwoo-cell-bg: #1a1a18;
+  --color-yeonwoo-card-border: rgba(200, 168, 112, 0.25);
+  --color-yeonwoo-text: #d8d6d0;
+  --color-yeonwoo-text-sub: #b0aea4;
+  --color-yeonwoo-text-mute: #888;
 }
 
 @keyframes shine {
@@ -44,6 +54,17 @@ body {
   color: var(--foreground);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+}
+
+/* 유료 결과 페이지(paid scene)와 페이지 컨테이너(data-page-idx)는
+   텍스트 선택/복사 허용. 사용자가 결과지의 멘트를 복사·공유할 수 있도록.
+   dev 미리보기 라우트(/dev/yeonwoo/...)와 실전 라우트(/saju/paid/...) 모두 적용. */
+[data-paid-scene],
+[data-paid-scene] *,
+[data-page-idx],
+[data-page-idx] * {
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 @keyframes fadeIn {

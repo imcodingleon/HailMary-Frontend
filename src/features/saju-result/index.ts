@@ -23,3 +23,17 @@ export { default as StickyCheckoutCta } from "./views/shared/StickyCheckoutCta";
 
 export { default as DoyoonResultScene } from "./views/doyoon/DoyoonResultScene";
 export { default as YeonwooResultScene } from "./views/yeonwoo/YeonwooResultScene";
+
+// 유료 (paid) 파트 — 연우 v1.8.
+export type {
+  PaidReport,
+  PaidReportStatus,
+  PaidReportStatusResponse,
+  PaidChapterKey,
+  PaidChapters,
+} from "./domain/paidReport";
+export { usePaidReport } from "./hooks/usePaidReport";
+export type { PaidReportFetchState } from "./hooks/usePaidReport";
+export { usePaidResultPolling } from "./hooks/usePaidResultPolling";
+export { default as YeonwooPaidScene } from "./views/yeonwoo/paid/YeonwooPaidScene";
+export { default as PaidResultLoading } from "./views/yeonwoo/paid/PaidResultLoading";

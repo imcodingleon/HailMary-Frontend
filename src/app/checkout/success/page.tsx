@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { trackEvent } from "@/shared/utils/analytics";
 
 type ConfirmStatus = "pending" | "success" | "error";
@@ -19,6 +19,7 @@ interface ConfirmedPayment {
 
 function SuccessBody() {
   const params = useSearchParams();
+  const router = useRouter();
   const paymentKey = params.get("paymentKey") ?? "";
   const orderId = params.get("orderId") ?? "";
   const amount = params.get("amount") ?? "";
@@ -27,6 +28,7 @@ function SuccessBody() {
   const [data, setData] = useState<ConfirmedPayment | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const viewSentRef = useRef(false);
+  const redirectSentRef = useRef(false);
 
   useEffect(() => {
     if (viewSentRef.current) return;
@@ -92,6 +94,14 @@ function SuccessBody() {
         try {
           sessionStorage.removeItem("checkoutPending");
         } catch {}
+        if (!redirectSentRef.current) {
+          redirectSentRef.current = true;
+          trackEvent("paid_result_redirect", {
+            order_id: d.orderId,
+            character: d.character,
+          });
+          router.replace(`/saju/paid/${encodeURIComponent(d.orderId)}/loading`);
+        }
       })
       .catch((err: unknown) => {
         const msg = err instanceof Error ? err.message : "결제 승인에 실패했어요.";
