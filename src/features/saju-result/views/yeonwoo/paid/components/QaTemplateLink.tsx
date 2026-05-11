@@ -37,7 +37,6 @@ export default function QaTemplateLink({ sectionId }: QaTemplateLinkProps) {
         textDecoration: "none",
         cursor: "pointer",
       }}
-      onClick={(e) => e.stopPropagation()}
     >
       <span aria-hidden>📋</span>
       <span>QA</span>
