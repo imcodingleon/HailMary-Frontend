@@ -64,10 +64,10 @@ export const QA_TEMPLATE_MAP: Readonly<Record<string, string>> = {
   // P-4
   "2-3": "/dev/yeonwoo/p4-akyon-cases",
   "2-4": "/dev/yeonwoo/p4-illusion-cases",
-  // P-5 (dev cases는 톤 검증 후 진입 시 생성)
-  // "3-1": "/dev/yeonwoo/p5-charm-cases",
-  // "3-2": "/dev/yeonwoo/p5-mechanism-cases",
-  // "3-3": "/dev/yeonwoo/p5-sense-cases",
+  // P-5
+  "3-1": "/dev/yeonwoo/p5-charm-cases",
+  "3-2": "/dev/yeonwoo/p5-mechanism-cases",
+  "3-3": "/dev/yeonwoo/p5-sense-cases",
   // P-6 (점수 엔진 개선 중 — dev cases 진입 보류)
   // "4-1": "/dev/yeonwoo/p6-inyon-cases",
   // "4-2": "/dev/yeonwoo/p6-inner-cases",

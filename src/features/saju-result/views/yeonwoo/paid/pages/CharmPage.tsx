@@ -1,12 +1,18 @@
 import Image from "next/image";
 import PageHead from "../components/PageHead";
 import AiBlock from "../components/AiBlock";
+import CharmSalCard, { type CharmSalProps } from "../components/CharmSalCard";
+import {
+  composeCharmAi,
+  getStageCards,
+  getPointCards,
+  getMechanismAi,
+  getSenseAi,
+} from "../charm-ai";
 import {
   Sec,
   SectionLabel,
   SectionTitle,
-  SectionBody,
-  VarTag,
   YeonwooBubble,
 } from "../components/Section";
 
@@ -16,80 +22,58 @@ import {
 // 3-3 감각적 매력 포인트: 카드 3개 (눈빛/목소리/분위기) + 촛불 일러스트 + flame-label + AI
 
 interface CharmData {
-  charm_sal: string;          // "도화살(桃花煞)" 등 한자 포함
-  charm_score: number;        // 0~100 (백엔드 점수)
-  charm_level_label: string;  // "중 · 보통" 등 (점수→단계 변환 결과)
-  stage_cards: ReadonlyArray<{ label: string; value: string; sub: string }>; // 3-2 4개
+  // 3-1
+  charm_score: number;          // 0~100 (백엔드 charmStrength)
+  charm_percentile: number;     // 상위 N% (예: 12 = 상위 12%, 백엔드 100 - lookup)
+  charm_sals: ReadonlyArray<CharmSalProps>; // 보유 매력살만 (가변, 백엔드 charm_service.get_user_charm_sals)
+  stage_cards: ReadonlyArray<{ label: string; value: string; sub: string }>; // 3-2 4개 (일간 10 변형)
   point_cards: ReadonlyArray<{
     label: string;       // "매력 포인트 1 · 눈빛"
     strength: "weak" | "medium" | "strong";
     flame_label: string; // "은은하게"
     sub: string;
   }>;
-  ai_charm: string;
+  ai_charm: string;       // 일간별 조언 (도화살 메타포 X)
   ai_mechanism: string;
   ai_sense: string;
 }
 
 const MOCK_P5: CharmData = {
-  // 백엔드 templates/yeonwoo_p5_charm.py compose_p5_charm(ilgan="임수", charm_sal="도화살", charm_level="中") 결과 동기화 (예정).
-  charm_sal: "도화살(桃花煞)",
-  charm_score: 62,
-  charm_level_label: "중 · 보통",
-  stage_cards: [
+  // 백엔드 templates/yeonwoo_p5_charm.py compose_p5_charm(ilgan="임수") + charm_service.get_user_charm_sals() 동기화 예정.
+  charm_score: 72,
+  charm_percentile: 18,  // 상위 18%
+  charm_sals: [
     {
-      label: "1단계 · 첫 마주침",
-      value: "눈빛이 먼저 닿아",
-      sub: "너는 말보다 눈으로 먼저 닿는 사람이야.",
+      charm_key: "do_hwa_sal",
+      name_kor: "도화살",
+      name_han: "桃花煞",
+      trait: "사람을 끌어당기는 자기 매력",
     },
     {
-      label: "2단계 · 반복 접촉",
-      value: "두 번째부터 깊어져",
-      sub: "너는 한 번 보고 안 끝나. 두 번째에 마음이 묶여.",
+      charm_key: "hong_yeom_sal",
+      name_kor: "홍염살",
+      name_han: "紅艶煞",
+      trait: "한 번 보면 잊히지 않는 강렬한 매력",
     },
     {
-      label: "3단계 · 익숙함",
-      value: "곁에 있는 게 자연스러워져",
-      sub: "너의 깊이가 편안함으로 변해. 그게 너의 무기야.",
-    },
-    {
-      label: "4단계 · 끌림",
-      value: "상대가 빠져들어",
-      sub: "이쯤 되면 네가 가만히 있어도 상대가 와.",
+      charm_key: "cheon_eul_gwi_in",
+      name_kor: "천을귀인",
+      name_han: "天乙貴人",
+      trait: "귀인 중 최상 — 어디서든 사랑받는 결",
     },
   ],
-  point_cards: [
-    {
-      label: "매력 포인트 1 · 눈빛",
-      strength: "weak",
-      flame_label: "은은하게",
-      sub: "조용히 응시할 때가 가장 강해.",
-    },
-    {
-      label: "매력 포인트 2 · 목소리",
-      strength: "medium",
-      flame_label: "잔잔하게",
-      sub: "낮게 말할 때 사람이 다가와.",
-    },
-    {
-      label: "매력 포인트 3 · 분위기",
-      strength: "strong",
-      flame_label: "깊게",
-      sub: "말없이 앉아있을 때의 깊이감이 너의 핵심이야.",
-    },
-  ],
-  ai_charm:
-    "도화살(桃花煞)이 네 사주에 들어와 있어. 매력살이라는 건 타고난 빛 같은 거야. 가만히 있어도 새어 나오는 결.\n\n" +
-    "임수(壬水) 일간은 원래 매력 자체가 깊어. 얕게 빛나는 사람이 아니야. 한 번 보면 잊히지 않는 결을 가진 사람이지. 근데 너는 그걸 잠재워 두고 살아. 거울 앞에 안 서고, 향수도 안 뿌리고, 옷장 앞에서 머뭇거리지.\n\n" +
-    "옷, 향, 시선 — 다 도구야. 안 쓰면 매력살은 잠들어. 일주일만 의식적으로 깨워봐. 거울 보고 한 번 웃고, 향수 한 번 더 뿌려. 그 정도면 흐름이 돌아. 너는 이미 가진 사람이야. 켜기만 하면 돼.",
-  ai_mechanism:
-    "네 매력은 한 번에 안 보여. 첫 마주침은 약해. 두 번째에 흐름이 묶이고, 세 번째에 익숙함으로 바뀌어. 그 다음에 상대가 빠져.\n\n" +
-    "임수(壬水) 일간이 그래. 깊이감으로 끌어당기는 사람이야. 첫인상으로 승부 보는 결이 아니야. 그러니까 한 번 만나고 평가하지 마. 두 번째까지 갈 자리를 만들어. 거기서 네 진짜 매력이 켜져.",
-  ai_sense:
-    "너의 매력은 눈빛, 목소리, 분위기에 다 들어 있어. 특히 침묵할 때의 깊이가 너의 핵심이야.\n\n" +
-    "눈빛은 흘리지 마. 잡아. 한 사람을 보면 그 사람만 봐. 임수(壬水) 일간 특유의 깊이감이 그렇게 나와. 시선 하나로 사람이 묶여.\n\n" +
-    "목소리는 낮게 해. 빠르게 말하면 깊이가 안 실려. 한 박자 늦게, 낮은 톤으로. 그게 너야.\n\n" +
-    "분위기는 만들지 말고 두면 돼. 가만히 앉아 있을 때의 결이 너의 가장 강한 무기야. 꾸미려 하면 흐려져. 이 세 개만 의식해도 같은 너인데 전혀 달라 보여.",
+  // 일간별 4 단계 카드 자동 합성 (charm-ai.ts getStageCards)
+  stage_cards: getStageCards("임수"),
+  // 일간별 3 매력 포인트 카드 자동 합성 (charm-ai.ts getPointCards)
+  point_cards: getPointCards("임수"),
+  // 보유 매력살 + 일간 기반 자동 합성 (charm-ai.ts composeCharmAi)
+  ai_charm: composeCharmAi(
+    ["do_hwa_sal", "hong_yeom_sal", "cheon_eul_gwi_in"],
+    "임수",
+  ),
+  // 일간별 AI 박스 자동 합성 (charm-ai.ts)
+  ai_mechanism: getMechanismAi("임수"),
+  ai_sense: getSenseAi("임수"),
 };
 
 export default function CharmPage({ data }: { data?: CharmData }) {
@@ -111,16 +95,19 @@ export default function CharmPage({ data }: { data?: CharmData }) {
       {/* ── 3-1 나의 매력 지수 ── */}
       <Sec>
         <SectionLabel qaSectionId="3-1">3-1 나의 매력 지수</SectionLabel>
-        <SectionTitle>
-          매력살 — <VarTag>{p.charm_sal}</VarTag>
-        </SectionTitle>
+        <SectionTitle>매력살</SectionTitle>
 
-        <CharmScoreGauge score={p.charm_score} label={p.charm_level_label} />
+        <CharmScoreGauge
+          score={p.charm_score}
+          label={`상위 ${p.charm_percentile}%`}
+        />
 
-        <SectionBody>
-          현재 단계: <VarTag>{p.charm_level_label}</VarTag> — 자리에 맞는 흐름이야.
-          다만 너는 이걸 안 쓰고 있어. 매력은 켜야 보여.
-        </SectionBody>
+        {/* 보유 매력살 카드 그리드 (가변 길이, 2-col grid) */}
+        <div className="my-3 grid grid-cols-2 gap-2">
+          {p.charm_sals.map((s) => (
+            <CharmSalCard key={s.charm_key ?? s.name_kor} sal={s} />
+          ))}
+        </div>
 
         <AiBlock text={p.ai_charm} />
 
