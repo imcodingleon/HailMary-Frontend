@@ -40,8 +40,9 @@ export const SHOW_QA_LINKS: boolean = (() => {
  *   1-5 AI:       v3 (full 양식 기반)
  */
 export const QA_TEMPLATE_MAP: Readonly<Record<string, string>> = {
-  // P-0
-  "0-1": "/dev/yeonwoo/p0-cases",
+  // P-0 — 0-1~0-4는 차트/표/사주 원국 (템플릿 변형 없음, 룰 placeholder만).
+  //        0-5만 일간별 톤 변형 있어 QA 비교 필요.
+  "0-5": "/dev/yeonwoo/p0-cases",
   // P-1
   "1-1": "/dev/yeonwoo/p1-cases",
   "1-2": "/dev/yeonwoo/p1-trigger-cases",

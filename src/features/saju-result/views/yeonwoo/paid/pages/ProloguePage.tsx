@@ -8,6 +8,7 @@ import type {
 } from "../../../../domain/paidReport";
 import AiBlock from "../components/AiBlock";
 import PageHead from "../components/PageHead";
+import QaTemplateLink from "../components/QaTemplateLink";
 import SajuPillarsBox from "../components/SajuPillarsBox";
 
 interface ProloguePageProps {
@@ -96,14 +97,17 @@ export default function ProloguePage({ data }: ProloguePageProps) {
 function SectionLabel({
   slabel,
   stitle,
+  qaSectionId,
 }: {
   slabel: string;
   stitle: React.ReactNode;
+  qaSectionId?: string;
 }) {
   return (
     <>
       <div className="text-[13px] font-medium tracking-[0.05em] text-[#888] uppercase mb-[5px]">
         {slabel}
+        {qaSectionId ? <QaTemplateLink sectionId={qaSectionId} /> : null}
       </div>
       <div
         className="text-[17px] font-semibold leading-[1.5] mb-2 text-[#d8d6d0]"
@@ -401,7 +405,11 @@ function GlossarySection() {
 function YeonwooViewSection({ aiIntro }: { aiIntro: string }) {
   return (
     <div className="px-[14px] py-5">
-      <SectionLabel slabel="0-5 연우가 본 너" stitle="첫눈에 들어온 너의 결." />
+      <SectionLabel
+        slabel="0-5 연우가 본 너"
+        stitle="첫눈에 들어온 너의 결."
+        qaSectionId="0-5"
+      />
 
       <div className="flex justify-center my-3">
         <div className="relative w-full max-w-[280px] aspect-square">
