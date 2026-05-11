@@ -16,7 +16,11 @@ export default function AvoidPartnerSection({
   imageBasePath = "/images/spouse",
 }: Props) {
   const safeSlot = slotId ?? "neutral";
-  const imageSrc = `${imageBasePath}/${safeSlot}.png`;
+  // neutral은 캐릭터 분리 안 함 — 단일 fallback 이미지 사용.
+  const imageSrc =
+    safeSlot === "neutral"
+      ? `/images/spouse/neutral.png`
+      : `${imageBasePath}/${safeSlot}.png`;
 
   return (
     <div

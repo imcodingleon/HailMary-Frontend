@@ -197,7 +197,10 @@ export default function DoyoonResultScene() {
           dialogues={blockingDialogues}
         />
         <IncompatibleBannerSection />
-        <AvoidPartnerSection slotId={data.spouseAvoid?.slotId ?? null} />
+        <AvoidPartnerSection
+          slotId={data.spouseAvoid?.slotId ?? null}
+          imageBasePath="/images/spouse/doyoon/avoid"
+        />
         <AvoidPartnerInfoSection slotId={data.spouseAvoid?.slotId ?? null} />
         <Section09Block />
         <BeigeBlockSection />
@@ -211,6 +214,7 @@ export default function DoyoonResultScene() {
         <DestinedPartnerSection
           spouseMatch={data.spouseMatch}
           displayName={displayName}
+          imageBasePath="/images/spouse/doyoon/match"
         />
         <RomanceTimingSection
           monthlyRomanceFlow={data.monthlyRomanceFlow}

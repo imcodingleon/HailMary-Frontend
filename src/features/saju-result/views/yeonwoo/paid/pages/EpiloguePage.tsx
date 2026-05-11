@@ -1,6 +1,21 @@
 import Image from "next/image";
 import PageHead from "../components/PageHead";
-import { Sec, SectionLabel, SectionTitle, SectionBody } from "../components/Section";
+import { Sec } from "../components/Section";
+
+// HTML 명세 (line 2756~2790) 정밀 포팅.
+// 終 에필로그: AI 슬롯 0개 (강연우 하드코딩 멘트)
+//   - SD yw_cg_c (sz-240) + thread_corner 외곽 wrapper
+//   - 강연우 버블 (4줄 하드코딩 멘트, 15px / line-height 1.9)
+//   - dancheong-divider
+//   - epilog-seal (緣 인장, motif_seal_yeon)
+
+// HTML 원본 4줄 멘트 (line 2779).
+const EPILOGUE_LINES: ReadonlyArray<string> = [
+  "다 읽었어? 네 팔자에 뭐가 걸려 있는지 이제 알겠지.",
+  "매듭은 풀라고 있는 거야. 끌어안고 사는 게 아니라.",
+  "너 정도면 충분히 잘 살아. 아직 안 보이는 것뿐이야.",
+  "... 가봐.",
+];
 
 export default function EpiloguePage() {
   return (
@@ -11,27 +26,28 @@ export default function EpiloguePage() {
     >
       <PageHead
         chHanja="終"
-        chCode="EPILOGUE"
-        title="연우의 마지막 말"
-        sub="다 읽었어? 천천히 따라와."
+        chCode="EPILOG"
+        title="에필로그"
+        sub=""
         iconAsset="/yeonwoo/motif/motif_seal_jeom.svg"
         iconOpacity={0.35}
       />
 
       <Sec>
-        <SectionLabel>마지막 한 마디</SectionLabel>
-        <SectionTitle>여기까지 따라온 너에게.</SectionTitle>
-
+        {/* SD yw_cg_c (sz-240) + thread_corner 외곽 wrapper (size-frame 110px) */}
         <div className="relative my-4 flex justify-center">
           <span
             aria-hidden
-            className="absolute -top-2 -left-2 w-12 h-12 bg-no-repeat bg-contain pointer-events-none opacity-60 z-10"
+            className="absolute -top-3 -left-3 w-[60px] h-[60px] bg-no-repeat bg-contain pointer-events-none opacity-65 z-10"
             style={{ backgroundImage: "url(/yeonwoo/thread/thread_corner.png)" }}
           />
           <span
             aria-hidden
-            className="absolute -bottom-2 -right-2 w-12 h-12 bg-no-repeat bg-contain pointer-events-none opacity-60 z-10"
-            style={{ backgroundImage: "url(/yeonwoo/thread/thread_corner.png)", transform: "scale(-1,-1)" }}
+            className="absolute -bottom-3 -right-3 w-[60px] h-[60px] bg-no-repeat bg-contain pointer-events-none opacity-65 z-10"
+            style={{
+              backgroundImage: "url(/yeonwoo/thread/thread_corner.png)",
+              transform: "scale(-1,-1)",
+            }}
           />
           <div className="relative w-[240px] h-[240px]">
             <Image
@@ -39,46 +55,54 @@ export default function EpiloguePage() {
               alt="강연우 — 클로징"
               fill
               sizes="240px"
-              style={{ objectFit: "contain" }}
+              style={{
+                objectFit: "contain",
+                filter: "drop-shadow(0 0 18px rgba(232,201,160,0.40))",
+              }}
             />
           </div>
         </div>
 
-        {/* 강연우 하드코딩 멘트 (PAID_FEATURE.md: P-11 AI 슬롯 0개) */}
+        {/* 강연우 버블 (HTML 원본 4줄 하드코딩, 15px / line-height 1.9 / padding 14px) */}
         <div
-          className="rounded-[10px] px-4 py-5 my-3 text-center"
+          className="rounded-[10px] my-2 italic"
           style={{
-            background: "linear-gradient(180deg, #1a1a18, #141413)",
-            border: "0.5px solid rgba(200,168,112,0.25)",
+            background: "#1e1e1c",
+            color: "#d8d4cc",
+            border: "0.5px solid #333",
+            padding: "14px",
+            fontSize: "15px",
+            lineHeight: 1.9,
+            letterSpacing: "-0.01em",
+            wordBreak: "keep-all",
           }}
         >
           <div
-            className="text-[12px] mb-2 tracking-[0.15em] text-[#E8C9A0] uppercase"
+            className="not-italic mb-1 tracking-[0.05em]"
+            style={{ fontSize: "12px", color: "#E8C9A0" }}
           >
             강연우
           </div>
-          <p
-            className="text-[16px] leading-[1.95] text-[#d8d4cc]"
-            style={{
-              fontFamily: "var(--font-nanum-myeongjo)",
-              wordBreak: "keep-all",
-              letterSpacing: "0.01em",
-            }}
-          >
-            &ldquo;다 읽었어? 네 팔자에 뭐가 걸려 있는지 이제 알겠지.
-            <br />
-            나는 여기까지 보여줬어. 다음은 네가 흐를 차례야.&rdquo;
-          </p>
+          &ldquo;
+          {EPILOGUE_LINES.map((line, i) => (
+            <span key={i}>
+              {line}
+              {i < EPILOGUE_LINES.length - 1 && <br />}
+            </span>
+          ))}
+          &rdquo;
         </div>
 
         {/* 단청 디바이더 */}
         <div
           aria-hidden
-          className="my-5 h-6 bg-no-repeat bg-center bg-contain opacity-80"
-          style={{ backgroundImage: "url(/yeonwoo/motif/motif_dancheong.svg)" }}
+          className="my-6 h-6 bg-no-repeat bg-center bg-contain opacity-80"
+          style={{
+            backgroundImage: "url(/yeonwoo/motif/motif_dancheong.svg)",
+          }}
         />
 
-        {/* 緣 인장 (마지막 줄) */}
+        {/* 緣(seal_yeon) 작은 인장 — 마지막 줄 */}
         <div className="flex flex-col items-center my-4 gap-2">
           <div
             aria-hidden
@@ -88,13 +112,16 @@ export default function EpiloguePage() {
               filter: "drop-shadow(0 0 14px rgba(232,201,160,0.45))",
             }}
           />
-          <SectionBody>
-            <span
-              className="block text-center text-[13px] text-[#888780] tracking-[0.1em]"
-            >
-              緣 — 이 결이 너를 어디로 데려갈지, 그건 시간이 답해.
-            </span>
-          </SectionBody>
+          <span
+            className="text-[12px] text-center"
+            style={{
+              color: "#888780",
+              letterSpacing: "0.1em",
+              wordBreak: "keep-all",
+            }}
+          >
+            緣 — 이 결이 너를 어디로 데려갈지, 그건 시간이 답해.
+          </span>
         </div>
       </Sec>
     </section>

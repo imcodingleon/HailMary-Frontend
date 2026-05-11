@@ -78,7 +78,11 @@ export function DestinedPartnerSection({ spouseMatch }: Props) {
   const destinedKey = slotIdToDestinedKey(slotId);
   const copy = DESTINED_PARTNER_DIALOGUES[destinedKey];
   const [w1, w2, w3] = getBarWidths(slotId);
-  const imageSrc = `/images/spouse/${slotId}.png`;
+  // 캐릭터별 분리 경로 + neutral fallback.
+  const imageSrc =
+    slotId === "neutral"
+      ? `/images/spouse/neutral.png`
+      : `/images/spouse/yeonwoo/match/${slotId}.png`;
 
   return (
     <div className="w-full px-5 py-12" style={{ background: "#000" }}>

@@ -305,7 +305,11 @@ export default function DestinedPartnerSection({
   const destinedKey = slotIdToDestinedKey(slotId);
   const copy = DESTINED_PARTNER_DIALOGUES[destinedKey];
   const [w1, w2, w3] = getBarWidths(slotId);
-  const imageSrc = `${imageBasePath}/${slotId}.png`;
+  // neutral은 캐릭터 분리 안 함 — 단일 fallback 이미지 사용.
+  const imageSrc =
+    slotId === "neutral"
+      ? `/images/spouse/neutral.png`
+      : `${imageBasePath}/${slotId}.png`;
 
   const handleLocked = () => {
     if (onLockedClick) {

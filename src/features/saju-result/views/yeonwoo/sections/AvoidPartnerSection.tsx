@@ -74,7 +74,11 @@ export function AvoidPartnerSection({ spouseAvoid }: Props) {
   const slotId = spouseAvoid?.slotId ?? "neutral";
   const copy = AVOID_PARTNER_FREE_DIALOGUES[slotId] ?? AVOID_PARTNER_FREE_DIALOGUES["neutral"];
   const [w1, w2, w3] = getBarWidths(slotId);
-  const imageSrc = `/images/spouse/${slotId}.png`;
+  // 캐릭터별 분리 경로 + neutral fallback (사주 미정 케이스는 단일 기본 사진).
+  const imageSrc =
+    slotId === "neutral"
+      ? `/images/spouse/neutral.png`
+      : `/images/spouse/yeonwoo/avoid/${slotId}.png`;
 
   return (
     <div className="w-full px-3 py-12" style={{ background: "#000" }}>

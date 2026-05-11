@@ -4,45 +4,57 @@ import AiBlock from "../components/AiBlock";
 import {
   Sec,
   SectionLabel,
-  SectionTitle,
   YeonwooBubble,
 } from "../components/Section";
 
-// 12개월 매듭 분포 (PAID_FEATURE.md):
-// loose × 2 (M+0, M+6), tight × 6 (M+1, M+4, M+5, M+7, M+9, M+11),
-// glowing × 3 (M+2, M+3, M+8), peak × 2 (M+3, M+8 = glowing 위 촛불)
+// HTML 명세 (line 2401~2582) 정밀 포팅.
+// 단일 섹션 5-1 (label 없음, 도입부에 SD + AI + 타임라인 12개월 + 버블만)
+//
+// 구성:
+//   - SD yw_08 (sz-spotlight 260×260) + thread_corner 대각 액센트
+//   - AI 박스 (12개월 흐름 도입, 200~300자)
+//   - 두루마리 (scroll_top/middle/bottom) + 타임라인 12 row
+//     · 각 row: label + hearts ♥♥♥♥♥ + knot (loose/tight/glowing) + state + desc
+//     · 피크 row (M+3, M+8): tl-peak-row + 촛불 + 분홍 강조
+//   - 강연우 버블 "이 시기에 붉은 실이 가장 강하게 당겨."
+
 type KnotKind = "loose" | "tight" | "glowing";
-interface MonthCell {
-  monthLabel: string;       // "이번달", "+1개월" ...
+
+interface MonthRow {
+  label: string;       // "5월 (이번달)" / "6월" / "'27. 1월" 등 동적
+  hearts: number;      // 0~5 (♥ 채워진 개수)
   knot: KnotKind;
-  peak?: boolean;           // candle_peak 추가 표시
-  hint: string;             // 한 줄 힌트
+  state: string;       // "시작" / "진입" / "상승" / "피크" / "심화" / "안정" / "정체" / "재상승" / "2차 피크" / "신뢰" / "충전" / "1년차 마무리"
+  desc: string;
+  is_peak?: boolean;
 }
 
 interface TimingData {
-  months: ReadonlyArray<MonthCell>;
-  ai_intro: string;          // 200~300자
+  months: ReadonlyArray<MonthRow>;
+  ai_intro: string;          // 200~300자, {PEAK_LABEL_1}/{PEAK_LABEL_2}/{ILGAN} placeholder 자동 치환된 결과
 }
 
-const DEFAULT_MONTHS: ReadonlyArray<MonthCell> = [
-  { monthLabel: "이번달", knot: "loose",   hint: "잔잔. 흐름은 멀리." },
-  { monthLabel: "+1개월", knot: "tight",   hint: "묶임이 단단해져." },
-  { monthLabel: "+2개월", knot: "glowing", hint: "결이 빛나기 시작해." },
-  { monthLabel: "+3개월", knot: "glowing", peak: true, hint: "피크. 인연이 가까워." },
-  { monthLabel: "+4개월", knot: "tight",   hint: "여운. 단단함은 유지." },
-  { monthLabel: "+5개월", knot: "tight",   hint: "정리되는 자리." },
-  { monthLabel: "+6개월", knot: "loose",   hint: "한 호흡 쉬어가." },
-  { monthLabel: "+7개월", knot: "tight",   hint: "다시 묶이는 결." },
-  { monthLabel: "+8개월", knot: "glowing", peak: true, hint: "두 번째 피크." },
-  { monthLabel: "+9개월", knot: "tight",   hint: "단단해진 인연." },
-  { monthLabel: "+10개월", knot: "tight",  hint: "안정 구간." },
-  { monthLabel: "+11개월", knot: "tight",  hint: "12개월 결말." },
+const DEFAULT_MONTHS: ReadonlyArray<MonthRow> = [
+  { label: "5월 (이번달)", hearts: 2, knot: "loose",   state: "시작",        desc: "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야." },
+  { label: "6월",          hearts: 3, knot: "tight",   state: "진입",        desc: "실이 한 가닥 새로 묶여. 익숙한 자리에서 새 사람 보일 수 있어." },
+  { label: "7월",          hearts: 5, knot: "glowing", state: "상승",        desc: "흐름이 빠르게 차오르는 달. 다가오는 신호 놓치지 마." },
+  { label: "8월",          hearts: 5, knot: "glowing", state: "피크",        desc: "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.", is_peak: true },
+  { label: "9월",          hearts: 4, knot: "tight",   state: "심화",        desc: "관계가 깊어지는 시기. 상대 페이스에 맞춰 움직여." },
+  { label: "10월",         hearts: 3, knot: "tight",   state: "안정",        desc: "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아." },
+  { label: "11월",         hearts: 2, knot: "loose",   state: "정체",        desc: "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜." },
+  { label: "12월",         hearts: 3, knot: "tight",   state: "재상승",      desc: "새 환경, 새 자리에 가봐. 거기서 실이 다시 움직여." },
+  { label: "'27. 1월",     hearts: 5, knot: "glowing", state: "2차 피크",    desc: "한 해를 새로 여는 달. 실이 한 번 더 강하게 당겨져. 표현을 분명히 해.", is_peak: true },
+  { label: "'27. 2월",     hearts: 4, knot: "tight",   state: "신뢰",        desc: "관계 단단해지는 시기. 약속 한 번이 천 마디보다 무거워." },
+  { label: "'27. 3월",     hearts: 2, knot: "loose",   state: "충전",        desc: "속을 비우는 달. 다음 흐름에 쓸 기운을 모아." },
+  { label: "'27. 4월",     hearts: 4, knot: "tight",   state: "1년차 마무리", desc: "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔." },
 ];
 
 const MOCK_P8: TimingData = {
   months: DEFAULT_MONTHS,
   ai_intro:
-    "12개월의 결을 두루마리에 펼쳤어. 매듭이 빛나는 자리가 두 번 있어. 그 자리에 인연이 가까워.\n\n壬水 일간한테는 흐름이 중요해. 매듭이 단단한 달엔 너 자신을 정돈해. 빛나는 달엔 흐름을 따라가. 너는 쉬어가는 달엔 쉬는 게 맞아.",
+    "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n" +
+    "이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 8월과 '27. 1월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n" +
+    "임수(壬水) 일간은 흐름을 거스르면 안 되는 결이야. 피크에 움직이고, 정체기엔 멈춰. 그게 너에게 가장 잘 맞아.",
 };
 
 export default function TimingPage({ data }: { data?: TimingData }) {
@@ -62,11 +74,11 @@ export default function TimingPage({ data }: { data?: TimingData }) {
       />
 
       <Sec>
-        <SectionLabel>5-1 12개월 운명선</SectionLabel>
-        <SectionTitle>두루마리에 펼친 한 해.</SectionTitle>
+        {/* HTML 명세에 slabel 없음 — SD 스포트라이트만 */}
+        <SectionLabel qaSectionId="5-1">5-1 12개월 운명선</SectionLabel>
 
+        {/* SD yw_08 (sz-spotlight 260×260) + thread_corner 대각 액센트 */}
         <div className="relative my-3 flex justify-center">
-          {/* thread_corner 대각 액센트 (Y-9 주변) */}
           <span
             aria-hidden
             className="absolute -top-2 -left-2 w-10 h-10 bg-no-repeat bg-contain pointer-events-none opacity-60"
@@ -75,7 +87,10 @@ export default function TimingPage({ data }: { data?: TimingData }) {
           <span
             aria-hidden
             className="absolute -bottom-2 -right-2 w-10 h-10 bg-no-repeat bg-contain pointer-events-none opacity-60"
-            style={{ backgroundImage: "url(/yeonwoo/thread/thread_corner.png)", transform: "scale(-1,-1)" }}
+            style={{
+              backgroundImage: "url(/yeonwoo/thread/thread_corner.png)",
+              transform: "scale(-1,-1)",
+            }}
           />
           <div className="relative w-full max-w-[260px] aspect-square">
             <Image
@@ -89,83 +104,243 @@ export default function TimingPage({ data }: { data?: TimingData }) {
         </div>
 
         <AiBlock text={p.ai_intro} />
-      </Sec>
 
-      <Sec>
-        <SectionLabel>5-2 12개월 타임라인</SectionLabel>
-        <SectionTitle>두루마리를 한 마디씩 풀면 이런 결.</SectionTitle>
+        {/* 두루마리 + 12 row 타임라인 */}
         <Scroll>
-          <div className="grid grid-cols-2 gap-2">
-            {p.months.map((m) => (
-              <MonthCellView key={m.monthLabel} cell={m} />
+          <div className="flex flex-col">
+            {p.months.map((m, i) => (
+              <TimelineRow
+                key={m.label}
+                row={m}
+                isLast={i === p.months.length - 1}
+              />
             ))}
           </div>
         </Scroll>
-        <YeonwooBubble text="빛나는 달은 두 번. 그 자리에 인연이 가까워." />
+
+        <YeonwooBubble text="이 시기에 붉은 실이 가장 강하게 당겨." />
       </Sec>
     </section>
   );
 }
 
+// ── 두루마리 컨테이너 (scroll_top/middle/bottom) ──
+// HTML CSS 정밀 매핑 (line 877~928):
+//   - scroll-body: 좌우 검정 매듭 + 가운데 한지 (좌우 14% 비움)
+//   - margin top/bottom -32%: top/bottom cap의 한지 영역에 컨텐츠 끌어올림
+//   - 좌측 thread_straight 세로 라인 (opacity 0.5)
+//   - 안쪽 텍스트 색: 다크 브라운 (#3a2a14)
 function Scroll({ children }: { children: React.ReactNode }) {
   return (
-    <div className="my-3">
+    <div className="my-3 relative">
+      {/* 두루마리 상단 cap (한지 + 위쪽 검정 막대) */}
       <div
         aria-hidden
-        className="h-6 bg-no-repeat bg-center"
+        className="w-full"
         style={{
+          aspectRatio: "16 / 4",
           backgroundImage: "url(/yeonwoo/scroll/scroll_top_yw.svg)",
+          backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
+          backgroundPosition: "center bottom",
         }}
       />
+      {/* 본문 영역 (좌우 14% 패딩으로 검정 매듭 영역 비우기) */}
       <div
-        className="px-3 py-3"
+        className="relative"
         style={{
           backgroundImage: "url(/yeonwoo/scroll/scroll_middle_yw.svg)",
           backgroundRepeat: "repeat-y",
           backgroundSize: "100% auto",
+          backgroundPosition: "center top",
+          padding: "14px 14% 14px calc(14% + 6px)",
+          marginTop: "-32%",
+          marginBottom: "-32%",
+          color: "#3a2a14",
+          minHeight: "100px",
+          zIndex: 1,
         }}
       >
+        {/* 좌측 세로 thread_straight 라인 (opacity 0.5) */}
+        <span
+          aria-hidden
+          className="absolute pointer-events-none"
+          style={{
+            left: "calc(14% - 8px)",
+            top: "8px",
+            bottom: "8px",
+            width: "6px",
+            backgroundImage: "url(/yeonwoo/thread/thread_straight.svg)",
+            backgroundRepeat: "repeat-y",
+            backgroundSize: "6px auto",
+            backgroundPosition: "center top",
+            opacity: 0.5,
+          }}
+        />
         {children}
       </div>
+      {/* 두루마리 하단 cap (한지 + 아래쪽 검정 막대) */}
       <div
         aria-hidden
-        className="h-6 bg-no-repeat bg-center"
+        className="w-full"
         style={{
+          aspectRatio: "16 / 4",
           backgroundImage: "url(/yeonwoo/scroll/scroll_bottom_yw.svg)",
+          backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
+          backgroundPosition: "center top",
         }}
       />
     </div>
   );
 }
 
-function MonthCellView({ cell }: { cell: MonthCell }) {
+// ── 타임라인 1개월 row ──
+// HTML CSS 정밀 매핑 (line 181~196, 938~1038):
+//   - 일반 row: 점선 border-bottom + padding 8px 0 + tl-row-inner flex / gap 8px
+//   - tl-label: 다크 브라운 #3a2a14, 14px, weight 500
+//   - tl-hearts: ♥ #D4537E (분홍) / ♡ rgba(60,40,20,0.18) (옅은 브라운)
+//   - tl-knot: 우측 끝 (margin-left:auto), 24~32px SVG
+//   - 그 다음 state span
+//   - month-desc: #5a4020 브라운, 12px, line-height 1.7
+//   - 피크 row: 분홍 배경 + 좌측 큰 candle_peak (36×62) + 우측 decoration_petals
+function TimelineRow({ row, isLast }: { row: MonthRow; isLast: boolean }) {
+  const isPeak = !!row.is_peak;
+  const labelColor = isPeak ? "#D4537E" : "#3a2a14";
+  const labelWeight = isPeak ? 700 : 500;
+  const stateColor = isPeak ? "#B83E66" : "#5a4020";
+  const descColor = isPeak ? "#B83E66" : "#5a4020";
+  const knotSize =
+    row.knot === "loose" ? 24 : row.knot === "tight" ? 28 : 32;
   return (
     <div
-      className="relative rounded-[8px] px-2.5 py-3 flex items-center gap-2.5"
-      style={{ background: "#1a1a18", border: "0.5px solid rgba(200,168,112,0.2)" }}
+      className="relative"
+      style={{
+        borderBottom: isLast ? "none" : "0.5px solid rgba(60,40,20,0.10)",
+        padding: isPeak ? "8px 6px" : "8px 0",
+        background: isPeak ? "rgba(212,83,126,0.10)" : "transparent",
+        borderRadius: isPeak ? "8px" : 0,
+        margin: isPeak ? "4px -4px" : 0,
+        boxShadow: isPeak ? "inset 0 0 24px rgba(212,83,126,0.10)" : "none",
+      }}
     >
-      <div className="relative w-7 h-7 flex-shrink-0">
+      {/* 피크 우측 — decoration_petals */}
+      {isPeak && (
         <span
           aria-hidden
-          className="absolute inset-0 bg-no-repeat bg-center bg-contain"
-          style={{ backgroundImage: `url(/yeonwoo/thread/thread_knot_${cell.knot}.svg)` }}
+          className="absolute pointer-events-none"
+          style={{
+            top: "50%",
+            right: "-2px",
+            width: "36px",
+            height: "36px",
+            transform: "translateY(-50%)",
+            backgroundImage: "url(/yeonwoo/decoration/decoration_petals.svg)",
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            opacity: 0.55,
+          }}
         />
-        {cell.peak && (
+      )}
+
+      <div
+        className="flex items-center"
+        style={{ gap: "8px", flexWrap: "nowrap" }}
+      >
+        {/* 피크 좌측 candle_peak (36×62) */}
+        {isPeak && (
           <span
             aria-hidden
-            className="absolute -top-2 left-1/2 -translate-x-1/2 w-3.5 h-5 bg-no-repeat bg-center bg-contain"
-            style={{ backgroundImage: "url(/yeonwoo/candle/candle_peak.svg)" }}
+            className="inline-block flex-shrink-0"
+            style={{
+              width: "36px",
+              height: "62px",
+              backgroundImage: "url(/yeonwoo/candle/candle_peak.svg)",
+              backgroundSize: "contain",
+              backgroundPosition: "center bottom",
+              backgroundRepeat: "no-repeat",
+              verticalAlign: "bottom",
+            }}
           />
         )}
+
+        {/* label */}
+        <span
+          className="flex-shrink-0"
+          style={{
+            fontSize: "14px",
+            color: labelColor,
+            fontWeight: labelWeight,
+            whiteSpace: "nowrap",
+          }}
+        >
+          {row.label}
+        </span>
+
+        {/* hearts ♥ × 5 */}
+        <span
+          className="flex-shrink-0"
+          style={{ fontSize: "14px", whiteSpace: "nowrap" }}
+        >
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              key={i}
+              style={{
+                color: i < row.hearts ? "#D4537E" : "rgba(60,40,20,0.18)",
+              }}
+            >
+              {i < row.hearts ? "♥" : "♡"}
+            </span>
+          ))}
+        </span>
+
+        {/* knot 아이콘 (우측 끝으로 밀려감) */}
+        <span
+          aria-hidden
+          className="inline-block flex-shrink-0"
+          style={{
+            width: `${knotSize}px`,
+            height: `${knotSize}px`,
+            marginLeft: "auto",
+            backgroundImage: `url(/yeonwoo/thread/thread_knot_${row.knot}.svg)`,
+            backgroundSize: "contain",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            filter:
+              row.knot === "glowing"
+                ? "drop-shadow(0 0 8px rgba(212,83,126,0.65))"
+                : "none",
+          }}
+        />
+
+        {/* state 라벨 */}
+        <span
+          className="flex-shrink-0"
+          style={{
+            fontSize: "13px",
+            color: stateColor,
+            fontWeight: isPeak ? 600 : 400,
+          }}
+        >
+          {row.state}
+        </span>
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[12px] text-[#E8C9A0] tracking-[0.05em] mb-0.5">{cell.monthLabel}</div>
-        <div className="text-[12px] text-[#a8a6a0] leading-[1.4]" style={{ wordBreak: "keep-all" }}>
-          {cell.hint}
-        </div>
-      </div>
+
+      {/* month-desc (둘째 줄) */}
+      <p
+        className="mt-1"
+        style={{
+          fontSize: "12px",
+          color: descColor,
+          lineHeight: 1.7,
+          marginTop: "3px",
+          padding: "2px 0",
+          wordBreak: "keep-all",
+        }}
+      >
+        {row.desc}
+      </p>
     </div>
   );
 }

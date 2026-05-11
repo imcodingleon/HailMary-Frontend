@@ -215,10 +215,14 @@ export default function ResultPreviewPage() {
         sajuRequestId="mock_preview"
         dialogues={MOCK_BLOCKING_DIALOGUES}
       />
-      <AvoidPartnerSection slotId="m-fire-yang" />
+      <AvoidPartnerSection
+        slotId="m-fire-yang"
+        imageBasePath="/images/spouse/doyoon/avoid"
+      />
       <DestinedPartnerSection
         spouseMatch={MOCK_SPOUSE_MATCH}
         displayName="도윤"
+        imageBasePath="/images/spouse/doyoon/match"
       />
       <RomanceTimingSection monthlyRomanceFlow={MOCK_FLOW} />
       <RealReviewsSection reviews={MOCK_REVIEWS} versionBadgeLabel="한도윤 버전" />
