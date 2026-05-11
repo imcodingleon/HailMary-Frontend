@@ -50,7 +50,7 @@ function SuccessBody() {
       setErrorMsg("결제 식별 정보가 누락되었어요.");
       return;
     }
-    let pending: { character: string; email: string } | null = null;
+    let pending: { character: string; email: string; amount?: number } | null = null;
     try {
       const raw = sessionStorage.getItem("checkoutPending");
       if (raw) pending = JSON.parse(raw);
@@ -59,6 +59,19 @@ function SuccessBody() {
     if (!pending?.character || !pending?.email) {
       setStatus("error");
       setErrorMsg("결제 세션이 만료되었어요. 처음부터 다시 시도해 주세요.");
+      return;
+    }
+
+    // 금액 무결성 검증: 의도한 결제 금액과 successUrl의 amount가 일치하는지 확인
+    if (typeof pending.amount === "number" && pending.amount !== Number(amount)) {
+      trackEvent("payment_amount_mismatch", {
+        character_id: pending.character,
+        order_id: orderId,
+        intended_amount: pending.amount,
+        received_amount: Number(amount),
+      });
+      setStatus("error");
+      setErrorMsg("결제 금액이 일치하지 않아요. 결제를 취소하고 고객센터로 문의해 주세요.");
       return;
     }
 

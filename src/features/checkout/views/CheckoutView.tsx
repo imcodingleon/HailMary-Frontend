@@ -35,6 +35,7 @@ export function CheckoutView({ character }: CheckoutViewProps) {
     setOpenConsent,
     handleConsentDetail,
     isProcessing,
+    widgetsReady,
     applyCoupon,
     handleBack,
     handleSubmit,
@@ -76,7 +77,17 @@ export function CheckoutView({ character }: CheckoutViewProps) {
           onApply={applyCoupon}
         />
 
-        <CheckoutCta onSubmit={handleSubmit} loading={isProcessing} />
+        {/* 토스페이먼츠 v2 결제수단 위젯 */}
+        <div id="payment-method" />
+
+        {/* 토스페이먼츠 v2 이용약관 위젯 */}
+        <div id="agreement" />
+
+        <CheckoutCta
+          onSubmit={handleSubmit}
+          loading={isProcessing}
+          disabled={!widgetsReady}
+        />
 
         <div className="space-y-3 pt-2">
           <ConsentRow

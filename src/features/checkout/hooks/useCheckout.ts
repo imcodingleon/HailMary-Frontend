@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { isValidEmail } from "@/shared/utils/validation";
@@ -13,7 +13,8 @@ import {
 
 export type ConsentDoc = "data-usage" | "payment";
 
-export type CheckoutMethod = "GENERAL" | "KAKAOPAY" | "NAVERPAY";
+type TossPaymentsInstance = Awaited<ReturnType<typeof loadTossPayments>>;
+type WidgetsInstance = ReturnType<TossPaymentsInstance["widgets"]>;
 
 export interface UseCheckoutReturn {
   product: CheckoutProduct;
@@ -32,9 +33,10 @@ export interface UseCheckoutReturn {
   setOpenConsent: (v: ConsentDoc | null) => void;
   handleConsentDetail: (doc: ConsentDoc) => void;
   isProcessing: boolean;
+  widgetsReady: boolean;
   applyCoupon: () => void;
   handleBack: () => void;
-  handleSubmit: (method: CheckoutMethod) => void;
+  handleSubmit: () => void;
 }
 
 function generateOrderId(character: CheckoutCharacter): string {
@@ -56,6 +58,66 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
   const [agreePayment, setAgreePayment] = useState(true);
   const [openConsent, setOpenConsent] = useState<ConsentDoc | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [widgets, setWidgets] = useState<WidgetsInstance | null>(null);
+  const [widgetsReady, setWidgetsReady] = useState(false);
+
+  // 1단계: 결제위젯 인스턴스 생성 (마운트 시 1회)
+  useEffect(() => {
+    const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+    if (!clientKey) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const tossPayments = await loadTossPayments(clientKey);
+        if (cancelled) return;
+        const instance = tossPayments.widgets({ customerKey: ANONYMOUS });
+        setWidgets(instance);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "결제 위젯 초기화 실패";
+        trackEvent("payment_widget_init_failed", {
+          character_id: character,
+          error_message: message,
+        });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [character]);
+
+  // 2단계: 결제 금액 설정 + 결제수단/약관 위젯 렌더링
+  useEffect(() => {
+    if (widgets == null) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        await widgets.setAmount({
+          currency: "KRW",
+          value: product.priceKrw,
+        });
+        await Promise.all([
+          widgets.renderPaymentMethods({
+            selector: "#payment-method",
+            variantKey: "DEFAULT",
+          }),
+          widgets.renderAgreement({
+            selector: "#agreement",
+            variantKey: "AGREEMENT",
+          }),
+        ]);
+        if (!cancelled) setWidgetsReady(true);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "결제 위젯 렌더링 실패";
+        trackEvent("payment_widget_render_failed", {
+          character_id: character,
+          error_message: message,
+        });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [widgets, product.priceKrw, character]);
 
   const setEmail = useCallback((v: string) => {
     setEmailState(v);
@@ -134,127 +196,95 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     alert("쿠폰 적용은 정식 오픈 후 안내드릴게요.");
   }, [coupon, character]);
 
-  const handleSubmit = useCallback(
-    async (method: CheckoutMethod) => {
-      trackEvent("checkout_pay_button_click", {
+  const handleSubmit = useCallback(async () => {
+    trackEvent("checkout_pay_button_click", {
+      character_id: character,
+      amount: product.priceKrw,
+      email_filled: email.trim().length > 0,
+      agree_data_usage: agreeDataUsage,
+      agree_payment: agreePayment,
+    });
+    if (!isValidEmail(email)) {
+      setEmailError("이메일 형식을 확인해 주세요.");
+      trackEvent("checkout_validation_failed", {
         character_id: character,
-        payment_method: method,
-        amount: product.priceKrw,
-        email_filled: email.trim().length > 0,
-        agree_data_usage: agreeDataUsage,
-        agree_payment: agreePayment,
+        reason: "email_invalid",
       });
-      if (!isValidEmail(email)) {
-        setEmailError("이메일 형식을 확인해 주세요.");
-        trackEvent("checkout_validation_failed", {
-          character_id: character,
-          reason: "email_invalid",
-        });
-        return;
-      }
-      if (!agreeDataUsage || !agreePayment) {
-        alert("결제 진행에는 두 가지 동의가 모두 필요합니다.");
-        trackEvent("checkout_validation_failed", {
-          character_id: character,
-          reason: "consent_missing",
-        });
-        return;
-      }
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-      if (!clientKey) {
-        alert("결제 키 설정이 누락되었어요. 관리자에게 문의해 주세요.");
-        return;
-      }
-      if (isProcessing) return;
-      setIsProcessing(true);
-      const sajuRequestId =
-        typeof window !== "undefined"
-          ? localStorage.getItem(`${character}SajuRequestId`)
-          : null;
-      let orderId: string | null = null;
-      try {
-        const tossPayments = await loadTossPayments(clientKey);
-        const payment = tossPayments.payment({ customerKey: ANONYMOUS });
-        orderId = generateOrderId(character);
-        try {
-          sessionStorage.setItem(
-            "checkoutPending",
-            JSON.stringify({
-              character,
-              orderId,
-              amount: product.priceKrw,
-              email: email.trim(),
-            }),
-          );
-        } catch {}
-
-        trackEvent("payment_method_selected", {
-          character_id: character,
-          saju_request_id: sajuRequestId,
-          payment_method: method,
-          amount: product.priceKrw,
-          order_id: orderId,
-        });
-
-        // 결제 수단별 분기:
-        //   GENERAL  → 통합결제창 (flowMode DEFAULT) — 카드·간편결제·계좌이체 등 종합
-        //   KAKAOPAY → 카카오페이 자체창 (flowMode DIRECT)
-        //   NAVERPAY → 네이버페이 자체창 (flowMode DIRECT)
-        // 계약 전 키에서는 NAVERPAY는 가능, KAKAOPAY는 일부 제한이 있을 수 있음.
-        const cardConfig =
-          method === "GENERAL"
-            ? {
-                useEscrow: false,
-                flowMode: "DEFAULT" as const,
-                useCardPoint: false,
-                useAppCardOnly: false,
-              }
-            : {
-                useEscrow: false,
-                flowMode: "DIRECT" as const,
-                easyPay: method === "KAKAOPAY" ? "카카오페이" : "네이버페이",
-                useCardPoint: false,
-                useAppCardOnly: false,
-              };
-
-        trackEvent("payment_initiated", {
-          character_id: character,
-          saju_request_id: sajuRequestId,
-          payment_method: method,
-          amount: product.priceKrw,
-          order_id: orderId,
-        });
-
-        await payment.requestPayment({
-          method: "CARD",
-          amount: { currency: "KRW", value: product.priceKrw },
+      return;
+    }
+    if (!agreeDataUsage || !agreePayment) {
+      alert("결제 진행에는 두 가지 동의가 모두 필요합니다.");
+      trackEvent("checkout_validation_failed", {
+        character_id: character,
+        reason: "consent_missing",
+      });
+      return;
+    }
+    if (widgets == null || !widgetsReady) {
+      alert("결제 위젯이 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    if (isProcessing) return;
+    setIsProcessing(true);
+    const sajuRequestId =
+      typeof window !== "undefined"
+        ? localStorage.getItem(`${character}SajuRequestId`)
+        : null;
+    const orderId = generateOrderId(character);
+    try {
+      sessionStorage.setItem(
+        "checkoutPending",
+        JSON.stringify({
+          character,
           orderId,
-          orderName: product.productLabel,
-          successUrl: `${window.location.origin}/checkout/success`,
-          failUrl: `${window.location.origin}/checkout/fail`,
-          customerEmail: email.trim(),
-          card: cardConfig,
-        });
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "결제를 시작하지 못했어요.";
-        const errorCode =
-          err && typeof err === "object" && "code" in err
-            ? String((err as { code: unknown }).code)
-            : "UNKNOWN";
-        trackEvent("payment_failed", {
-          character_id: character,
-          order_id: orderId,
-          error_code: errorCode,
-          error_message: message,
-        });
-        if (!message.includes("USER_CANCEL") && !message.includes("취소")) {
-          alert(`결제를 시작하지 못했어요: ${message}`);
-        }
-        setIsProcessing(false);
+          amount: product.priceKrw,
+          email: email.trim(),
+        }),
+      );
+    } catch {}
+
+    trackEvent("payment_initiated", {
+      character_id: character,
+      saju_request_id: sajuRequestId,
+      amount: product.priceKrw,
+      order_id: orderId,
+    });
+
+    try {
+      await widgets.requestPayment({
+        orderId,
+        orderName: product.productLabel,
+        successUrl: `${window.location.origin}/checkout/success`,
+        failUrl: `${window.location.origin}/checkout/fail`,
+        customerEmail: email.trim(),
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "결제를 시작하지 못했어요.";
+      const errorCode =
+        err && typeof err === "object" && "code" in err
+          ? String((err as { code: unknown }).code)
+          : "UNKNOWN";
+      trackEvent("payment_failed", {
+        character_id: character,
+        order_id: orderId,
+        error_code: errorCode,
+        error_message: message,
+      });
+      if (!message.includes("USER_CANCEL") && !message.includes("취소")) {
+        alert(`결제를 시작하지 못했어요: ${message}`);
       }
-    },
-    [email, agreeDataUsage, agreePayment, character, product, isProcessing],
-  );
+      setIsProcessing(false);
+    }
+  }, [
+    email,
+    agreeDataUsage,
+    agreePayment,
+    character,
+    product,
+    isProcessing,
+    widgets,
+    widgetsReady,
+  ]);
 
   return {
     product,
@@ -273,6 +303,7 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     setOpenConsent,
     handleConsentDetail,
     isProcessing,
+    widgetsReady,
     applyCoupon,
     handleBack,
     handleSubmit,
