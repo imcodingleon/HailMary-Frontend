@@ -1,15 +1,25 @@
 import type { ReactNode } from "react";
+import QaTemplateLink from "./QaTemplateLink";
 
 // 섹션 공통 헤더 + 본문 + 변수 태그 (var-tag).
 // 디자인 원본의 .slabel / .stitle.st-yw / .var-tag 매핑.
 
-export function SectionLabel({ children }: { children: ReactNode }) {
+// `qaSectionId` prop은 ⚠️ 실배포 시 제거 대상 (qa.ts 상단 가이드 참조).
+// 매핑된 sectionId면 라벨 옆에 작은 [QA] 링크가 dev 빌드에서만 표시됨.
+export function SectionLabel({
+  children,
+  qaSectionId,
+}: {
+  children: ReactNode;
+  qaSectionId?: string;
+}) {
   return (
     <div
       className="text-[13px] font-medium uppercase mb-[5px]"
       style={{ letterSpacing: "0.05em", color: "#888" }}
     >
       {children}
+      {qaSectionId ? <QaTemplateLink sectionId={qaSectionId} /> : null}
     </div>
   );
 }

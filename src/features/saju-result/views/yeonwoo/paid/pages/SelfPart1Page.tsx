@@ -86,7 +86,7 @@ export default function SelfPart1Page({ data }: { data?: SelfPart1Data }) {
       />
 
       <Sec>
-        <SectionLabel>1-1 나의 연애 유형</SectionLabel>
+        <SectionLabel qaSectionId="1-1">1-1 나의 연애 유형</SectionLabel>
         <SectionTitle>
           <VarTag>{p.love_type}</VarTag>
         </SectionTitle>
@@ -118,7 +118,7 @@ export default function SelfPart1Page({ data }: { data?: SelfPart1Data }) {
       </Sec>
 
       <Sec>
-        <SectionLabel>1-2 사랑에 빠지는 방식</SectionLabel>
+        <SectionLabel qaSectionId="1-2">1-2 사랑에 빠지는 방식</SectionLabel>
         <SectionTitle>트리거 셋. 이게 작동하면 너는 끝이야.</SectionTitle>
         <CardYw
           label="트리거 1"
@@ -140,7 +140,7 @@ export default function SelfPart1Page({ data }: { data?: SelfPart1Data }) {
       </Sec>
 
       <Sec>
-        <SectionLabel>1-3 연애 중 감정 패턴</SectionLabel>
+        <SectionLabel qaSectionId="1-3">1-3 연애 중 감정 패턴</SectionLabel>
         <SectionTitle>초반엔 잔잔, 위기엔 폭발.</SectionTitle>
         <CandleChart rows={p.candle_rows} />
         <AiBlock text={p.ai_emotion} />
