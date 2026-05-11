@@ -231,6 +231,12 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
         ? localStorage.getItem(`${character}SajuRequestId`)
         : null;
     const orderId = generateOrderId(character);
+    // sessionToken: 무료 플로에서 발급되어 localStorage에 저장된 값.
+    // 백엔드 confirm 단계에서 user 식별에 사용된다. 누락이면 confirm 400.
+    const sessionToken =
+      typeof window !== "undefined"
+        ? localStorage.getItem(`${character}SajuRequestId`)
+        : null;
     try {
       sessionStorage.setItem(
         "checkoutPending",
@@ -239,6 +245,7 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
           orderId,
           amount: product.priceKrw,
           email: email.trim(),
+          sessionToken,
         }),
       );
     } catch {}
