@@ -1,9 +1,9 @@
 # Amplitude — 도화선 분석 자산 인덱스
 
 > 프로젝트: `dohwasun` (appId `808332`, org `phm-service`)
-> 마지막 갱신: 2026-05-07 — 이벤트 33개로 확장(체크아웃 인터랙션 7종 추가) + `intro_step_complete` → `intro_start_clicked`, `paid_report_cta_clicked` → `pay_cta_click` 이름 변경 + StrictMode 더블 발화 가드 적용 (`info_form_view`, `survey_step_view`, `loading_enter`).
+> 마지막 갱신: 2026-05-11 — Toss Payments v2 마이그레이션 정합성 정리 + 결제 confirm 실패 추적 추가. v2 위젯 전환으로 결제수단 선택이 위젯 내부로 이동 → `payment_method_selected` 이벤트와 `checkout_pay_button_click`/`payment_initiated`의 `payment_method` 속성 제거. 위젯/금액 무결성/confirm 단계의 실패 신호 5종 신규(`payment_widget_init_failed`, `payment_widget_render_failed`, `payment_amount_mismatch`, `paid_result_redirect`, `payment_confirm_failed`).
 
-도화선 서비스의 33개 이벤트(F/E 32 + B/E 1 예정)를 기반으로 차트 9개와 대시보드 5개를 운용 중이다. 이 문서는 그 자산의 위치, 운용 리듬, 후속 액션을 한 곳에 모아둔 단일 인덱스다.
+도화선 서비스의 37개 이벤트(F/E 36 + B/E 1 예정)를 기반으로 차트 9개와 대시보드 5개를 운용 중이다. 이 문서는 그 자산의 위치, 운용 리듬, 후속 액션을 한 곳에 모아둔 단일 인덱스다.
 
 ---
 
@@ -102,7 +102,7 @@
 
 ---
 
-## 4. 검증된 33개 이벤트와 속성
+## 4. 검증된 37개 이벤트와 속성
 
 > 공통 속성 (모든 이벤트 자동 첨부): `device_id`, `session_id`, `timestamp`.
 > 이벤트 흐름 단계별로 묶어 정리.
@@ -249,10 +249,11 @@
 - **핵심 속성:** `character_id`, `consent_type`
 - **목적:** 동의 항목의 "자세히 보기" 클릭. 약관 정독률(약관별 detail 클릭률) 측정 — 클릭률이 높으면 약관이 부담스럽다는 신호, 낮으면 무심코 동의 의미.
 
-#### 27) `checkout_pay_button_click` *(2026-05-07 신규)*
-- **핵심 속성:** `character_id`, `payment_method` (`"GENERAL" \| "KAKAOPAY" \| "NAVERPAY"`), `email_filled` (boolean), `agree_data_usage` (boolean), `agree_payment` (boolean)
-- **목적:** 카카오페이/네이버페이/일반결제 버튼 클릭 **즉시** 발화. **검증 통과 여부와 무관하게 클릭 자체를 추적**해 결제수단별 클릭 의지 절대값 확보. 이후 `checkout_validation_failed`(검증 실패) 또는 `payment_method_selected → payment_initiated`(검증 통과)로 분기.
-- **분석 활용:** `pay_button_click → payment_initiated` 전환율 = 검증 통과율. 클릭 시점의 `email_filled`/`agree_*` 상태 분포로 **어느 약관이 미체크된 채로 클릭이 일어나는지** 패턴 분석 가능.
+#### 27) `checkout_pay_button_click` *(2026-05-07 신규, 2026-05-11 v2 마이그레이션 정정)*
+- **핵심 속성:** `character_id`, `amount`, `email_filled` (boolean), `agree_data_usage` (boolean), `agree_payment` (boolean)
+- **목적:** 단일 "결제하기" 버튼 클릭 **즉시** 발화. **검증 통과 여부와 무관하게 클릭 자체를 추적**해 결제 의지 절대값 확보. 이후 `checkout_validation_failed`(검증 실패) 또는 `payment_initiated`(검증 통과)로 분기.
+- **분석 활용:** `checkout_pay_button_click → payment_initiated` 전환율 = 검증 통과율. 클릭 시점의 `email_filled`/`agree_*` 상태 분포로 **어느 약관이 미체크된 채로 클릭이 일어나는지** 패턴 분석 가능.
+- **v2 마이그레이션 변경:** 결제수단(카드/토스페이/카카오페이/네이버페이/페이코)이 토스 위젯 내부에서 결정되므로 `payment_method` 속성 제거. 결제수단 선호도 분석은 백엔드 `payments.method` 컬럼(EASY_PAY/CARD/TRANSFER/…) 기준으로 전환.
 
 #### 28) `checkout_validation_failed`
 - **핵심 속성:** `character_id`, `reason` (`"email_invalid" \| "consent_missing"`)
@@ -261,36 +262,72 @@
 
 ---
 
-### 4-9. 결제 진행
+### 4-9. 결제 위젯 초기화 (Toss v2)
 
-#### 29) `payment_method_selected`
-- **핵심 속성:** `character_id`, `saju_request_id`, `payment_method` (`"GENERAL" \| "KAKAOPAY" \| "NAVERPAY"`), `amount`, `order_id`
-- **발생 시점:** 검증 통과 직후, 결제수단을 결정해서 `order_id`가 클라이언트에서 생성되는 시점. tossPayments SDK 호출 **직전**.
-- **목적:** (1) 결제수단 선호도 분포 분석. (2) `order_id` 발급 시점 기록 — 이후 `payment_completed`(B/E)와 조인 키. (3) 검증 통과율 측정.
+#### 29) `payment_widget_init_failed` *(2026-05-11 정식 등재 — Toss v2 마이그레이션 시점부터 발화)*
+- **핵심 속성:** `character_id`, `error_message`
+- **발생 시점:** `loadTossPayments(clientKey)` 또는 `tossPayments.widgets({ customerKey })` 실패 시. 체크아웃 페이지 마운트 직후 클라이언트 키 누락·네트워크 차단 등으로 위젯 인스턴스 생성이 실패한 경우.
+- **목적:** **결제 진입 자체가 막힌 사용자 모집단** 측정. 0이 정상. 발화량이 발생하면 클라이언트 키/CSP/네트워크 진단 신호.
 
-#### 30) `payment_initiated`
-- **핵심 속성:** `character_id`, `saju_request_id`, `payment_method`, `amount`, `order_id`
-- **발생 시점:** `tossPayments.requestPayment()` 호출 직후, **토스 결제창(외부 모달/리다이렉트)이 사용자에게 노출된 시점**.
-- **목적:** 결제수단 결정 → 실제 결제창 진입 직전 망설임 측정 (`payment_method_selected → payment_initiated` 차이). 토스 결제창 노출률 = 결제 의지 표명의 마지막 클라이언트 단계.
-
-#### 31) `payment_failed`
-- **핵심 속성:** `character_id`, `order_id`, `error_code`, `error_message`
-- **발생 시점:** 두 경로 — **(a)** `/checkout/fail`로 리다이렉트 진입 (토스가 fail URL로 보낸 경우), **(b)** `tossPayments.requestPayment()` catch 블록 (USER_CANCEL 포함, 사용자가 결제창 X 클릭).
-- **목적:** 결제 실패 사유 분포 — `error_code`별 카운트로 카드 거부, 한도 초과, 사용자 취소 등 분리 분석. USER_CANCEL 비율이 높으면 결제 직전 망설임 신호.
-
-#### 32) `checkout_success_view`
-- **핵심 속성:** `character_id`, `order_id`
-- **발생 시점:** `/checkout/success` 페이지 마운트 시. 토스가 success URL로 사용자를 보낸 직후.
-- **목적:** **F/E 관점의 결제 완료 신호** — 사용자가 성공 페이지를 본 시점. ⚠️ 단일 진실원 아님 — 실제 결제 검증은 B/E `payment_completed`. F/E 신호와 B/E 검증 사이의 갭 추적용.
+#### 30) `payment_widget_render_failed` *(2026-05-11 정식 등재)*
+- **핵심 속성:** `character_id`, `error_message`
+- **발생 시점:** `widgets.setAmount()` 또는 `widgets.renderPaymentMethods()` / `widgets.renderAgreement()` 실패 시. 위젯 인스턴스는 만들어졌으나 결제수단/약관 UI 렌더에 실패한 경우.
+- **목적:** 위젯이 떴지만 사용자가 결제수단을 선택할 수 없는 케이스 추적. `payment_widget_init_failed`와 분리해 어느 단계에서 막혔는지 식별.
 
 ---
 
-### 4-10. 백엔드 결제 검증 (예정)
+### 4-10. 결제 진행 (Toss v2)
 
-#### 33) `payment_completed` *(B/E)*
-- **핵심 속성:** `character_id`, `saju_request_id`, `order_id`, `amount`, `payment_method`, `paid_at`
-- **발생 시점:** 토스 webhook `DONE` 수신 → 백엔드 검증 → Amplitude HTTP API 직접 전송.
-- **목적:** **GMV / ARPPU / 유료 사용자 수의 단일 진실원**. F/E `checkout_success_view`와의 차이 = 결제 검증 실패 케이스(Data Health 경고 신호).
+> **v2 마이그레이션 영향(2026-05-11 갱신):** 결제수단(카드/토스페이/카카오페이/네이버페이/페이코)이 토스 위젯 내부에서 결정되므로 클라이언트는 결제수단을 알지 못한다. 이로 인해 구 `payment_method_selected` 이벤트와 `payment_method` 속성은 **제거**됨. 결제수단 분포 분석은 백엔드 `payments.method`/`easy_pay_provider`/`bank_code` 컬럼 기준.
+
+#### ~~`payment_method_selected`~~ *(2026-05-11 제거됨)*
+- v1 스타일(`tossPayments.payment()`)에서 카카오/네이버/일반 3개 버튼 분기를 가정한 이벤트. v2 위젯 단일 버튼 전환으로 의미를 상실하여 코드와 문서에서 제거. 과거 데이터(2026-05-06 ~ 2026-05-07 사이)는 Amplitude에 잔존하나 신규 발화 없음.
+
+#### 31) `payment_initiated`
+- **핵심 속성:** `character_id`, `saju_request_id`, `amount`, `order_id`
+- **발생 시점:** `widgets.requestPayment()` 호출 직전, **토스 결제창(새창/풀페이지)이 사용자에게 노출되기 직전 마지막 클라이언트 단계**.
+- **목적:** 결제 의지 표명의 마지막 클라이언트 신호. `checkout_pay_button_click → payment_initiated` 전환율 = 검증 통과율. 이후 사용자 여정은 토스 결제창(블랙박스) → `/checkout/success` 또는 `/checkout/fail` 리다이렉트로만 관찰됨.
+- **v2 마이그레이션 변경:** `payment_method` 속성 제거(위젯 내부에서 결정되므로 클라이언트가 모름).
+
+#### 32) `payment_failed`
+- **핵심 속성:** `character_id`, `order_id`, `error_code`, `error_message`
+- **발생 시점:** 두 경로 — **(a)** `/checkout/fail`로 리다이렉트 진입 (토스가 fail URL로 보낸 경우, `error_code` 예: `PAY_PROCESS_CANCELED`), **(b)** `widgets.requestPayment()` catch 블록 (SDK 자체 거절 케이스).
+- **목적:** 결제 실패 사유 분포 — `error_code`별 카운트로 카드 거부, 한도 초과, 사용자 취소 등 분리 분석. `PAY_PROCESS_CANCELED` 비율이 높으면 결제 직전 망설임 신호.
+
+#### 33) `payment_amount_mismatch` *(2026-05-11 정식 등재)*
+- **핵심 속성:** `character_id`, `order_id`, `intended_amount`, `received_amount`
+- **발생 시점:** `/checkout/success` 마운트 시점에 `sessionStorage.checkoutPending.amount`(체크아웃에서 의도한 금액)와 successUrl의 `amount` 쿼리(토스가 박은 값)가 불일치할 때.
+- **목적:** **금액 위·변조 1차 방어선의 트리거 신호.** 정상 흐름에서는 0이 정상. 발화 시 백엔드 confirm을 호출하지 않고 차단되므로, 발생량 자체가 잠재적 보안 이슈/QA 결함 신호.
+
+#### 34) `checkout_success_view`
+- **핵심 속성:** `character_id`, `order_id`
+- **발생 시점:** `/checkout/success` 페이지 마운트 시. 토스가 success URL로 사용자를 보낸 직후.
+- **목적:** **F/E 관점의 결제 완료 신호** — 사용자가 성공 페이지를 본 시점. ⚠️ 단일 진실원 아님 — 실제 결제 검증은 B/E `payment_completed` 또는 `paid_result_redirect` 직전 confirm 성공. F/E 신호와 B/E 검증 사이의 갭 추적용.
+
+#### 35) `payment_confirm_failed` *(2026-05-11 신규)*
+- **핵심 속성:** `character_id`, `order_id`, `payment_key`, `amount`, `error_message`
+- **발생 시점:** `/checkout/success`에서 백엔드 `POST /api/payments/confirm` 호출이 실패한 경우(HTTP 4xx/5xx 또는 네트워크 에러). 토스는 결제를 받았지만 우리 백엔드가 검증/저장에 실패한 케이스.
+- **목적:** **결제 후 백엔드 단계 실패율의 단일 진실원.** `checkout_success_view → payment_confirm_failed` 비율 = 사용자 입장에서 "돈은 빠져나갔는데 결과지를 못 받은" 사고 발생률. 0%가 정상. 올라가면 백엔드/토스 시크릿 키/스키마 회귀 시그널(예: 2026-05-08 `userId` 필수 필드 추가 회귀).
+- **분석 활용:** `error_message`에 FastAPI 검증 오류(`session_token: Field required`), 502 PaymentGatewayError 메시지 등이 그대로 들어가 원인 분포 즉석 도출 가능.
+
+#### 36) `paid_result_redirect` *(2026-05-11 정식 등재)*
+- **핵심 속성:** `order_id`, `character`
+- **발생 시점:** `/checkout/success`에서 백엔드 confirm 응답이 성공(`201 Created`)으로 떨어진 직후, `/saju/paid/[order_id]/loading`으로 라우팅하기 직전 1회 발화. `redirectSentRef`로 중복 방지.
+- **목적:** **F/E 관점의 진짜 결제 성공 단일 진실원.** `checkout_success_view`와 달리 백엔드 검증까지 통과한 상태만 카운트되므로 유료 결과지 도달 KPI의 분자로 사용.
+- ⚠️ `character_id`가 아니라 `character` 키로 전송됨(success 페이지 응답 객체 필드명 그대로). 다른 이벤트와 segment 결합 시 주의.
+
+---
+
+### 4-11. 백엔드 결제 검증 (라이브 — 2026-05-11 구현 완료)
+
+#### 37) `payment_completed` *(B/E, 2026-05-11 라이브)*
+- **핵심 속성:** `character_id`, `order_id`, `amount`, `payment_method` (`EASY_PAY`/`CARD`/`TRANSFER`/`VIRTUAL_ACCOUNT`/`MOBILE_PHONE`/`OTHER`), `easy_pay_provider` (예: `토스페이`), `card_issuer_code`, `bank_code`, `paid_at` (ISO8601), `environment` (`local`/`production`)
+- **공통 속성:** `user_id` = `user_{users.id}`, `device_id`/`session_id` = 프론트가 confirm 요청에 동봉한 값, `time` = `paid_at` epoch ms, `insert_id` = `payment_completed-{order_id}` (멱등 키).
+- **발생 시점:** `ConfirmPaymentUseCase` 가 결제 승인 + DB 저장 + PaidReport 트리거를 모두 마친 직후, `asyncio.create_task` 로 fire-and-forget 발화.
+- **목적:** **GMV / ARPPU / 유료 사용자 수의 단일 진실원**. PII 0건 정책으로 Amplitude 한 화면에서 사용자 깔때기 + 결제 상세를 함께 분석 가능.
+- **안전성:** Amplitude 호출 실패·지연이 결제 응답에 절대 영향을 주지 않도록 fire-and-forget + 타임아웃 5초 + 전 구간 swallow. 단위 테스트로 검증 (`test_analytics_failure_does_not_break_confirm`).
+- **참고 문서:** `HailMary-Backend` 작업 계획·결과는 `docs/payments/6. payment-completed-backend-amplitude.md`.
+- **향후 토스 webhook 도입 시:** 이벤트 발화 시점을 confirm UseCase → webhook 수신으로 이동. `insert_id` 멱등 키가 같아서 중복 방지 자연 작동.
 
 ---
 
@@ -308,6 +345,9 @@
 | 2026-05-06 결제 퍼널 9종 (`pay_cta_click` 등) | `isInSchema: false` — 콘솔 등록 필요 |
 | 2026-05-07 신규 7종 (체크아웃 인터랙션) | `isInSchema: false` — 콘솔 등록 필요 |
 | 2026-05-07 이름 변경 2종 (`intro_start_clicked`, `pay_cta_click`) | 신규 이름으로 재등록 필요 (구 이름 데이터와 단절) |
+| 2026-05-11 Toss v2 정합성 정리 5종 (`payment_widget_init_failed`, `payment_widget_render_failed`, `payment_amount_mismatch`, `payment_confirm_failed`, `paid_result_redirect`) | `isInSchema: false` — 콘솔 등록 필요 |
+| 2026-05-11 제거 1종 (`payment_method_selected`) | 트래킹 플랜에서 deprecated 처리 필요 |
+| 2026-05-11 속성 변경 2종 (`checkout_pay_button_click`, `payment_initiated` 의 `payment_method` 속성 제거) | 스키마 갱신 필요 |
 
 ---
 
@@ -327,7 +367,7 @@
 1. ~~`gender` 속성 미수집~~ — **해결됨** (차트 쿼리 방식 문제였음)
 2. ~~`character_id` vs `character` 키 통일~~ — **해결됨** (코드 수정)
 3. ~~트래킹 플랜 등록~~ — **해결됨** (라이브) — 단, 2026-05-06 신규 추가된 9개 이벤트는 `isInSchema: false` 상태. 트래킹 플랜에 등록 필요 (Amplitude UI에서 수동, MCP 미지원).
-4. ~~결제 이벤트 부재~~ — **부분 해결됨**. F/E 6종(`checkout_page_view`, `checkout_validation_failed`, `payment_method_selected`, `payment_initiated`, `payment_failed`, `checkout_success_view`) 구현 완료. **B/E `payment_completed`는 미해결** — Toss webhook → Amplitude HTTP API 연동 백엔드 작업 필요.
+4. ~~결제 이벤트 부재~~ — **부분 해결됨**. F/E 결제 이벤트 구현 완료 — 체크아웃 인터랙션 7종 + 결제 진행 5종 + 위젯 실패 2종 + 결과 분기 3종(`paid_result_redirect`, `payment_confirm_failed`, `payment_amount_mismatch`). **B/E `payment_completed`는 미해결** — Toss webhook(또는 confirm 성공 후 백엔드 직접 발화) → Amplitude HTTP API 연동 백엔드 작업 필요.
 5. **자동 수집 속성 정리** — `[Amplitude] Page *` 검토 필요.
 6. **`(none)` birth_year 발생** — Apr 27 2명. 코드 변경 전 데이터인지 또는 폼 입력 우회 경로가 있는지 확인 필요.
 7. **타임존 설정 누락** — 프로젝트 `dateTimeSettings.timeZoneId`가 빈 문자열. Amplitude UI가 미국 시간 기준으로 표시되어 한국 사용자 활동 시간 해석 곤란. 콘솔 → Settings → Project Settings에서 `Asia/Seoul`로 변경 필요 (MCP 미지원).
@@ -341,13 +381,17 @@
 - 새 대시보드 D-6 마케팅 채널 분석
 - D-1에 채널별 슬라이스
 
-### 결제 B/E 연동 후 (`payment_completed` 라이브)
-- D-1 단순 퍼널 14~18단계 확장 (`result_page_view` → `paid_report_cta_clicked` → `checkout_page_view` → `payment_method_selected` → `payment_initiated` → `payment_completed`)
-- 새 대시보드 D-6 결제 퍼널 + 결제수단별 분포 + 결제 실패 사유(`error_code`) 분포
-- D-5에 `paid_users` / GMV / ARPPU headline 추가 검토
+### 결제 B/E 연동 (`payment_completed` 라이브 — 2026-05-11 완료)
+
+신규 차트/대시보드 후보:
+- D-1 단순 퍼널 14~18단계 확장 (`result_page_view` → `pay_cta_click` → `checkout_page_view` → `checkout_pay_button_click` → `payment_initiated` → `paid_result_redirect` → `payment_completed`)
+- 새 대시보드 D-6 결제 퍼널 + 결제 실패 사유(`error_code`) 분포 + 결제수단 분포(`payment_method`, `easy_pay_provider`) — 이제 Amplitude에서 직접 segment 가능.
+- D-5에 `paid_users` / GMV (`sum(payment_completed.amount)`) / ARPPU headline 추가.
+- **사고 모니터링 차트**: `payment_confirm_failed / payment_completed` 비율 — 0%가 정상. 0%가 아니면 백엔드 회귀 알람.
+- **환경 필터**: 모든 결제 차트에 `environment = production` 필터 기본 적용 (local 테스트 데이터 배제).
 
 ### 결과 페이지 분석 차트 추가 후보 (D-3 슬롯 여유 시)
-- `result_page_view → paid_report_cta_clicked` 전환율 — 결제 의도율
+- `result_page_view → pay_cta_click` 전환율 — 결제 의도율
 - `result_page_exit.max_scroll`을 `character_id`(yeonwoo/doyoon)로 segment — 캐릭터별 도달률 비교
 - `result_page_exit.max_scroll` 차트의 10단위 binning 적용 검토 (Amplitude UI에서 Bucket size 수동 조정. MCP는 비공식 파라미터로 시도 가능하나 안정성 미검증)
 
@@ -363,6 +407,68 @@
 ---
 
 ## 9. 작업 이력
+
+### 2026-05-11 — Toss Payments v2 마이그레이션 정합성 정리 + 결제 confirm 실패 추적
+
+#### 배경
+
+`docs/payments/4. toss-v2-migration-retrospective.md`에서 토스 v1(`tossPayments.payment()`) → v2(`tossPayments.widgets()`) 위젯 통합 전환 완료. 결제수단 선택 UI가 토스 위젯 내부로 이동하면서 클라이언트는 결제수단을 더 이상 알지 못한다. 이번 갱신은 그 사실을 본 문서에 반영하고, 동시에 백엔드 confirm 단계의 회귀(`docs/payments/5. confirm-422-userid-fix-plan.md`)를 통해 노출된 사각지대(결제는 됐는데 백엔드 검증 실패)를 트래킹으로 메운다.
+
+#### 결제 깔때기 (확정본)
+
+```
+checkout_page_view
+  ↓
+checkout_pay_button_click          (단일 버튼)
+  ↓ (검증 실패 시 → checkout_validation_failed)
+payment_initiated                   토스 결제창 노출 직전 (블랙박스 진입)
+  ↓ (새창 내부는 추적 불가)
+  ├─ checkout_success_view          토스 → success URL
+  │    ↓
+  │    ├─ paid_result_redirect (F/E)        백엔드 confirm 응답 성공 직후 (F/E 시그널)
+  │    │    └─ payment_completed (B/E ✨)   백엔드 fire-and-forget 발화 (단일 진실원, GMV/ARPPU/결제수단)
+  │    ├─ payment_confirm_failed            백엔드 confirm 실패
+  │    └─ payment_amount_mismatch           사용자 금액 위조 (1차 방어선)
+  │
+  └─ payment_failed                 토스 → fail URL (PAY_PROCESS_CANCELED 등)
+```
+
+`paid_result_redirect` (F/E) 와 `payment_completed` (B/E) 는 같은 결제 1건마다 각각 1회씩 발화한다. 둘이 모두 도달해야 정상 깔때기. F/E만 도달하고 B/E 누락 시 → Amplitude 인입/네트워크 이슈. B/E만 도달하고 F/E 누락 시 → 프론트 라우팅 실패(드물지만 가능).
+
+#### F/E 이벤트 변경
+
+| 이벤트 | 변경 |
+| --- | --- |
+| `payment_method_selected` | **제거** — v2 단일 버튼 전환으로 의미 상실. 결제수단 분석은 백엔드 `payments.method` 컬럼 기준으로 전환. |
+| `checkout_pay_button_click` | `payment_method` 속성 **제거**, `amount` 속성 유지. |
+| `payment_initiated` | `payment_method` 속성 **제거**. |
+| `payment_widget_init_failed` | **신규 등재** — `loadTossPayments` / `widgets()` 실패. |
+| `payment_widget_render_failed` | **신규 등재** — `setAmount` / `render*` 실패. |
+| `payment_amount_mismatch` | **신규 등재** — sessionStorage 의도 amount ≠ successUrl amount. 1차 방어선. |
+| `paid_result_redirect` | **신규 등재** — 백엔드 confirm 성공 직후 1회. F/E 결제 성공 단일 진실원. |
+| `payment_confirm_failed` | **신규 등재 (코드 추가)** — `/checkout/success`에서 백엔드 confirm 실패 시 발화. `success/page.tsx`의 catch 블록에 trackEvent 추가. |
+
+#### 코드 변경 위치
+
+| 위치 | 변경 |
+| --- | --- |
+| `app/checkout/success/page.tsx` | confirm fetch catch 블록에 `payment_confirm_failed` trackEvent 추가 (character_id, order_id, payment_key, amount, error_message). |
+
+`payment_widget_init_failed` / `payment_widget_render_failed` / `payment_amount_mismatch` / `paid_result_redirect`는 코드상 이미 발화 중이었으나 본 문서에 미등재 상태였음. 본 갱신으로 정식 등재.
+
+#### Amplitude 콘솔 후속 작업
+
+- 트래킹 플랜에 신규 5종 (`payment_widget_init_failed`, `payment_widget_render_failed`, `payment_amount_mismatch`, `paid_result_redirect`, `payment_confirm_failed`) 등록.
+- `payment_method_selected`를 deprecated로 마킹 (과거 데이터는 보존, 신규 발화 없음).
+- `checkout_pay_button_click` / `payment_initiated`의 `payment_method` 속성을 스키마에서 제거.
+- (선택) 신규 모니터링 차트 — `payment_confirm_failed / checkout_success_view` 비율. 0%가 정상, 알람 임계치 후보 1%.
+
+#### 알려진 제약
+
+- 토스 결제창(새창/풀페이지) 내부 사용자 행동은 same-origin policy로 추적 불가. 결제수단 선택, QR 스캔, 카드 입력 등은 블랙박스. 결과 분기(success/fail URL)만 관찰 가능.
+- 모바일 풀페이지 리다이렉트 플로에서 `widgets.requestPayment()` Promise가 resolve/reject 되지 않을 수 있어 catch가 안 타는 케이스 존재. 후속 작업으로 `visibilitychange` 또는 `pageshow` 기반 보정 검토 필요.
+
+---
 
 ### 2026-05-07 — `67cgv3qe` 차트 삭제
 
