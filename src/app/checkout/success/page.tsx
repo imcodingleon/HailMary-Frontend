@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { trackEvent } from "@/shared/utils/analytics";
+import { getDeviceId, getSessionId, trackEvent } from "@/shared/utils/analytics";
 
 type ConfirmStatus = "pending" | "success" | "error";
 
@@ -50,7 +50,12 @@ function SuccessBody() {
       setErrorMsg("결제 식별 정보가 누락되었어요.");
       return;
     }
-    let pending: { character: string; email: string; amount?: number } | null = null;
+    let pending: {
+      character: string;
+      email: string;
+      amount?: number;
+      sessionToken?: string | null;
+    } | null = null;
     try {
       const raw = sessionStorage.getItem("checkoutPending");
       if (raw) pending = JSON.parse(raw);
@@ -59,6 +64,12 @@ function SuccessBody() {
     if (!pending?.character || !pending?.email) {
       setStatus("error");
       setErrorMsg("결제 세션이 만료되었어요. 처음부터 다시 시도해 주세요.");
+      return;
+    }
+
+    if (!pending.sessionToken) {
+      setStatus("error");
+      setErrorMsg("사용자 세션 정보가 없어요. 처음부터 다시 시도해 주세요.");
       return;
     }
 
@@ -77,12 +88,21 @@ function SuccessBody() {
 
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
     const url = `${apiBase}/api/payments/confirm`;
+    // 백엔드 payment_completed Amplitude 이벤트가 프론트와 동일 깔때기로 묶이도록 동봉.
+    // 누락이어도 confirm 자체에는 영향 없음 (백엔드가 user_id 기반으로 발화).
+    const deviceId = getDeviceId() || null;
+    const sessionIdRaw = getSessionId();
+    const sessionIdNum = sessionIdRaw ? Number(sessionIdRaw) : NaN;
+    const sessionId = Number.isFinite(sessionIdNum) ? sessionIdNum : null;
     const body = {
       paymentKey,
       orderId,
       amount: Number(amount),
       character: pending.character,
       customerEmail: pending.email,
+      sessionToken: pending.sessionToken,
+      deviceId,
+      sessionId,
     };
 
     fetch(url, {
@@ -96,6 +116,18 @@ function SuccessBody() {
           const detail =
             (json?.detail?.message as string | undefined) ??
             (typeof json?.detail === "string" ? json.detail : null) ??
+            // FastAPI 검증 오류: detail이 [{loc, msg, type}, ...] 배열로 옴
+            (Array.isArray(json?.detail)
+              ? (json.detail as Array<{ loc?: unknown[]; msg?: string }>)
+                  .map((d) => {
+                    const field = Array.isArray(d.loc)
+                      ? d.loc.filter((p) => p !== "body").join(".")
+                      : "";
+                    return field ? `${field}: ${d.msg ?? ""}` : (d.msg ?? "");
+                  })
+                  .filter(Boolean)
+                  .join(", ")
+              : null) ??
             `HTTP ${r.status}`;
           throw new Error(detail);
         }
@@ -120,6 +152,13 @@ function SuccessBody() {
         const msg = err instanceof Error ? err.message : "결제 승인에 실패했어요.";
         setErrorMsg(msg);
         setStatus("error");
+        trackEvent("payment_confirm_failed", {
+          character_id: pending?.character ?? null,
+          order_id: orderId,
+          payment_key: paymentKey,
+          amount: Number(amount),
+          error_message: msg,
+        });
       });
   }, [paymentKey, orderId, amount]);
 
