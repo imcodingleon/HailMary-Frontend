@@ -40,8 +40,13 @@ export const SHOW_QA_LINKS: boolean = (() => {
  *   1-5 AI:       v3 (full 양식 기반)
  */
 export const QA_TEMPLATE_MAP: Readonly<Record<string, string>> = {
-  // P-0 — 0-1~0-4는 차트/표/사주 원국 (템플릿 변형 없음, 룰 placeholder만).
-  //        0-5만 일간별 톤 변형 있어 QA 비교 필요.
+  // P-0
+  //   0-1 사주 원국  : 차트 (룰만, 톤 변형 없음 → 매핑 X)
+  //   0-2 오행 흐름  : 막대 차트 (룰만 → 매핑 X)
+  //   0-3 너의 일간  : 일간 10 정적 카드 풀 (백엔드 ilgan_cards.py ILGAN_CARDS dict)
+  //   0-4 용어 사전  : 정적 표 (변형 없음 → 매핑 X)
+  //   0-5 첫인사     : 일간 10 톤 템플릿 (백엔드 yeonwoo_p0_intro.py)
+  "0-3": "/dev/yeonwoo/p0-ilgan-cards",
   "0-5": "/dev/yeonwoo/p0-cases",
   // P-1
   "1-1": "/dev/yeonwoo/p1-cases",

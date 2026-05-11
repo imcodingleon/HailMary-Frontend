@@ -254,6 +254,7 @@ function IlganCardSection({ ilgan, card }: { ilgan: string; card: IlganCard }) {
             <VarTag>{ilgan}</VarTag> — 결을 한눈에.
           </>
         }
+        qaSectionId="0-3"
       />
       <div
         className="relative rounded-xl p-3.5 my-2.5"
