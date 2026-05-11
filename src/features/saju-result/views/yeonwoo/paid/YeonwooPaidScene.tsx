@@ -22,11 +22,11 @@ export default function YeonwooPaidScene({ report }: YeonwooPaidSceneProps) {
     <main data-paid-scene="yeonwoo" className="bg-[#151513]">
       <PaidShell>
         <ProloguePage data={report.chapters.p0} />
-        <SelfPart1Page />
-        <SelfPart2Page />
-        <BlockingPart1Page />
-        <BlockingPart2Page />
-        <CharmPage />
+        <SelfPart1Page data={report.chapters.p1} />
+        <SelfPart2Page data={report.chapters.p2} />
+        <BlockingPart1Page data={report.chapters.p3} />
+        <BlockingPart2Page data={report.chapters.p4} />
+        <CharmPage data={report.chapters.p5} />
         <DestinedPart1Page />
         <DestinedPart2Page />
         <TimingPage />
