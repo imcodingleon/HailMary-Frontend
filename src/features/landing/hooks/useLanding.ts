@@ -17,7 +17,7 @@ export function useLanding(): LandingState & { handleStart: () => void } {
   }, []);
 
   const handleStart = () => {
-    trackEvent("intro_step_complete", { step: 1 });
+    trackEvent("intro_start_clicked", { step: 1 });
     setFading(true);
     setTimeout(() => router.push("/intro"), 900);
   };

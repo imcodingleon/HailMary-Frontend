@@ -20,14 +20,17 @@ export interface UseCheckoutReturn {
   email: string;
   setEmail: (v: string) => void;
   emailError: string | null;
+  handleEmailBlur: () => void;
   coupon: string;
   setCoupon: (v: string) => void;
+  handleCouponBlur: () => void;
   agreeDataUsage: boolean;
-  setAgreeDataUsage: (v: boolean) => void;
+  handleAgreeDataUsage: (v: boolean) => void;
   agreePayment: boolean;
-  setAgreePayment: (v: boolean) => void;
+  handleAgreePayment: (v: boolean) => void;
   openConsent: ConsentDoc | null;
   setOpenConsent: (v: ConsentDoc | null) => void;
+  handleConsentDetail: (doc: ConsentDoc) => void;
   isProcessing: boolean;
   applyCoupon: () => void;
   handleBack: () => void;
@@ -59,21 +62,88 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     if (emailError) setEmailError(null);
   }, [emailError]);
 
+  const handleEmailBlur = useCallback(() => {
+    const trimmed = email.trim();
+    if (!trimmed) return;
+    trackEvent("checkout_email_input", {
+      character_id: character,
+      has_value: true,
+      is_valid: isValidEmail(trimmed),
+    });
+  }, [email, character]);
+
+  const handleCouponBlur = useCallback(() => {
+    const trimmed = coupon.trim();
+    if (!trimmed) return;
+    trackEvent("checkout_coupon_input", {
+      character_id: character,
+      has_value: true,
+    });
+  }, [coupon, character]);
+
+  const handleAgreeDataUsage = useCallback(
+    (v: boolean) => {
+      setAgreeDataUsage(v);
+      trackEvent("checkout_consent_toggle", {
+        character_id: character,
+        consent_type: "data-usage",
+        checked: v,
+      });
+    },
+    [character],
+  );
+
+  const handleAgreePayment = useCallback(
+    (v: boolean) => {
+      setAgreePayment(v);
+      trackEvent("checkout_consent_toggle", {
+        character_id: character,
+        consent_type: "payment",
+        checked: v,
+      });
+    },
+    [character],
+  );
+
+  const handleConsentDetail = useCallback(
+    (doc: ConsentDoc) => {
+      setOpenConsent(doc);
+      trackEvent("checkout_consent_detail_click", {
+        character_id: character,
+        consent_type: doc,
+      });
+    },
+    [character],
+  );
+
   const handleBack = useCallback(() => {
+    trackEvent("checkout_back_click", { character_id: character });
     router.push(`/saju/result?character=${character}`);
   }, [router, character]);
 
   const applyCoupon = useCallback(() => {
     const code = coupon.trim();
+    trackEvent("checkout_coupon_apply_click", {
+      character_id: character,
+      has_value: code.length > 0,
+    });
     if (!code) {
       alert("쿠폰 코드를 입력해 주세요.");
       return;
     }
     alert("쿠폰 적용은 정식 오픈 후 안내드릴게요.");
-  }, [coupon]);
+  }, [coupon, character]);
 
   const handleSubmit = useCallback(
     async (method: CheckoutMethod) => {
+      trackEvent("checkout_pay_button_click", {
+        character_id: character,
+        payment_method: method,
+        amount: product.priceKrw,
+        email_filled: email.trim().length > 0,
+        agree_data_usage: agreeDataUsage,
+        agree_payment: agreePayment,
+      });
       if (!isValidEmail(email)) {
         setEmailError("이메일 형식을 확인해 주세요.");
         trackEvent("checkout_validation_failed", {
@@ -191,14 +261,17 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     email,
     setEmail,
     emailError,
+    handleEmailBlur,
     coupon,
     setCoupon,
+    handleCouponBlur,
     agreeDataUsage,
-    setAgreeDataUsage,
+    handleAgreeDataUsage,
     agreePayment,
-    setAgreePayment,
+    handleAgreePayment,
     openConsent,
     setOpenConsent,
+    handleConsentDetail,
     isProcessing,
     applyCoupon,
     handleBack,

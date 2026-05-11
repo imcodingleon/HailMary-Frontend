@@ -30,7 +30,7 @@ function ChapterRow({
       <div className="flex items-start py-5">
         <div
           className="w-[56px] flex-shrink-0 text-[13px] font-medium pt-0.5"
-          style={{ color: "#998f82", letterSpacing: "0.05em" }}
+          style={{ color: "#c9a96e", letterSpacing: "0.05em" }}
         >
           {label}
         </div>
@@ -40,8 +40,8 @@ function ChapterRow({
           </p>
           {desc && (
             <p
-              className="text-[11px] leading-relaxed"
-              style={{ color: "#7a716b", letterSpacing: "0.02em" }}
+              className="text-[13px] leading-relaxed"
+              style={{ color: "#c9a96e", letterSpacing: "0.02em" }}
             >
               {desc}
             </p>
@@ -50,8 +50,8 @@ function ChapterRow({
         <div className="flex-shrink-0 pt-0.5">
           {badge ? (
             <span
-              className="inline-block text-[11px] tracking-wider px-3 py-1 rounded-full"
-              style={{ border: "1px solid #E6C58E", color: "#E6C58E" }}
+              className="inline-block text-[13px] tracking-wider px-3 py-1 rounded-full"
+              style={{ border: "1px solid #c9a96e", color: "#c9a96e" }}
             >
               {badge}
             </span>
@@ -72,17 +72,17 @@ export function FullResultIndexSection() {
         className="text-[20px] font-bold tracking-[0.05em] mb-4"
         style={{ color: "#c9a96e" }}
       >
-        풀결과 구성
+        전체 결과 구성
       </h2>
       <div className="w-full h-[1px] mb-1" style={{ background: "#4a4035" }} />
 
-      <ChapterRow label="Ch 1" title="너라는 사람" desc="연애 유형 · 감정 구조 · 매력" badge="공개" />
+      <ChapterRow label="01" title="너라는 사람" desc="연애 유형 · 감정 구조 · 매력" badge="공개" />
       <ChapterRow label="—" title="두 선생님의 시각 차이" />
-      <ChapterRow label="Ch 2" title="지금 연애를 막는 것" desc="방해 구조 · 반복 패턴 · 악연 컷팅" />
-      <ChapterRow label="Ch 3" title="나의 도화기 (桃花氣)" desc="도화기 지수 · 이성이 끌리는 방식" />
-      <ChapterRow label="Ch 4" title="운명의 짝 · 그 사람" desc="인연 프로파일 · 투시 · 결말 예측" />
-      <ChapterRow label="Ch 5" title="인연이 오는 시간" desc="12개월 연애운 · 만남 시나리오" />
-      <ChapterRow label="Ch 6" title="연애운 상승 실천 가이드" desc="오행 보완 · 매력살 활용" />
+      <ChapterRow label="02" title="지금 연애를 막는 것" desc="방해 구조 · 반복 패턴 · 악연 컷팅" />
+      <ChapterRow label="03" title="나의 도화기 (桃花氣)" desc="도화기 지수 · 이성이 끌리는 방식" />
+      <ChapterRow label="04" title="운명의 짝 · 그 사람" desc="인연 프로파일 · 투시 · 결말 예측" />
+      <ChapterRow label="05" title="인연이 오는 시간" desc="12개월 연애운 · 만남 시나리오" />
+      <ChapterRow label="06" title="연애운 상승 실천 가이드" desc="오행 보완 · 매력살 활용" />
       <ChapterRow label="—" title="에필로그" isLast />
     </div>
   );

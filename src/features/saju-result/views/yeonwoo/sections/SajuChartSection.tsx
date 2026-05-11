@@ -109,7 +109,7 @@ export function SajuChartSection({ pillars }: Props) {
       >
         <div className="px-6 pt-6" style={{ paddingBottom: "48px" }}>
           <span
-            className="inline-block text-[11px] tracking-wider px-3 py-1 rounded-full mb-4"
+            className="inline-block text-[13px] tracking-wider px-3 py-1 rounded-full mb-4"
             style={{
               background: "#FFFFFF",
               color: "#1FAE6A",
@@ -119,7 +119,7 @@ export function SajuChartSection({ pillars }: Props) {
             무료
           </span>
 
-          <p className="text-base tracking-[0.35em] mb-6" style={{ color: "#c9a96e" }}>
+          <p className="text-[18px] font-bold tracking-[0.35em] mb-6" style={{ color: "#c9a96e" }}>
             사주 원국
           </p>
 

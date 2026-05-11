@@ -3,10 +3,11 @@
 interface EmailFieldProps {
   value: string;
   onChange: (v: string) => void;
+  onBlur?: () => void;
   error: string | null;
 }
 
-export function EmailField({ value, onChange, error }: EmailFieldProps) {
+export function EmailField({ value, onChange, onBlur, error }: EmailFieldProps) {
   return (
     <section className="space-y-2">
       <label htmlFor="checkout-email" className="block">
@@ -23,6 +24,7 @@ export function EmailField({ value, onChange, error }: EmailFieldProps) {
         spellCheck={false}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         placeholder="you@example.com"
         className="block w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-[14px] text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none"
         aria-invalid={error ? "true" : "false"}

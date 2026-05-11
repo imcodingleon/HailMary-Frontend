@@ -36,10 +36,10 @@ const DIVIDER_STYLE = {
 function FieldRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[10px] tracking-[0.3em] mb-1" style={{ color: "#856C51" }}>
+      <p className="text-[13px] tracking-[0.3em] mb-1" style={{ color: "#856C51" }}>
         {label}
       </p>
-      <p className="text-[13px] leading-relaxed" style={{ color: TEXT_COLOR }}>
+      <p className="text-[16px] leading-relaxed" style={{ color: TEXT_COLOR }}>
         {value}
       </p>
     </div>
@@ -49,7 +49,7 @@ function FieldRow({ label, value }: { label: string; value: string }) {
 function BlurredField({ label, lineWidths }: { label: string; lineWidths: number[] }) {
   return (
     <div>
-      <p className="text-[10px] tracking-[0.3em] mb-1.5" style={{ color: "#856C51" }}>
+      <p className="text-[13px] tracking-[0.3em] mb-1.5" style={{ color: "#856C51" }}>
         {label}
       </p>
       <div className="flex flex-col gap-1.5" aria-hidden="true">
@@ -156,7 +156,7 @@ export function AvoidPartnerSection({ spouseAvoid }: Props) {
 
       <div style={{ margin: "0 30px" }}>
         <button
-          className="w-full text-[13px] tracking-[0.2em] font-medium"
+          className="w-full text-[16px] tracking-[0.05em] font-medium"
           style={{
             padding: "16px 16px",
             borderRadius: "14px",

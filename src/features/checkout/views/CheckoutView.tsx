@@ -23,14 +23,17 @@ export function CheckoutView({ character }: CheckoutViewProps) {
     email,
     setEmail,
     emailError,
+    handleEmailBlur,
     coupon,
     setCoupon,
+    handleCouponBlur,
     agreeDataUsage,
-    setAgreeDataUsage,
+    handleAgreeDataUsage,
     agreePayment,
-    setAgreePayment,
+    handleAgreePayment,
     openConsent,
     setOpenConsent,
+    handleConsentDetail,
     isProcessing,
     applyCoupon,
     handleBack,
@@ -55,13 +58,23 @@ export function CheckoutView({ character }: CheckoutViewProps) {
       <CheckoutHeader onBack={handleBack} />
 
       <main className="flex-1 space-y-6 px-6 py-8">
-        <EmailField value={email} onChange={setEmail} error={emailError} />
+        <EmailField
+          value={email}
+          onChange={setEmail}
+          onBlur={handleEmailBlur}
+          error={emailError}
+        />
 
         <hr className="border-white/[0.06]" />
 
         <PriceSummary product={product} />
 
-        <CouponField value={coupon} onChange={setCoupon} onApply={applyCoupon} />
+        <CouponField
+          value={coupon}
+          onChange={setCoupon}
+          onBlur={handleCouponBlur}
+          onApply={applyCoupon}
+        />
 
         <CheckoutCta onSubmit={handleSubmit} loading={isProcessing} />
 
@@ -70,15 +83,15 @@ export function CheckoutView({ character }: CheckoutViewProps) {
             id="agree-data-usage"
             label="개인정보 이용 동의"
             checked={agreeDataUsage}
-            onChange={setAgreeDataUsage}
-            onDetail={() => setOpenConsent("data-usage")}
+            onChange={handleAgreeDataUsage}
+            onDetail={() => handleConsentDetail("data-usage")}
           />
           <ConsentRow
             id="agree-payment"
             label="결제진행 동의"
             checked={agreePayment}
-            onChange={setAgreePayment}
-            onDetail={() => setOpenConsent("payment")}
+            onChange={handleAgreePayment}
+            onDetail={() => handleConsentDetail("payment")}
           />
         </div>
       </main>

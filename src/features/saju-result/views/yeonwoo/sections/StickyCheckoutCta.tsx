@@ -78,7 +78,7 @@ export function StickyCheckoutCta({ visible = true }: Props = {}) {
           gap: "10px",
         }}
         onClick={() => {
-          trackEvent("paid_report_cta_clicked", { character_id: "yeonwoo" });
+          trackEvent("pay_cta_click", { character_id: "yeonwoo" });
           router.push("/checkout/yeonwoo");
         }}
       >

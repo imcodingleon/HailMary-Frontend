@@ -5,7 +5,6 @@ const CARD_BG = "#FBF1E7";
 const CARD_BORDER = "#E0CFB6";
 const TITLE_COLOR = "#2a1f15";
 const SUBTITLE_COLOR = "#998f82";
-const STAT_VALUE_COLOR = "#AD7D38";
 const STAT_LABEL_COLOR = "#998f82";
 const STAT_DIVIDER_COLOR = "#E0CFB6";
 const STAR_COLOR = "#E94E3F";
@@ -23,6 +22,7 @@ export type ReviewItem = {
   name: string;
   stars: number;
   body: string;
+  highlights?: string[];
 };
 
 type Props = {
@@ -52,11 +52,25 @@ function StarRow({ filled, total = 5 }: { filled: number; total?: number }) {
   );
 }
 
+function renderBody(body: string, highlights?: string[]) {
+  if (!highlights?.length) return <>{body}</>;
+  const pattern = highlights.map((h) => h.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  const parts = body.split(new RegExp(`(${pattern})`));
+  return (
+    <>
+      {parts.map((part, i) =>
+        highlights.includes(part) ? <strong key={i}>{part}</strong> : <span key={i}>{part}</span>
+      )}
+    </>
+  );
+}
+
 function ReviewCard({
   ilju,
   name,
   stars,
   body,
+  highlights,
   versionBadgeLabel,
 }: ReviewItem & { versionBadgeLabel: string }) {
   return (
@@ -91,7 +105,7 @@ function ReviewCard({
           </span>
           <span
             style={{
-              fontSize: "13px",
+              fontSize: "16px",
               color: NAME_COLOR,
               fontFamily: "Pretendard, sans-serif",
               fontWeight: 500,
@@ -105,7 +119,7 @@ function ReviewCard({
 
       <p
         style={{
-          fontSize: "13px",
+          fontSize: "16px",
           color: BODY_COLOR,
           fontFamily: "Pretendard, sans-serif",
           fontWeight: 500,
@@ -115,7 +129,7 @@ function ReviewCard({
           textWrap: "auto",
         }}
       >
-        {body}
+        {renderBody(body, highlights)}
       </p>
 
       <span
@@ -123,7 +137,7 @@ function ReviewCard({
           display: "inline-block",
           background: VERSION_BADGE_BG,
           color: VERSION_BADGE_TEXT,
-          fontSize: "11px",
+          fontSize: "13px",
           fontFamily: "Pretendard, sans-serif",
           fontWeight: 500,
           padding: "3px 10px",
@@ -139,13 +153,12 @@ function ReviewCard({
 
 function StatBlock({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col items-center" style={{ gap: "6px" }}>
+    <div className="flex flex-col items-center" style={{ gap: "4px" }}>
       <p
         style={{
-          fontSize: "22px",
-          fontFamily: '"JejuMyeongjo", "Pretendard", serif',
-          fontWeight: 600,
-          color: STAT_VALUE_COLOR,
+          fontSize: "24px",
+          fontWeight: 700,
+          color: "#B49874",
           lineHeight: 1,
         }}
       >
@@ -153,8 +166,7 @@ function StatBlock({ value, label }: { value: string; label: string }) {
       </p>
       <p
         style={{
-          fontSize: "12px",
-          fontFamily: "Pretendard, sans-serif",
+          fontSize: "16px",
           color: STAT_LABEL_COLOR,
           letterSpacing: "0.02em",
         }}
@@ -169,7 +181,7 @@ export default function RealReviewsSection({
   reviews,
   versionBadgeLabel,
   subtitle = "도화선을 경험한 사람들",
-  averageRating = "4.9",
+  averageRating = "★ 4.9",
   revisitRate = "94%",
 }: Props) {
   return (
@@ -197,7 +209,7 @@ export default function RealReviewsSection({
       <p
         className="text-center"
         style={{
-          fontSize: "13px",
+          fontSize: "14px",
           fontFamily: "Pretendard, sans-serif",
           fontWeight: 500,
           color: SUBTITLE_COLOR,

@@ -165,7 +165,7 @@ export default function SajuChartSection({ pillars, displayName }: Props) {
           <span
             style={{
               display: "inline-block",
-              fontSize: "12px",
+              fontSize: "13px",
               fontFamily: "Pretendard, sans-serif",
               fontWeight: 500,
               color: "#856C51",

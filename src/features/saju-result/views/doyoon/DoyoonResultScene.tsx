@@ -224,7 +224,7 @@ export default function DoyoonResultScene() {
         ctaLabel="결제하고 도윤의 정밀 리포트 읽기"
         visible={showCta}
         onCheckout={() => {
-          trackEvent("paid_report_cta_clicked", { character_id: "doyoon" });
+          trackEvent("pay_cta_click", { character_id: "doyoon" });
           router.push("/checkout/doyoon");
         }}
       />

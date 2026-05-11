@@ -14,8 +14,11 @@ export default function SurveyMultiSelect({ step, onNext, characterId }: Props) 
   const [selected, setSelected] = useState<string[]>([]);
 
   useEffect(() => {
+    const SENT_KEY = `hm_survey_step_view_sent_${characterId ?? "unknown"}_${step.step}`;
+    if (sessionStorage.getItem(SENT_KEY)) return;
+    sessionStorage.setItem(SENT_KEY, "1");
     trackEvent("survey_step_view", { character_id: characterId, step: step.step });
-  }, []);
+  }, [characterId, step.step]);
 
   const toggle = (id: string) => {
     setSelected((prev) =>

@@ -46,6 +46,9 @@ export default function SajuLoadingView({ character }: Props) {
   }, []);
 
   useEffect(() => {
+    const SENT_KEY = `hm_loading_enter_sent_${character}`;
+    if (sessionStorage.getItem(SENT_KEY)) return;
+    sessionStorage.setItem(SENT_KEY, "1");
     trackEvent("loading_enter", { character_id: character });
   }, [character]);
 

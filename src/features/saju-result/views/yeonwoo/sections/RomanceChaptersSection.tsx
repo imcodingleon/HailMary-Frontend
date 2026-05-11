@@ -57,6 +57,7 @@ export function RomanceChaptersSection({ pillars }: Props) {
   const dayPillar = pillars.find((p) => p.label === "일주");
   const dayStemHangul = dayPillar?.heavenHangul ?? "";
   const stemKey = isHeavenStemHangul(dayStemHangul) ? dayStemHangul : "계";
+  const dayEl = (dayPillar?.element ?? "").split("/")[0].trim();
   const entry = ROMANCE_DISPOSITION_DIALOGUES[stemKey];
 
   const HANJA_PREFIX_LEN = 2;
@@ -83,16 +84,16 @@ export function RomanceChaptersSection({ pillars }: Props) {
           className="rounded-2xl"
           style={{
             padding: "35px",
-            background: "rgba(230,197,142,0.04)",
-            border: "1px solid #E6C58E",
+            background: "rgba(180,152,116,0.04)",
+            border: "1px solid #B49874",
             borderLeftWidth: "5px",
-            borderLeftColor: "#E6C58E",
-            boxShadow: "0 0 22px rgba(230,197,142,0.16), inset 0 0 12px rgba(230,197,142,0.05)",
+            borderLeftColor: "#B49874",
+            boxShadow: "0 0 22px rgba(180,152,116,0.16), inset 0 0 12px rgba(180,152,116,0.05)",
           }}
         >
           <span
             className="inline-block text-[10px] tracking-wider px-2.5 py-0.5 rounded-full mb-3"
-            style={{ border: "1px solid #E6C58E", color: "#E6C58E" }}
+            style={{ border: "1px solid #B49874", color: "#B49874" }}
           >
             무료
           </span>
@@ -114,6 +115,9 @@ export function RomanceChaptersSection({ pillars }: Props) {
             <span style={{ fontFamily: "\"NotoSerifTC\", serif", fontWeight: 400, fontSize: "18px" }}>
               {hanjaPrefix}
             </span>
+            <span style={{ fontWeight: 700, fontSize: "14px", opacity: 0.6, marginLeft: "4px" }}>
+              ({stemKey}{dayEl})
+            </span>
             {line1Rest}
           </p>
           <p
@@ -134,7 +138,7 @@ export function RomanceChaptersSection({ pillars }: Props) {
       </div>
 
       <p
-        className="text-center text-[11px] tracking-[0.1em] mt-8"
+        className="text-center text-[13px] tracking-[0.1em] mt-8"
         style={{ color: "#7a716b" }}
       >
         총 6개 챕터가 준비되어 있습니다

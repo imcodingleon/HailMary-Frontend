@@ -19,8 +19,11 @@ type Props = {
 
 export default function InfoForm({ onSubmit, buttonLabel = "도윤에게 알려주기 →", characterId }: Props) {
   useEffect(() => {
+    const SENT_KEY = `hm_info_form_view_sent_${characterId ?? "unknown"}`;
+    if (sessionStorage.getItem(SENT_KEY)) return;
+    sessionStorage.setItem(SENT_KEY, "1");
     trackEvent("info_form_view", { character_id: characterId });
-  }, []);
+  }, [characterId]);
 
   const [name, setName] = useState("");
   const [birth, setBirth] = useState("");

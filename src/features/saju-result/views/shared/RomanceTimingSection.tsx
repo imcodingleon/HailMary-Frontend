@@ -13,7 +13,7 @@ const HEART_EMPTY = "#E0CFB6";
 const MONTH_LABEL_COLOR = "#4a3a2a";
 const LOCKED_BAR_COLOR = "rgba(133,108,81,0.22)";
 const PERCENT_COLOR = "#856C51";
-const LOCKED_PERCENT_COLOR = "#B59E8A";
+const LOCKED_PERCENT_COLOR = "#977e68";
 const PEAK_ROW_BG = "#FBE7E3";
 const PEAK_PILL_BG = "#E94E3F";
 const PEAK_PILL_TEXT = "#FFFFFF";
@@ -255,7 +255,7 @@ export default function RomanceTimingSection({
       <p
         className="text-center"
         style={{
-          fontSize: "13px",
+          fontSize: "14px",
           fontFamily: "Pretendard, sans-serif",
           fontWeight: 500,
           color: SUBTITLE_COLOR,
@@ -318,7 +318,7 @@ export default function RomanceTimingSection({
             border: `1.5px solid ${CTA_COLOR}55`,
             background: "transparent",
             color: CTA_COLOR,
-            fontSize: "14px",
+            fontSize: "16px",
             fontFamily: "Pretendard, sans-serif",
             fontWeight: 600,
             display: "flex",

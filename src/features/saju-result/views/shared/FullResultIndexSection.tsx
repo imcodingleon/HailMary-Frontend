@@ -2,15 +2,15 @@
 
 const SECTION_BG = "#FDF5EA";
 const TITLE_COLOR = "#2a1f15";
-const SUBTITLE_COLOR = "#998f82";
-const CH_LABEL_COLOR = "#998f82";
+const SUBTITLE_COLOR = "#a5803c";
+const CH_LABEL_COLOR = "#a5803c";
 const DIVIDER_COLOR = "#E0CFB6";
 const LOCK_COLOR = "#E94E3F";
 const PUBLIC_PILL_BG = "#F4E5CD";
-const PUBLIC_PILL_BORDER = "#AD7D38";
-const PUBLIC_PILL_TEXT = "#856C51";
+const PUBLIC_PILL_BORDER = "#a5803c";
+const PUBLIC_PILL_TEXT = "#a5803c";
 const HEADER_DECO_COLOR = "#A5773C";
-const LOCKED_TITLE_COLOR = "#B59E8A";
+const LOCKED_TITLE_COLOR = "#977e68";
 
 type Chapter = {
   ch: string;
@@ -21,37 +21,37 @@ type Chapter = {
 
 const CHAPTERS: Chapter[] = [
   {
-    ch: "Ch 1",
+    ch: "01",
     title: "{name}님이라는 사람",
     subtitle: "연애 성향 · 감정 구조 · 매력",
     isPublic: true,
   },
   {
-    ch: "Ch 2",
+    ch: "02",
     title: "연애를 방해하는 변수들",
     subtitle: "구조적 원인 · 반복 패턴",
     isPublic: false,
   },
   {
-    ch: "Ch 3",
+    ch: "03",
     title: "나의 매력 지수 분석",
     subtitle: "매력 지수 · 호감 패턴",
     isPublic: false,
   },
   {
-    ch: "Ch 4",
+    ch: "04",
     title: "최적 인연 · 데이터 프로파일",
     subtitle: "궁합 지수 · 심리 분석",
     isPublic: false,
   },
   {
-    ch: "Ch 5",
+    ch: "05",
     title: "인연 접촉 확률 분석",
     subtitle: "월별 접촉 확률 · 피크 구간",
     isPublic: false,
   },
   {
-    ch: "Ch 6",
+    ch: "06",
     title: "연애 변수 최적화 가이드",
     subtitle: "변수 보완 · 리스크 제거",
     isPublic: false,
@@ -75,7 +75,7 @@ function PublicPill() {
     <span
       style={{
         display: "inline-block",
-        fontSize: "11px",
+        fontSize: "13px",
         background: PUBLIC_PILL_BG,
         color: PUBLIC_PILL_TEXT,
         border: `1px solid ${PUBLIC_PILL_BORDER}`,
@@ -144,7 +144,7 @@ function ChapterRow({
           </p>
           <p
             style={{
-              fontSize: "11px",
+              fontSize: "13px",
               fontFamily: "Pretendard, sans-serif",
               fontWeight: 400,
               color: SUBTITLE_COLOR,
