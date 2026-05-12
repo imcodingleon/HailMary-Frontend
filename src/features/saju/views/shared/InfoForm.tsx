@@ -33,11 +33,12 @@ export default function InfoForm({ onSubmit, buttonLabel = "도윤에게 알려�
   const [gender, setGender] = useState<"female" | "male" | null>(null);
 
   const birthError = useMemo(() => validateBirth(birth), [birth]);
+  const timeError = useMemo(() => validateTime(time), [time]);
   const isValid =
     name.trim().length > 0 &&
     /^\d{4}\.\d{2}\.\d{2}$/.test(birth) &&
     birthError === null &&
-    (unknownTime || /^\d{2}:\d{2}$/.test(time)) &&
+    (unknownTime || (/^\d{2}:\d{2}$/.test(time) && timeError === null)) &&
     gender !== null;
 
   const handleSubmit = (e: React.MouseEvent) => {
@@ -107,6 +108,9 @@ export default function InfoForm({ onSubmit, buttonLabel = "도윤에게 알려�
                 시간 모름
               </Chip>
             </div>
+            {!unknownTime && timeError && (
+              <p className="text-[12px] mt-1" style={{ color: "#E89A8A" }}>{timeError}</p>
+            )}
           </Field>
 
           <Field label="성별">
@@ -169,6 +173,17 @@ function formatTime(input: string): string {
   const digits = input.replace(/\D/g, "").slice(0, 4);
   if (digits.length <= 2) return digits;
   return `${digits.slice(0, 2)}:${digits.slice(2)}`;
+}
+
+function validateTime(time: string): string | null {
+  // 입력 미완료(5자리 미만)는 에러로 표시하지 않음 — submit은 isValid에서 막힘.
+  if (!/^\d{2}:\d{2}$/.test(time)) return null;
+  const [hStr, mStr] = time.split(":");
+  const h = Number(hStr);
+  const m = Number(mStr);
+  if (h < 0 || h > 23) return "시는 00~23 사이여야 해요";
+  if (m < 0 || m > 59) return "분은 00~59 사이여야 해요";
+  return null;
 }
 
 function validateBirth(birth: string): string | null {
