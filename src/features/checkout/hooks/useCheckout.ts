@@ -47,6 +47,14 @@ function generateOrderId(character: CheckoutCharacter): string {
   return `dohwa-${character}-${uuid}`;
 }
 
+function scrollToField(id: string): void {
+  if (typeof document === "undefined") return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (el instanceof HTMLElement) el.focus({ preventScroll: true });
+}
+
 export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
   const router = useRouter();
   const product = PRODUCTS[character];
@@ -219,6 +227,8 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     });
     if (!isValidEmail(email)) {
       setEmailError("이메일 형식을 확인해 주세요.");
+      // 미입력 항목으로 자동 스크롤 + focus — 사용자가 화면 어느 위치인지 헤매지 않도록.
+      scrollToField("checkout-email");
       trackEvent("checkout_validation_failed", {
         character_id: character,
         reason: "email_invalid",
@@ -226,6 +236,8 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
       return;
     }
     if (!agreeDataUsage || !agreePayment) {
+      // 미체크된 동의 row로 자동 스크롤. alert 닫히면 해당 위치 노출.
+      scrollToField(!agreeDataUsage ? "agree-data-usage" : "agree-payment");
       alert("결제 진행에는 두 가지 동의가 모두 필요합니다.");
       trackEvent("checkout_validation_failed", {
         character_id: character,

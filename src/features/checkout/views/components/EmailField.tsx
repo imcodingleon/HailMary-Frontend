@@ -12,6 +12,7 @@ export function EmailField({ value, onChange, onBlur, error }: EmailFieldProps) 
     <section className="space-y-2">
       <label htmlFor="checkout-email" className="block">
         <span className="text-[15px] font-semibold text-neutral-900">이메일</span>
+        <span className="ml-2 text-[11px] font-medium text-rose-500">필수항목</span>
         <span className="ml-2 text-[12px] text-neutral-500">
           사주 · 운세 결과 확인 및 안내메시지 발송에 이용됩니다
         </span>
