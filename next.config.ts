@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // S3 + CloudFront 정적 호스팅 — 정적 산출물(/out) 생성 위해 필수.
+  // 동적 라우트(/saju/paid/[order_id])는 generateStaticParams 로 빌드 시점 prerender.
+  output: "export",
   trailingSlash: true,
   images: {
     unoptimized: true,
