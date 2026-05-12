@@ -85,6 +85,19 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     };
   }, [character]);
 
+  // 결제창에서 뒤로가기로 돌아왔을 때 isProcessing 상태 reset.
+  // requestPayment 가 토스로 redirect 하면 catch 도달 X → setIsProcessing(false) 미실행 →
+  // 뒤로가기 후 결제 버튼이 비활성으로 묶이는 회귀. pageshow 이벤트로 복원.
+  useEffect(() => {
+    const reset = () => setIsProcessing(false);
+    window.addEventListener("pageshow", reset);
+    window.addEventListener("focus", reset);
+    return () => {
+      window.removeEventListener("pageshow", reset);
+      window.removeEventListener("focus", reset);
+    };
+  }, []);
+
   // 2단계: 결제 금액 설정 + 결제수단/약관 위젯 렌더링
   useEffect(() => {
     if (widgets == null) return;
