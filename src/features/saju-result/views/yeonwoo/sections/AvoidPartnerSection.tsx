@@ -71,14 +71,12 @@ function BlurredField({ label, lineWidths }: { label: string; lineWidths: number
 }
 
 export function AvoidPartnerSection({ spouseAvoid }: Props) {
-  const slotId = spouseAvoid?.slotId ?? "neutral";
-  const copy = AVOID_PARTNER_FREE_DIALOGUES[slotId] ?? AVOID_PARTNER_FREE_DIALOGUES["neutral"];
+  const slotId = spouseAvoid?.slotId ?? "m-neutral";
+  const copy = AVOID_PARTNER_FREE_DIALOGUES[slotId] ?? AVOID_PARTNER_FREE_DIALOGUES["m-neutral"];
   const [w1, w2, w3] = getBarWidths(slotId);
-  // 캐릭터별 분리 경로 + neutral fallback (사주 미정 케이스는 단일 기본 사진).
-  const imageSrc =
-    slotId === "neutral"
-      ? `/images/spouse/neutral.png`
-      : `/images/spouse/yeonwoo/avoid/${slotId}.png`;
+  // 무료 결과지 전용 블러 사진. 유료 원본(`yeonwoo/paid/avoid/`)과 디렉토리 분리.
+  // slotId는 backend가 항상 `{m|f}-{element}-{yinyang}` 또는 `{m|f}-neutral`로 반환.
+  const imageSrc = `/images/spouse/yeonwoo/free/avoid/${slotId}.png`;
 
   return (
     <div className="w-full px-3 py-12" style={{ background: "#000" }}>
@@ -98,15 +96,13 @@ export function AvoidPartnerSection({ spouseAvoid }: Props) {
         <div className="w-12 h-[1px]" style={{ background: "#c9a96e", opacity: 0.7 }} />
       </div>
 
-      <div
-        className="w-full overflow-hidden mb-4"
-        style={{ borderRadius: "12px", border: "1px solid #2a1a1a" }}
-      >
+      {/* 새 무료 사진은 자체에 프레임/블러 포함 → 추가 border/강제 비율 X. 3:4 본 비율로 자연 표시. */}
+      <div className="w-full mb-4">
         <Image
           src={imageSrc}
           alt=""
-          width={448}
-          height={300}
+          width={384}
+          height={512}
           className="w-full h-auto block"
           sizes="(max-width: 448px) 100vw, 448px"
         />

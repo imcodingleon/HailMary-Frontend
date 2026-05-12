@@ -144,7 +144,7 @@ export const MOCK_SAJU_DOYOON: SajuResultData = {
     tenGodPatternKey: "officer_pressure",
   },
   spouseAvoid: {
-    slotId: "neutral",
+    slotId: "f-neutral",
     avoidElement: null,
     avoidYinYang: null,
   },

@@ -129,8 +129,12 @@ const GENDERED_SLOTS = [
 ] as const;
 type GenderedSlot = (typeof GENDERED_SLOTS)[number];
 
-export type AvoidSlotKey = "neutral" | GenderedSlot;
-export type MatchSlotKey = "f-neutral" | "m-neutral" | GenderedSlot;
+// neutral은 성별 prefix 필수 (`f-neutral` | `m-neutral`) — 무료 결과지에서
+// 동성 사진 노출을 막기 위함. backend `spouse_avoid_service` / `spouse_match_service`
+// 둘 다 동일 패턴으로 반환한다.
+type NeutralSlot = "f-neutral" | "m-neutral";
+export type AvoidSlotKey = NeutralSlot | GenderedSlot;
+export type MatchSlotKey = NeutralSlot | GenderedSlot;
 
 // neutral 일 때 avoidElement/avoidYinYang 은 null.
 export interface SpouseAvoidView {

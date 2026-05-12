@@ -146,9 +146,9 @@ type Props = {
 };
 
 export default function AvoidPartnerInfoSection({ slotId, onLockedClick }: Props) {
-  const safeSlot: AvoidSlotKey = slotId ?? "neutral";
+  const safeSlot: AvoidSlotKey = slotId ?? "m-neutral";
   const copy =
-    AVOID_PARTNER_FREE_DIALOGUES[safeSlot] ?? AVOID_PARTNER_FREE_DIALOGUES["neutral"];
+    AVOID_PARTNER_FREE_DIALOGUES[safeSlot] ?? AVOID_PARTNER_FREE_DIALOGUES["m-neutral"];
 
   return (
     <div

@@ -107,7 +107,12 @@ export const AVOID_PARTNER_FREE_DIALOGUES: Record<AvoidSlotKey, AvoidPartnerFree
     ageGap: "비슷한 나이나 약간 연하. 보호해주고 싶은 느낌이 들거든.",
     firstFeel: "특별하고 예민한 느낌. 근데 그 예민함이 관계를 피곤하게 만들어.",
   },
-  neutral: {
+  "f-neutral": {
+    impression: "특별히 위험한 타입이 딱 정해지지 않아. 근데 그게 더 조심해야 한다는 뜻이야.",
+    ageGap: "나이 패턴이 일정하지 않아. 상황에 따라 달라지거든.",
+    firstFeel: "편하고 무난한 느낌. 근데 위험은 항상 편한 데서 시작해.",
+  },
+  "m-neutral": {
     impression: "특별히 위험한 타입이 딱 정해지지 않아. 근데 그게 더 조심해야 한다는 뜻이야.",
     ageGap: "나이 패턴이 일정하지 않아. 상황에 따라 달라지거든.",
     firstFeel: "편하고 무난한 느낌. 근데 위험은 항상 편한 데서 시작해.",

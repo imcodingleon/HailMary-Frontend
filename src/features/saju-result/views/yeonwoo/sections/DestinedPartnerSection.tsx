@@ -78,11 +78,9 @@ export function DestinedPartnerSection({ spouseMatch }: Props) {
   const destinedKey = slotIdToDestinedKey(slotId);
   const copy = DESTINED_PARTNER_DIALOGUES[destinedKey];
   const [w1, w2, w3] = getBarWidths(slotId);
-  // 캐릭터별 분리 경로 + neutral fallback.
-  const imageSrc =
-    slotId === "neutral"
-      ? `/images/spouse/neutral.png`
-      : `/images/spouse/yeonwoo/match/${slotId}.png`;
+  // 무료 결과지 전용 블러 사진. 유료 원본(`yeonwoo/paid/match/`)과 디렉토리 분리.
+  // slotId는 backend가 항상 `{m|f}-{element}-{yinyang}` 또는 `{m|f}-neutral`로 반환.
+  const imageSrc = `/images/spouse/yeonwoo/free/match/${slotId}.png`;
 
   return (
     <div className="w-full px-5 py-12" style={{ background: "#000" }}>
@@ -99,28 +97,15 @@ export function DestinedPartnerSection({ spouseMatch }: Props) {
         <div className="w-12 h-[1px]" style={{ background: GOLD, opacity: 0.7 }} />
       </div>
 
-      <div
-        className="relative w-full overflow-hidden mb-5"
-        style={{
-          borderRadius: "16px",
-          border: "1px solid #2a2520",
-          aspectRatio: "1 / 1",
-        }}
-      >
+      {/* 새 무료 사진은 자체에 프레임/블러 포함 → 추가 border/강제 비율/그라데이션 X. */}
+      <div className="w-full mb-5">
         <Image
           src={imageSrc}
           alt=""
-          width={448}
-          height={448}
-          className="w-full h-full object-cover block"
+          width={384}
+          height={512}
+          className="w-full h-auto block"
           sizes="(max-width: 448px) 100vw, 448px"
-        />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.55) 100%)",
-          }}
         />
       </div>
 

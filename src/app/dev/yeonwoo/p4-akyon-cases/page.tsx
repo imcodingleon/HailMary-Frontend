@@ -3,7 +3,7 @@
 // 사용자 결정 2026-05-11:
 // - 사진/외형 정보/태그/AI 박스 모두 slotId 20 매트릭스 통일
 // - 사진 매칭: spouse-face-prompts.md slotId 규칙 (`{m|f}-{element}-{yang|yin}`)
-// - 호스팅 경로: /images/spouse/yeonwoo/avoid/{slotId}.png
+// - 호스팅 경로: /images/spouse/yeonwoo/paid/avoid/{slotId}.png (유료 원본)
 
 import AiBlock from "@/features/saju-result/views/yeonwoo/paid/components/AiBlock";
 import SpouseImage from "@/features/saju-result/views/yeonwoo/paid/components/SpouseImage";

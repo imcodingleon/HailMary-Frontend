@@ -199,7 +199,7 @@ export default function DoyoonResultScene() {
         <IncompatibleBannerSection />
         <AvoidPartnerSection
           slotId={data.spouseAvoid?.slotId ?? null}
-          imageBasePath="/images/spouse/doyoon/avoid"
+          imageBasePath="/images/spouse/doyoon/free/avoid"
         />
         <AvoidPartnerInfoSection slotId={data.spouseAvoid?.slotId ?? null} />
         <Section09Block />
@@ -214,7 +214,7 @@ export default function DoyoonResultScene() {
         <DestinedPartnerSection
           spouseMatch={data.spouseMatch}
           displayName={displayName}
-          imageBasePath="/images/spouse/doyoon/match"
+          imageBasePath="/images/spouse/doyoon/free/match"
         />
         <RomanceTimingSection
           monthlyRomanceFlow={data.monthlyRomanceFlow}

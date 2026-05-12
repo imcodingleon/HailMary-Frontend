@@ -301,15 +301,12 @@ export default function DestinedPartnerSection({
   onLockedClick,
   ctaLabel = "이 사람을 알아보는 법은 전체 결과에서",
 }: Props) {
-  const slotId: AvoidSlotKey = (spouseMatch?.slotId ?? "neutral") as AvoidSlotKey;
+  // backend가 항상 `{m|f}-{element}-{yinyang}` 또는 `{m|f}-neutral` 반환.
+  const slotId: AvoidSlotKey = (spouseMatch?.slotId ?? "m-neutral") as AvoidSlotKey;
   const destinedKey = slotIdToDestinedKey(slotId);
   const copy = DESTINED_PARTNER_DIALOGUES[destinedKey];
   const [w1, w2, w3] = getBarWidths(slotId);
-  // neutral은 캐릭터 분리 안 함 — 단일 fallback 이미지 사용.
-  const imageSrc =
-    slotId === "neutral"
-      ? `/images/spouse/neutral.png`
-      : `${imageBasePath}/${slotId}.png`;
+  const imageSrc = `${imageBasePath}/${slotId}.png`;
 
   const handleLocked = () => {
     if (onLockedClick) {
@@ -358,31 +355,16 @@ export default function DestinedPartnerSection({
         <div style={{ width: "48px", height: "1px", background: GOLD, opacity: 0.7 }} />
       </div>
 
+      {/* 새 무료 사진은 자체에 프레임/블러 포함 → 추가 border/강제 비율/그라데이션 X. */}
       <div style={{ margin: "0 20px 16px" }}>
-        <div
-          className="relative w-full overflow-hidden"
-          style={{
-            borderRadius: "14px",
-            border: `1px solid ${CARD_BORDER}`,
-            aspectRatio: "1 / 1",
-          }}
-        >
-          <Image
-            src={imageSrc}
-            alt=""
-            width={448}
-            height={448}
-            className="w-full h-full object-cover block"
-            sizes="(max-width: 448px) 100vw, 448px"
-          />
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, transparent 40%, rgba(253,245,234,0.45) 100%)",
-            }}
-          />
-        </div>
+        <Image
+          src={imageSrc}
+          alt=""
+          width={384}
+          height={512}
+          className="w-full h-auto block"
+          sizes="(max-width: 448px) 100vw, 448px"
+        />
       </div>
 
       <div

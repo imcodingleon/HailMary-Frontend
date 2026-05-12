@@ -142,7 +142,7 @@ export const MOCK_SAJU: MockSaju = {
     tenGodPatternKey: "stubborn_rivalry",
   },
   spouseAvoid: {
-    slotId: "neutral",
+    slotId: "f-neutral",
     avoidElement: null,
     avoidYinYang: null,
   },

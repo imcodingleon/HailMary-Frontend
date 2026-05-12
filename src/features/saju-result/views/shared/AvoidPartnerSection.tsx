@@ -4,7 +4,6 @@ import Image from "next/image";
 import type { AvoidSlotKey } from "@/features/saju-result/domain/types";
 
 const SECTION_BG = "#FDF5EA";
-const CARD_BORDER = "#E0CFB6";
 
 type Props = {
   slotId?: AvoidSlotKey | null;
@@ -15,12 +14,10 @@ export default function AvoidPartnerSection({
   slotId,
   imageBasePath = "/images/spouse",
 }: Props) {
-  const safeSlot = slotId ?? "neutral";
-  // neutral은 캐릭터 분리 안 함 — 단일 fallback 이미지 사용.
-  const imageSrc =
-    safeSlot === "neutral"
-      ? `/images/spouse/neutral.png`
-      : `${imageBasePath}/${safeSlot}.png`;
+  // backend가 항상 `{m|f}-{element}-{yinyang}` 또는 `{m|f}-neutral` 반환.
+  // null/undefined인 경우만 안전장치로 m-neutral 사용 (디렉토리에 파일 존재 필요).
+  const safeSlot = slotId ?? "m-neutral";
+  const imageSrc = `${imageBasePath}/${safeSlot}.png`;
 
   return (
     <div
@@ -31,18 +28,13 @@ export default function AvoidPartnerSection({
         paddingBottom: "24px",
       }}
     >
-      <div
-        className="w-full overflow-hidden"
-        style={{
-          borderRadius: "12px",
-          border: `1px solid ${CARD_BORDER}`,
-        }}
-      >
+      {/* 새 무료 사진은 자체에 프레임/블러 포함 → 추가 border/강제 비율 X. 3:4 본 비율로 자연 표시. */}
+      <div className="w-full">
         <Image
           src={imageSrc}
           alt=""
-          width={448}
-          height={300}
+          width={384}
+          height={512}
           className="w-full h-auto block"
           sizes="(max-width: 448px) 100vw, 448px"
         />

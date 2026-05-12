@@ -217,12 +217,12 @@ export default function ResultPreviewPage() {
       />
       <AvoidPartnerSection
         slotId="m-fire-yang"
-        imageBasePath="/images/spouse/doyoon/avoid"
+        imageBasePath="/images/spouse/doyoon/free/avoid"
       />
       <DestinedPartnerSection
         spouseMatch={MOCK_SPOUSE_MATCH}
         displayName="도윤"
-        imageBasePath="/images/spouse/doyoon/match"
+        imageBasePath="/images/spouse/doyoon/free/match"
       />
       <RomanceTimingSection monthlyRomanceFlow={MOCK_FLOW} />
       <RealReviewsSection reviews={MOCK_REVIEWS} versionBadgeLabel="한도윤 버전" />
