@@ -200,8 +200,52 @@ export interface PaidChapterP5 {
   ai_sense: string;
 }
 
+// ── P-6 (四 붉은 실이 이어진 사람 1/2) ───────────────────────
+// 4-1 인연 외형/매칭/첫 만남 + 4-2 속마음 투시.
+
+export interface InnerCard {
+  label: string;
+  value: string;
+  sub: string;
+}
+
+export interface PaidChapterP6 {
+  // 4-1
+  match_slot_id: string;                     // "m-water-yang" — PersonFrame 동적 사진용
+  keyword_tags: ReadonlyArray<string>;       // 5
+  info_rows: ReadonlyArray<InfoRow>;         // 8
+  ai_looks: string;
+  ai_match: string;
+  ai_first_meeting: string;
+  bubble: string;
+  // 4-2
+  inner_cards: ReadonlyArray<InnerCard>;     // 3
+  ai_inner: string;
+}
+
+// ── P-7 (四 결말 예측 시나리오 2/2) ──────────────────────────
+// 4-3 세 갈래 결말 카드 (warn/good/amber) + 권유 AI.
+
+export type EndingTone = "warn" | "good" | "amber";
+
+export interface EndingCard {
+  label: string;
+  value: string;
+  sub: string;
+  tone: EndingTone;
+}
+
+export interface PaidChapterP7 {
+  ending_card_1: EndingCard;   // warn
+  ending_card_2: EndingCard;   // good (권장)
+  ending_card_3: EndingCard;   // amber
+  ai_ending: string;            // 일간별 4 단락
+  notice: string;               // 🔮 안내문 (고정)
+  bubble: string;               // 강연우 멘트 (고정)
+}
+
 // ── chapters wrapper ──────────────────────────────────────────
-// P-6 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
+// P-8 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
 // 프론트는 MOCK fallback (`*Page.tsx`의 MOCK_PN)으로 렌더한다.
 
 export interface PaidChapters {
@@ -211,7 +255,9 @@ export interface PaidChapters {
   p3?: PaidChapterP3;
   p4?: PaidChapterP4;
   p5?: PaidChapterP5;
-  // p6 ~ p11은 templates 작성 후 추가.
+  p6?: PaidChapterP6;
+  p7?: PaidChapterP7;
+  // p8 ~ p11은 templates 작성 후 추가.
 }
 
 export interface PaidReport {

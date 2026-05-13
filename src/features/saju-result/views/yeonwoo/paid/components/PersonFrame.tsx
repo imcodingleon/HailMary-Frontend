@@ -1,12 +1,25 @@
 interface PersonFrameProps {
   person: "akyon" | "inyon";
+  /**
+   * 백엔드 spouse_match_service / spouse_avoid_service의 slotId.
+   * 주어지면 `/images/spouse/yeonwoo/paid/{avoid|match}/{slotId}.png`로 동적 매칭.
+   * 누락 시 기존 정적 fallback (`/yeonwoo/person/person_{person}.png`) 사용.
+   */
+  slotId?: string | null;
 }
 
 // 인물 프레임 (악연/인연). 통합 PNG 1차 + 4모서리 SVG 별도.
 // 사용처: P-4 (악연), P-6 (인연).
 
-export default function PersonFrame({ person }: PersonFrameProps) {
-  const personImg = `/yeonwoo/person/person_${person}.png`;
+const PERSON_TO_TYPE: Record<"akyon" | "inyon", "avoid" | "match"> = {
+  akyon: "avoid",
+  inyon: "match",
+};
+
+export default function PersonFrame({ person, slotId }: PersonFrameProps) {
+  const personImg = slotId
+    ? `/images/spouse/yeonwoo/paid/${PERSON_TO_TYPE[person]}/${slotId}.png`
+    : `/yeonwoo/person/person_${person}.png`;
   const fullFrame = `/yeonwoo/frame/frame_${person}_yw_full.png`;
   return (
     <div className="relative my-3 mx-auto w-full max-w-[280px] aspect-[3/4]">

@@ -68,11 +68,11 @@ export const QA_TEMPLATE_MAP: Readonly<Record<string, string>> = {
   "3-1": "/dev/yeonwoo/p5-charm-cases",
   "3-2": "/dev/yeonwoo/p5-mechanism-cases",
   "3-3": "/dev/yeonwoo/p5-sense-cases",
-  // P-6 (점수 엔진 개선 중 — dev cases 진입 보류)
-  // "4-1": "/dev/yeonwoo/p6-inyon-cases",
-  // "4-2": "/dev/yeonwoo/p6-inner-cases",
-  // P-7 (dev cases는 톤 검증 후 진입 시 생성)
-  // "4-3": "/dev/yeonwoo/p7-ending-cases",
+  // P-6 (4-1 인연 외형 + 4-2 속마음 투시 — backend yeonwoo_p6_destined.py)
+  "4-1": "/dev/yeonwoo/p6-inyon-cases",
+  "4-2": "/dev/yeonwoo/p6-inner-cases",
+  // P-7 (4-3 결말 예측 — backend yeonwoo_p7_inner.py)
+  "4-3": "/dev/yeonwoo/p7-ending-cases",
   // P-8 / P-9 / P-10 (dev cases는 톤 검증 후 진입 시 생성)
   // "5-1": "/dev/yeonwoo/p8-timing-cases",
   // "6-1": "/dev/yeonwoo/p9-ohang-cases",

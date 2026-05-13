@@ -25,12 +25,16 @@ import {
 //   - SD yw_03 (sz-xl 150×200) + 카드 3개 단일 컬럼 (data-flow="right")
 //   - AI 박스 300~350자
 
+// 백엔드 PaidChapterP6와 1:1 매칭. paidReport.ts의 PaidChapterP6 임포트와 호환되도록 필드명 통일.
 interface DestinedPart1Data {
   // 4-1
-  inyon_keyword_tags: ReadonlyArray<string>;       // 5
-  inyon_info_rows: ReadonlyArray<{ key: string; val: string }>; // 8 (마지막 row "궁합 지수" 강조)
-  ai_inyon_profile: string;                        // 400~500자
-  ai_inyon_meeting: string;                        // 300~400자
+  match_slot_id: string;                           // "m-water-yang" 등 (PersonFrame 동적 사진)
+  keyword_tags: ReadonlyArray<string>;             // 5
+  info_rows: ReadonlyArray<{ key: string; val: string }>; // 8 (마지막 row "궁합 지수" 강조)
+  ai_looks: string;                                // 외형 묘사 단락
+  ai_match: string;                                // 오행+일간 매칭 단락
+  ai_first_meeting: string;                        // 첫 만남 시나리오 단락
+  bubble: string;                                  // 강연우 멘트 (고정)
 
   // 4-2
   inner_cards: ReadonlyArray<{
@@ -45,15 +49,16 @@ const NOTICE_INNER_TEXT =
   "지금 마음에 걸리는 상대가 있다면 그 사람에 대입해봐. 아직 없다면 — 곧 들어올 인연을 기준으로 읽으면 돼.";
 
 const MOCK_P6: DestinedPart1Data = {
-  // HTML 원본 임수 톤 그대로 (점수 엔진 작업 후 일간/OHANG_LACK 합성 진입).
-  inyon_keyword_tags: [
+  // HTML 원본 임수 톤 그대로. backend yeonwoo_p6_destined.py 합성 결과와 1:1.
+  match_slot_id: "m-water-yang",
+  keyword_tags: [
     "따뜻한 인상",
     "조용한 사람",
     "손이 예쁨",
     "웃음이 깊음",
     "기다릴 줄 앎",
   ],
-  inyon_info_rows: [
+  info_rows: [
     { key: "키·체형", val: "평균~약간 큰 편 · 어깨선 단단함" },
     { key: "얼굴상", val: "선이 부드러운 둥근형 · 이마 넓음" },
     {
@@ -64,20 +69,21 @@ const MOCK_P6: DestinedPart1Data = {
     { key: "성격", val: "차분하지만 한 번 마음 열면 깊음" },
     { key: "직업군", val: "기획·교육·창작 계열" },
     { key: "첫 느낌", val: "왠지 익숙한 사람" },
-    // 마지막 row "궁합 지수"는 분홍 강조 — InfoGrid에서 받아서 처리 어려우니 별도 컴포넌트로 분리.
-    // 일단 InfoGrid에 모두 박고 시각은 동일하게.
+    // 마지막 row "궁합 지수"는 분홍 강조 — InfoGrid에서 받아서 처리.
     { key: "궁합 지수", val: "매우 강함" },
   ],
-  ai_inyon_profile:
+  ai_looks:
     "붉은 실이 이 사람한테 이어져 있어. 한 번 묶이면 안 풀리는 결이야.\n\n" +
-    "키는 평균에서 약간 큰 편. 어깨선이 단단해서 옆에 서면 너를 가려주는 느낌이야. 얼굴은 선이 부드러운 둥근형. 이마가 넓어. 눈매가 길고 끝이 부드럽게 떨어져 있어서, 웃지 않아도 따뜻해 보이는 사람이야. 입꼬리가 살짝 올라가 있어서 무표정일 때도 차갑지 않아.\n\n" +
-    "손가락은 길고 단정해. 손을 보면 알아. 함부로 쓴 손이 아니야. 차분한 결로 살아온 사람이지.\n\n" +
+    "키는 평균에서 약간 큰 편. 어깨선이 단단해서 옆에 서면 너를 가려주는 느낌이야. 얼굴은 선이 부드러운 둥근형. 이마가 넓어.\n\n" +
+    "눈매가 길고 끝이 부드럽게 떨어져 있어서, 웃지 않아도 따뜻해 보이는 사람이야. 입꼬리가 살짝 올라가 있어서 무표정일 때도 차갑지 않아. 손가락은 길고 단정해. 손을 보면 알아. 함부로 쓴 손이 아니야. 차분한 결로 살아온 사람이지.",
+  ai_match:
     "너의 토(土)가 부족한 자리에 이 사람이 그걸 채워. 따뜻하고 조용해. 말이 많지 않은데 곁에 있으면 편해. 너는 깊은 사람이라 옆에 있는 사람이 시끄러우면 못 견디잖아. 이 사람은 안 시끄러워. 그게 너한테 가장 중요해.\n\n" +
     "임수(壬水) 일간한테 가장 안정적인 짝이야. 기다릴 줄 아는 사람이라 너의 침묵을 받아줘. 너는 침묵으로 사랑하는 사람인데, 그걸 읽을 수 있는 사람이 흔하지 않아. 이 사람은 읽어.",
-  ai_inyon_meeting:
+  ai_first_meeting:
     "이 사람은 네 주변에 이미 있을 가능성이 커. 새로운 사람이 아니라 이미 한 번 스쳤던 사람일 수 있어. 너는 못 알아봤을 뿐이야. 깊은 사람은 한 번에 못 알아봐.\n\n" +
     "익숙한 자리, 자주 가는 공간 — 거기서 다시 마주칠 거야. 카페일 수도 있고, 일하는 자리일 수도 있고, 누가 소개해서 한 번 본 사람일 수도 있어. 처음엔 조용해서 못 알아볼 수 있어. 너의 결과 비슷한 사람이라 도드라지지 않거든.\n\n" +
     "두 번째 마주칠 때 시선을 한 번 더 줘. 그게 신호야. 거기서 실이 당겨져. 첫 번째는 그냥 지나가도 돼. 두 번째에 멈춰. 그게 너에게 주어진 단 한 번의 기회야.",
+  bubble: "이 사람 네 주변에 이미 있을 수 있어.",
 
   inner_cards: [
     {
@@ -132,17 +138,18 @@ export default function DestinedPart1Page({ data }: { data?: DestinedPart1Data }
         <SectionLabel qaSectionId="4-1">4-1 붉은 실이 이어진 사람</SectionLabel>
         <SectionTitle>네 명줄에 묶인 그 사람의 모습.</SectionTitle>
 
-        <PersonFrame person="inyon" />
+        <PersonFrame person="inyon" slotId={p.match_slot_id} />
 
-        <KeywordTags tags={p.inyon_keyword_tags} />
+        <KeywordTags tags={p.keyword_tags} />
 
         {/* 정보 그리드 8 row (마지막 "궁합 지수"는 분홍 강조) */}
-        <InyonInfoGrid rows={p.inyon_info_rows} />
+        <InyonInfoGrid rows={p.info_rows} />
 
-        <AiBlock text={p.ai_inyon_profile} />
-        <AiBlock text={p.ai_inyon_meeting} />
+        {/* AI 박스 — 외형 + 매칭을 한 박스로 묶고, 첫 만남은 별도 박스 */}
+        <AiBlock text={`${p.ai_looks}\n\n${p.ai_match}`} />
+        <AiBlock text={p.ai_first_meeting} />
 
-        <YeonwooBubble text="이 사람 네 주변에 이미 있을 수 있어." />
+        <YeonwooBubble text={p.bubble} />
       </Sec>
 
       {/* ── 4-2 속마음 투시 ── */}

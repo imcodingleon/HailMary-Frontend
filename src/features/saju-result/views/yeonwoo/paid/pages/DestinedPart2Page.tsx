@@ -14,43 +14,55 @@ import {
 //   - AI 박스 400~450자 (일간 10 변형 예정 — 현재 임수 톤)
 //   - SD yw_05 (sz-md 120×120) + 강연우 버블 (data-flow="left", 고정)
 
+// 백엔드 PaidChapterP7과 1:1 매칭.
+type CardTone = "warn" | "good" | "amber";
+
+interface DestinedPart2EndingCard {
+  label: string;
+  value: string;
+  sub: string;
+  tone: CardTone;
+}
+
 interface DestinedPart2Data {
-  ai_ending: string; // 400~450자, 일간별 변형
+  ending_card_1: DestinedPart2EndingCard;  // warn
+  ending_card_2: DestinedPart2EndingCard;  // good
+  ending_card_3: DestinedPart2EndingCard;  // amber
+  ai_ending: string;                       // 400~450자, 일간별 변형
+  notice: string;                          // 🔮 안내문 (고정)
+  bubble: string;                          // 강연우 멘트 (고정)
 }
 
 const MOCK_P7: DestinedPart2Data = {
-  // 백엔드 templates/yeonwoo_p7_ending.py compose_p7_ending(ilgan="임수") 결과 동기화 (예정).
+  // 임수 톤 — backend yeonwoo_p7_inner.py compose_p7_inner(ilgan="임수") 결과 1:1.
+  ending_card_1: {
+    tone: "warn",
+    label: "지금 이대로",
+    value: "실이 천천히 풀려",
+    sub: "둘 다 기다리다가 그냥 흐려져. 시간이 갈수록 약해져.",
+  },
+  ending_card_2: {
+    tone: "good",
+    label: "네가 먼저",
+    value: "실이 빠르게 당겨져",
+    sub: "너의 한마디로 매듭이 풀려. 가장 권하는 길이야.",
+  },
+  ending_card_3: {
+    tone: "amber",
+    label: "상대가 먼저",
+    value: "실이 강하게 묶여",
+    sub: "가능성은 있어. 다만 네가 그 신호를 못 알아볼 수도 있어.",
+  },
   ai_ending:
     "세 갈래가 보여. 같은 사람을 두고도 결말이 다 달라.\n\n" +
     "첫째, 지금 이대로. 둘 다 기다리다가 그냥 흐려져. 실이 끊어지진 않아. 그냥 천천히 풀려서 어느 날 보면 사라져 있어. 가장 흔한 결말이야. 너는 또 혼자 그 자리를 만지작거릴 거야.\n\n" +
     "둘째, 네가 먼저. 너의 한마디로 매듭이 풀려. 한마디가 어렵지 풀리면 빠르게 당겨져. 임수(壬水) 일간한테는 이게 가장 권하는 길이야. 깊은 사람이 먼저 손 내밀면 상대는 그 무게를 알아봐. 가벼운 한마디가 아니라는 걸 알아.\n\n" +
     "셋째, 상대가 먼저. 가능성은 있지만 시간이 더 걸려. 상대도 너랑 비슷한 결이라 망설여. 기다리는 동안 네가 견디기 어려울 수도 있어.\n\n" +
     "결정은 네가 해. 다만 명줄의 흐름은 한 번 갈라지면 다시 안 합쳐져. 잘 골라.",
+  notice:
+    "네가 어떻게 움직이느냐에 따라 명줄의 흐름이 갈라져. 세 갈래 중 하나가 너의 길이야.",
+  bubble: "명줄의 흐름이 이렇게 보여.",
 };
-
-const NOTICE_TEXT =
-  "네가 어떻게 움직이느냐에 따라 명줄의 흐름이 갈라져. 세 갈래 중 하나가 너의 길이야.";
-
-const ENDING_CARDS = [
-  {
-    tone: "warn" as const,
-    label: "지금 이대로",
-    value: "실이 천천히 풀려",
-    sub: "둘 다 기다리다가 그냥 흐려져. 시간이 갈수록 약해져.",
-  },
-  {
-    tone: "good" as const,
-    label: "네가 먼저",
-    value: "실이 빠르게 당겨져",
-    sub: "너의 한마디로 매듭이 풀려. 가장 권하는 길이야.",
-  },
-  {
-    tone: "amber" as const,
-    label: "상대가 먼저",
-    value: "실이 강하게 묶여",
-    sub: "가능성은 있어. 다만 네가 그 신호를 못 알아볼 수도 있어.",
-  },
-] as const;
 
 export default function DestinedPart2Page({ data }: { data?: DestinedPart2Data }) {
   const p = data ?? MOCK_P7;
@@ -80,11 +92,11 @@ export default function DestinedPart2Page({ data }: { data?: DestinedPart2Data }
         <SectionLabel qaSectionId="4-3">4-3 결말 예측 시나리오</SectionLabel>
 
         {/* notice-yw 박스 (🔮 안내문, 고정) */}
-        <NoticeBox text={NOTICE_TEXT} />
+        <NoticeBox text={p.notice} />
 
-        {/* 카드 3개 (3종 톤) */}
+        {/* 카드 3개 (3종 톤) — 백엔드 데이터로 동적 렌더 */}
         <CardsGrid>
-          {ENDING_CARDS.map((c) => (
+          {[p.ending_card_1, p.ending_card_2, p.ending_card_3].map((c) => (
             <EndingCard
               key={c.label}
               tone={c.tone}
@@ -109,7 +121,7 @@ export default function DestinedPart2Page({ data }: { data?: DestinedPart2Data }
             />
           </div>
           <div className="flex-1">
-            <YeonwooBubble text="명줄의 흐름이 이렇게 보여." />
+            <YeonwooBubble text={p.bubble} />
           </div>
         </div>
       </Sec>
@@ -161,7 +173,7 @@ function CardsGrid({ children }: { children: React.ReactNode }) {
 }
 
 // 3종 톤 카드 (warn / good / amber) — HTML CSS 정밀 매핑.
-type CardTone = "warn" | "good" | "amber";
+// CardTone은 파일 상단에서 이미 정의됨.
 
 const CARD_TONE_STYLES: Record<
   CardTone,

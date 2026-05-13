@@ -27,8 +27,8 @@ export default function YeonwooPaidScene({ report }: YeonwooPaidSceneProps) {
         <BlockingPart1Page data={report.chapters.p3} />
         <BlockingPart2Page data={report.chapters.p4} />
         <CharmPage data={report.chapters.p5} />
-        <DestinedPart1Page />
-        <DestinedPart2Page />
+        <DestinedPart1Page data={report.chapters.p6} />
+        <DestinedPart2Page data={report.chapters.p7} />
         <TimingPage />
         <PracticePage />
         <LetterPage />
