@@ -1,7 +1,7 @@
 // dev 전용 풀 셸 미리보기 — PaidShell + 12 페이지.
-// P-0~P-8: 배성현(1996-05-29, 男, 병화 일간) DB 사주로 ComposePaidReportUseCase 결과를
+// P-0~P-9(6-1): 배성현(1996-05-29, 男, 병화 일간) DB 사주로 ComposePaidReportUseCase 결과를
 //          fixture-baesh.json에 박아 동적 렌더 (스크립트로 한 번 추출, 백엔드 호출 X).
-// P-9~P-11: 백엔드 templates 미작성 → 각 Page 내부 MOCK 임수 케이스 fallback.
+// P-9 6-2(매력살 활용)와 P-10~P-11: 백엔드 templates 미작성 → 각 Page 내부 MOCK fallback.
 //
 // fixture 재생성: backend 디렉토리에서 python 스크립트로 DB 조회 + compose → 이 파일 덮어쓰기.
 import PaidShell from "@/features/saju-result/views/yeonwoo/paid/PaidShell";
@@ -38,8 +38,8 @@ export default function DevFullPaidPage() {
         <DestinedPart1Page data={chapters.p6} />
         <DestinedPart2Page data={chapters.p7} />
         <TimingPage data={chapters.p8} />
-        {/* P-9 ~ P-11: 백엔드 templates 미작성 — 각 Page 내부 MOCK fallback */}
-        <PracticePage />
+        <PracticePage data={chapters.p9} />
+        {/* P-10 ~ P-11: 백엔드 templates 미작성 — 각 Page 내부 MOCK fallback */}
         <LetterPage />
         <EpiloguePage />
       </PaidShell>

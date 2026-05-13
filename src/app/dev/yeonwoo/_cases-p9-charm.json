@@ -1,0 +1,361 @@
+[
+  {
+    "ilgan": "갑목",
+    "sal_keys_input": [],
+    "charm_score_input": 0,
+    "result": {
+      "primary_charm_key": "am_rok",
+      "primary_charm_label": "암록(暗祿)",
+      "charm_count": 0,
+      "charm_current": "微",
+      "charm_current_kor": "미",
+      "charm_target": "弱",
+      "charm_target_kor": "약",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "잔향만 남기기",
+          "sub": "옷·향·소품 다 빼고 한 가지만. 비어 있어야 암록이 켜져."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "한 발 물러서기",
+          "sub": "적극적으로 어필하지 마. 물러설 때 끌어와."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "말 한 마디에 의미 싣기",
+          "sub": "많이 말하지 말고 한 문장에 담아. 침묵의 무게."
+        }
+      ],
+      "charm_practice_body": "잔향만 남기기. 한 발 물러서기. 말 한 마디에 의미 싣기. 이 셋만 일주일 해봐. 微에서 弱으로 한 칸 켜져.",
+      "ai_charm": "두드러진 매력살은 안 보여. 그런데 너에겐 암록(暗祿)이 있어. 드러나지 않는 결인데, 깨우면 사람이 이유 없이 끌려와.\n\n잔향만 남기기. 한 발 물러서기. 말 한 마디에 의미 싣기. 이 셋만 일주일 해봐. 微에서 弱으로 한 칸 켜져.\n\n암록(暗祿)은 갑목(甲木) 일간과 잘 맞아. 곧게 뻗는 결이라 한번 켜지면 망설임 없이 표현해. 매력이 그 결과 만나면 사람이 따라와. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "을목",
+    "sal_keys_input": [
+      "do_hwa_sal"
+    ],
+    "charm_score_input": 45,
+    "result": {
+      "primary_charm_key": "do_hwa_sal",
+      "primary_charm_label": "도화살(桃花煞)",
+      "charm_count": 1,
+      "charm_current": "弱",
+      "charm_current_kor": "약",
+      "charm_target": "中",
+      "charm_target_kor": "중",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "자기 향 하나 고정",
+          "sub": "향수 한 방울이면 돼. 매번 같은 결로 박혀야 사람이 기억해."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "한 박자 머무는 눈빛",
+          "sub": "스쳐 보지 말고 잠깐 잡아. 도화는 시선에서 켜져."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "한 박자 늦게 답하기",
+          "sub": "바로 답하지 말고 한 호흡 쉬어. 그 빈 자리에 끌림이 와."
+        }
+      ],
+      "charm_practice_body": "향 한 방울. 한 박자 머무는 눈빛. 한 박자 늦게 답하기. 이 셋만 일주일 해봐. 弱에서 中으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 하나 있어. 이거만 잘 깨우면 돼. 도화살(桃花煞)은 살아 있어야 켜져. 잠재워 두면 그대로 잠들어.\n\n향 한 방울. 한 박자 머무는 눈빛. 한 박자 늦게 답하기. 이 셋만 일주일 해봐. 弱에서 中으로 한 칸 올라가.\n\n도화살(桃花煞)은 을목(乙木) 일간과 잘 맞아. 유연한 결이라 상대 톤에 맞춰 자기 매력을 끌어내. 의식적으로 켜면 부드럽게 박혀. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "병화",
+    "sal_keys_input": [
+      "hong_yeom_sal"
+    ],
+    "charm_score_input": 60,
+    "result": {
+      "primary_charm_key": "hong_yeom_sal",
+      "primary_charm_label": "홍염살(紅艶煞)",
+      "charm_count": 1,
+      "charm_current": "中",
+      "charm_current_kor": "중",
+      "charm_target": "強",
+      "charm_target_kor": "강",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "자기 색 하나 정해",
+          "sub": "옷·립·헤어 시그니처 컬러 하나만. 흩어지면 강렬함이 묻혀."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "어깨 펴고 천천히",
+          "sub": "빠른 동작 줄여. 정적인 결이 홍염을 살려."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "첫 한마디 짧게",
+          "sub": "인사를 길게 끌지 마. 한 단어로 박히는 게 홍염이야."
+        }
+      ],
+      "charm_practice_body": "자기 색 하나 고정. 어깨 펴고 천천히. 첫 한마디 짧게. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 하나 있어. 이거만 잘 깨우면 돼. 홍염살(紅艶煞)은 한 번에 박히는 결이야. 안 드러내면 그대로 묻혀.\n\n자기 색 하나 고정. 어깨 펴고 천천히. 첫 한마디 짧게. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.\n\n홍염살(紅艶煞)은 병화(丙火) 일간과 잘 맞아. 빛으로 비추는 결이라 매력이 켜지면 한꺼번에 환해져. 식기 전에 표현해. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "정화",
+    "sal_keys_input": [
+      "hwa_gae_sal"
+    ],
+    "charm_score_input": 55,
+    "result": {
+      "primary_charm_key": "hwa_gae_sal",
+      "primary_charm_label": "화개살(華蓋煞)",
+      "charm_count": 1,
+      "charm_current": "中",
+      "charm_current_kor": "중",
+      "charm_target": "強",
+      "charm_target_kor": "강",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "취향 큐레이션",
+          "sub": "영화·책·음악 자기 결로 큐레이션. 화개는 깊이로 끌어."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "혼자 있는 시간 확보",
+          "sub": "의식적으로 비워. 군중 속에 섞이면 화개가 닫혀."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "깊은 말 한 줄",
+          "sub": "가벼운 잡담 줄이고 한 문장 무게 있게. 짧고 깊게."
+        }
+      ],
+      "charm_practice_body": "취향 큐레이션. 혼자 있는 시간. 가벼운 잡담 줄이기. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 하나 있어. 이거만 잘 깨우면 돼. 화개살(華蓋煞)은 깊이로 사람을 끌어. 가볍게 흩어지면 닫혀.\n\n취향 큐레이션. 혼자 있는 시간. 가벼운 잡담 줄이기. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.\n\n화개살(華蓋煞)은 정화(丁火) 일간과 잘 맞아. 촛불 같은 결이라 가까이서 오래 켜져. 조용히 깊게 박는 매력이야. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "무토",
+    "sal_keys_input": [
+      "geum_yeo_rok",
+      "do_hwa_sal"
+    ],
+    "charm_score_input": 65,
+    "result": {
+      "primary_charm_key": "geum_yeo_rok",
+      "primary_charm_label": "금여록(金輿祿)",
+      "charm_count": 2,
+      "charm_current": "中",
+      "charm_current_kor": "중",
+      "charm_target": "強",
+      "charm_target_kor": "강",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "공간 정돈",
+          "sub": "책상·가방·방 정리. 풍요는 정돈된 결에서 풀려."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "조급함 빼기",
+          "sub": "빨리 대답 안 해도 돼. 여유가 곧 금여록이야."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "감사·칭찬 자주",
+          "sub": "작은 거 자주 표현해. 베푸는 결이 풍요를 부르거든."
+        }
+      ],
+      "charm_practice_body": "공간 정돈. 조급함 빼기. 감사·칭찬 자주. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 두 개 박혀 있어. 그 중 금여록(金輿祿)부터 깨워. 금여록(金輿祿)은 여유에서 풀려나와. 조급하면 가두는 결이야.\n\n공간 정돈. 조급함 빼기. 감사·칭찬 자주. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.\n\n금여록(金輿祿)은 무토(戊土) 일간과 잘 맞아. 묵직한 결이라 안정감으로 끌어와. 한번 켜면 오래 가. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "기토",
+    "sal_keys_input": [
+      "gong_mang"
+    ],
+    "charm_score_input": 30,
+    "result": {
+      "primary_charm_key": "gong_mang",
+      "primary_charm_label": "공망(空亡)",
+      "charm_count": 1,
+      "charm_current": "弱",
+      "charm_current_kor": "약",
+      "charm_target": "中",
+      "charm_target_kor": "중",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "다 보여주지 않기",
+          "sub": "옷·SNS 절반만. 채우지 말고 비워."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "반응 한 박자 줄이기",
+          "sub": "다 받아치지 마. 비어있는 자리가 매력이야."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "다 답하지 않기",
+          "sub": "받은 질문 골라서 답해. 침묵의 무게."
+        }
+      ],
+      "charm_practice_body": "다 보여주지 않기. 반응 한 박자 줄이기. 받은 질문 다 답 안 하기. 이 셋만 일주일 해봐. 弱에서 中으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 하나 있어. 이거만 잘 깨우면 돼. 공망(空亡)은 비어있어야 끌려. 다 채우면 사라져.\n\n다 보여주지 않기. 반응 한 박자 줄이기. 받은 질문 다 답 안 하기. 이 셋만 일주일 해봐. 弱에서 中으로 한 칸 올라가.\n\n공망(空亡)은 기토(己土) 일간과 잘 맞아. 포근한 결이라 들이는 매력이야. 부드러움이 곧 매력이야. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "경금",
+    "sal_keys_input": [
+      "cheon_eul_gwi_in"
+    ],
+    "charm_score_input": 75,
+    "result": {
+      "primary_charm_key": "cheon_eul_gwi_in",
+      "primary_charm_label": "천을귀인(天乙貴人)",
+      "charm_count": 1,
+      "charm_current": "強",
+      "charm_current_kor": "강",
+      "charm_target": "極",
+      "charm_target_kor": "극",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "단정함 유지",
+          "sub": "옷·머리·자세 깔끔하게. 흐트러지면 귀인기가 흐려져."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "먼저 인사",
+          "sub": "정중함 한 박자 빠르게. 천을귀인은 태도에서 켜져."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "약속 가볍게 안 하기",
+          "sub": "한 마디에 책임 실어. 신뢰가 곧 귀인이야."
+        }
+      ],
+      "charm_practice_body": "단정함 유지. 먼저 인사. 약속 가볍게 안 하기. 이 셋만 일주일 해봐. 強에서 極으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 하나 있어. 이거만 잘 깨우면 돼. 천을귀인(天乙貴人)은 단정함 위에 켜져. 흐트러지면 흐려져.\n\n단정함 유지. 먼저 인사. 약속 가볍게 안 하기. 이 셋만 일주일 해봐. 強에서 極으로 한 칸 올라가.\n\n천을귀인(天乙貴人)은 경금(庚金) 일간과 잘 맞아. 분명한 결이라 매력도 정확하게 와. 흐릿하게 안 쓰는 게 강점이야. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "신금",
+    "sal_keys_input": [
+      "hong_yeom_sal",
+      "hwa_gae_sal",
+      "geum_yeo_rok"
+    ],
+    "charm_score_input": 70,
+    "result": {
+      "primary_charm_key": "hong_yeom_sal",
+      "primary_charm_label": "홍염살(紅艶煞)",
+      "charm_count": 3,
+      "charm_current": "中",
+      "charm_current_kor": "중",
+      "charm_target": "強",
+      "charm_target_kor": "강",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "자기 색 하나 정해",
+          "sub": "옷·립·헤어 시그니처 컬러 하나만. 흩어지면 강렬함이 묻혀."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "어깨 펴고 천천히",
+          "sub": "빠른 동작 줄여. 정적인 결이 홍염을 살려."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "첫 한마디 짧게",
+          "sub": "인사를 길게 끌지 마. 한 단어로 박히는 게 홍염이야."
+        }
+      ],
+      "charm_practice_body": "자기 색 하나 고정. 어깨 펴고 천천히. 첫 한마디 짧게. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 세 개 박혀 있는 결이야. 흔치 않아. 홍염살(紅艶煞)부터 시작하면 나머지가 따라 와. 홍염살(紅艶煞)은 한 번에 박히는 결이야. 안 드러내면 그대로 묻혀.\n\n자기 색 하나 고정. 어깨 펴고 천천히. 첫 한마디 짧게. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.\n\n홍염살(紅艶煞)은 신금(辛金) 일간과 잘 맞아. 예리한 결이라 한 끗 차이로 박는 매력이야. 디테일이 곧 매력이야. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "임수",
+    "sal_keys_input": [
+      "cheon_eul_gwi_in",
+      "do_hwa_sal",
+      "geum_yeo_rok",
+      "hong_yeom_sal"
+    ],
+    "charm_score_input": 85,
+    "result": {
+      "primary_charm_key": "cheon_eul_gwi_in",
+      "primary_charm_label": "천을귀인(天乙貴人)",
+      "charm_count": 4,
+      "charm_current": "強",
+      "charm_current_kor": "강",
+      "charm_target": "極",
+      "charm_target_kor": "극",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "단정함 유지",
+          "sub": "옷·머리·자세 깔끔하게. 흐트러지면 귀인기가 흐려져."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "먼저 인사",
+          "sub": "정중함 한 박자 빠르게. 천을귀인은 태도에서 켜져."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "약속 가볍게 안 하기",
+          "sub": "한 마디에 책임 실어. 신뢰가 곧 귀인이야."
+        }
+      ],
+      "charm_practice_body": "단정함 유지. 먼저 인사. 약속 가볍게 안 하기. 이 셋만 일주일 해봐. 強에서 極으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살이 네 개 박혀 있어. 명리적으로 풍부한 결이야. 천을귀인(天乙貴人)부터 깨우는 게 빨라. 천을귀인(天乙貴人)은 단정함 위에 켜져. 흐트러지면 흐려져.\n\n단정함 유지. 먼저 인사. 약속 가볍게 안 하기. 이 셋만 일주일 해봐. 強에서 極으로 한 칸 올라가.\n\n천을귀인(天乙貴人)은 임수(壬水) 일간과 잘 맞아. 깊은 결이라 매력이 켜지면 가만히 있어도 사람이 와. 안 깨우면 그대로 잠들어 있어. 결국 너의 선택이야."
+    }
+  },
+  {
+    "ilgan": "계수",
+    "sal_keys_input": [
+      "cheon_eul_gwi_in",
+      "hong_yeom_sal",
+      "do_hwa_sal",
+      "geum_yeo_rok",
+      "hwa_gae_sal",
+      "gong_mang"
+    ],
+    "charm_score_input": 100,
+    "result": {
+      "primary_charm_key": "cheon_eul_gwi_in",
+      "primary_charm_label": "천을귀인(天乙貴人)",
+      "charm_count": 6,
+      "charm_current": "強",
+      "charm_current_kor": "강",
+      "charm_target": "極",
+      "charm_target_kor": "극",
+      "charm_practice_cards": [
+        {
+          "label": "방법 1 · 감각",
+          "value": "단정함 유지",
+          "sub": "옷·머리·자세 깔끔하게. 흐트러지면 귀인기가 흐려져."
+        },
+        {
+          "label": "방법 2 · 태도",
+          "value": "먼저 인사",
+          "sub": "정중함 한 박자 빠르게. 천을귀인은 태도에서 켜져."
+        },
+        {
+          "label": "방법 3 · 언어",
+          "value": "약속 가볍게 안 하기",
+          "sub": "한 마디에 책임 실어. 신뢰가 곧 귀인이야."
+        }
+      ],
+      "charm_practice_body": "단정함 유지. 먼저 인사. 약속 가볍게 안 하기. 이 셋만 일주일 해봐. 強에서 極으로 한 칸 올라가.",
+      "ai_charm": "너에겐 매력살 여섯 종이 다 박혀 있어. 매우 드문 결. 천을귀인(天乙貴人) 하나만 의식적으로 깨우면 나머지가 자동으로 켜져. 천을귀인(天乙貴人)은 단정함 위에 켜져. 흐트러지면 흐려져.\n\n단정함 유지. 먼저 인사. 약속 가볍게 안 하기. 이 셋만 일주일 해봐. 強에서 極으로 한 칸 올라가.\n\n천을귀인(天乙貴人)은 계수(癸水) 일간과 잘 맞아. 은은한 결이라 천천히 스며드는 매력이야. 한번 박히면 깊게 박혀. 결국 너의 선택이야."
+    }
+  }
+]

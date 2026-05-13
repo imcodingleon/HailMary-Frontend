@@ -75,8 +75,11 @@ export const QA_TEMPLATE_MAP: Readonly<Record<string, string>> = {
   "4-3": "/dev/yeonwoo/p7-ending-cases",
   // P-8 (5-1 12개월 운명선 — backend yeonwoo_p8_timing.py)
   "5-1": "/dev/yeonwoo/p8-timing-cases",
-  // "6-1": "/dev/yeonwoo/p9-ohang-cases",
-  // "6-2": "/dev/yeonwoo/p9-charm-practice-cases",
+  // P-9 (6-1 오행 보완 — backend yeonwoo_p9_practice.py)
+  "6-1": "/dev/yeonwoo/p9-ohang-cases",
+  // P-9 6-2 (매력살 활용 — backend yeonwoo_p9_charm.py)
+  "6-2": "/dev/yeonwoo/p9-charm-cases",
+  // P-10 (편지 — 후속 페이즈)
   // "7-1": "/dev/yeonwoo/p10-letter-cases",
   // P-11 에필로그 — 하드코딩 (AI 슬롯 0)
 };

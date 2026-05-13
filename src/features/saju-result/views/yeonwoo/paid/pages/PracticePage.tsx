@@ -12,75 +12,82 @@ import {
 
 // HTML 명세 (line 2585~2678) 정밀 포팅.
 // 6-1 오행 보완: stitle + card-good × 3 (색/공간/행동) + AI
-// 6-2 매력살 활용: stitle + 한자 스케일 5단계 + sbody + AI + SD yw_04 (sz-lg 140) + 강연우 버블
+// 6-2 매력살 활용: stitle + 한자 스케일 5단계 + card-good × 3 (감각/태도/언어) + AI + SD yw_04 + 버블
 
 type CharmLevel = "微" | "弱" | "中" | "強" | "極";
 
+// PaidChapterP9 backend wiring과 1:1.
 interface PracticeData {
   // 6-1
   ohang_lack: string;          // "토(土)" 한자 포함
-  ohang_method_cards: ReadonlyArray<{
-    label: string;
-    value: string;
-    sub: string;
-  }>;                          // 3개 (색/공간/행동)
-  ai_ohang: string;            // 250~300자
-
+  ohang_method_cards: ReadonlyArray<{ label: string; value: string; sub: string }>;
+  ai_ohang: string;
   // 6-2
-  charm_current: CharmLevel;   // 현재 단계 ("中" 등)
-  charm_target: CharmLevel;    // 목표 단계 ("強")
-  charm_practice_body: string; // sbody 한 줄
-  ai_charm: string;            // 200~250자
+  primary_charm_label: string;     // "도화살(桃花煞)" / "암록(暗祿)"
+  charm_count: number;             // 0~6
+  charm_current: CharmLevel;
+  charm_target: CharmLevel;
+  charm_practice_cards: ReadonlyArray<{ label: string; value: string; sub: string }>;
+  charm_practice_body: string;
+  ai_charm: string;
 }
 
+// 한자 5단계 — 의미는 정적, "현재 자리/목표 단계" 라벨은 activeLevel/targetLevel과 비교해서 동적으로 결정
 const HANJA_SCALE_PRACTICE: ReadonlyArray<{
   char: CharmLevel;
   read: string;
-  desc: string;
+  meaning: string;  // stage 본질 의미 (active/target 아닐 때 표시)
 }> = [
-  { char: "微", read: "미", desc: "잠재 상태" },
-  { char: "弱", read: "약", desc: "살짝 깸" },
-  { char: "中", read: "중", desc: "현재 자리" },
-  { char: "強", read: "강", desc: "목표 단계" },
-  { char: "極", read: "극", desc: "완전 발동" },
+  { char: "微", read: "미", meaning: "잠재 상태" },
+  { char: "弱", read: "약", meaning: "살짝 깸" },
+  { char: "中", read: "중", meaning: "중간 단계" },
+  { char: "強", read: "강", meaning: "강하게 발동" },
+  { char: "極", read: "극", meaning: "완전 발동" },
 ];
+
+function getStageDesc(
+  char: CharmLevel,
+  activeLevel: CharmLevel,
+  targetLevel: CharmLevel,
+  meaning: string,
+): string {
+  if (char === activeLevel) return "현재 자리";
+  if (char === targetLevel) return "목표 단계";
+  return meaning;
+}
 
 const MOCK_P9: PracticeData = {
   ohang_lack: "토(土)",
   ohang_method_cards: [
-    {
-      label: "방법 1 · 색",
-      value: "초록 계열 가까이 둬",
-      sub: "토(土) 기운을 색으로 끌어와. 옷, 소품, 화면 다 좋아.",
-    },
-    {
-      label: "방법 2 · 공간",
-      value: "동쪽 자리 의식해",
-      sub: "동쪽이 토(土)의 자리야. 책상이든 침대 머리든 그 방향으로.",
-    },
-    {
-      label: "방법 3 · 행동",
-      value: "아침 산책 30분",
-      sub: "살아있는 기운을 몸에 채워. 식물, 나무, 흙 가까이.",
-    },
+    { label: "방법 1 · 색", value: "초록 계열 가까이 둬", sub: "토(土) 기운을 색으로 끌어와. 옷, 소품, 화면 다 좋아." },
+    { label: "방법 2 · 공간", value: "동쪽 자리 의식해", sub: "동쪽이 토(土)의 자리야. 책상이든 침대 머리든 그 방향으로." },
+    { label: "방법 3 · 행동", value: "아침 산책 30분", sub: "살아있는 기운을 몸에 채워. 식물, 나무, 흙 가까이." },
   ],
   ai_ohang:
     "토(土)가 비어 있어. 채워야 흐름이 도네. 빈 채로 두면 인연이 들어와도 머물 자리가 없어.\n\n" +
-    "색은 초록. 옷이든 소품이든 화면이든 일상에 들여놔. 자리는 동쪽. 책상이든 침대 머리든 동쪽으로 돌려. 행동은 아침 산책. 30분이면 돼. 식물, 나무, 흙 — 토(土) 기운이 사는 자리 가까이 가.\n\n" +
-    "이 셋을 한 달만 의식해. 명줄의 매듭이 풀리기 시작해. 임수(壬水) 일간은 원래 깊은데 거기에 살아있는 기운이 들어가야 비로소 인연이 움직여. 작은 거 하나부터 시작하면 돼. 다 안 해도 돼. 하나씩 해.",
+    "색은 초록. 옷이든 소품이든 화면이든 일상에 들여놔. 자리는 동쪽. 책상이든 침대 머리든 동쪽으로 돌려. 행동은 아침 산책. 30분이면 돼.\n\n" +
+    "이 셋을 한 달만 의식해. 명줄의 매듭이 풀리기 시작해. 임수(壬水) 일간은 원래 깊은데 거기에 살아있는 기운이 들어가야 비로소 인연이 움직여. 작은 거 하나부터 시작하면 돼.",
 
+  primary_charm_label: "도화살(桃花煞)",
+  charm_count: 1,
   charm_current: "中",
   charm_target: "強",
+  charm_practice_cards: [
+    { label: "방법 1 · 감각", value: "자기 향 하나 고정", sub: "향수 한 방울이면 돼. 매번 같은 결로 박혀야 사람이 기억해." },
+    { label: "방법 2 · 태도", value: "한 박자 머무는 눈빛", sub: "스쳐 보지 말고 잠깐 잡아. 도화는 시선에서 켜져." },
+    { label: "방법 3 · 언어", value: "한 박자 늦게 답하기", sub: "바로 답하지 말고 한 호흡 쉬어. 그 빈 자리에 끌림이 와." },
+  ],
   charm_practice_body:
-    "현재 中(중)에서 強(강)으로 한 단계 올리는 게 가장 빨라. 향, 시선, 침묵의 사용 — 이 셋을 의식적으로 연습해.",
+    "향 한 방울. 한 박자 머무는 눈빛. 한 박자 늦게 답하기. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.",
   ai_charm:
-    "매력살은 살아 있어야 켜져. 잠재워 두면 그대로 잠들어.\n\n" +
-    "향수 한 방울. 한 박자 늦게 말하기. 시선을 흘리지 않고 잡기. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.\n\n" +
-    "도화살(桃花煞)은 임수(壬水) 일간과 잘 맞아. 깨우면 가만히 있어도 사람이 와. 안 깨우면 그대로 잠들어 있어. 결국 너의 선택이야.",
+    "너에겐 매력살이 하나 있어. 이거만 잘 깨우면 돼. 도화살(桃花煞)은 살아 있어야 켜져. 잠재워 두면 그대로 잠들어.\n\n" +
+    "향 한 방울. 한 박자 머무는 눈빛. 한 박자 늦게 답하기. 이 셋만 일주일 해봐. 中에서 強으로 한 칸 올라가.\n\n" +
+    "도화살(桃花煞)은 임수(壬水) 일간과 잘 맞아. 깊은 결이라 매력이 켜지면 가만히 있어도 사람이 와. 안 깨우면 그대로 잠들어 있어. 결국 너의 선택이야.",
 };
 
+// data prop = PaidChapterP9 1:1. backend 미합성 시 MOCK fallback.
 export default function PracticePage({ data }: { data?: PracticeData }) {
-  const p = data ?? MOCK_P9;
+  const p: PracticeData = data ?? MOCK_P9;
   return (
     <section
       data-page-idx="9"
@@ -119,12 +126,20 @@ export default function PracticePage({ data }: { data?: PracticeData }) {
       {/* ── 6-2 매력살 활용 ── */}
       <Sec>
         <SectionLabel qaSectionId="6-2">6-2 매력살 활용</SectionLabel>
-        <SectionTitle>잠든 매력살을 깨우는 법.</SectionTitle>
+        <SectionTitle>
+          잠든 <VarTag>{p.primary_charm_label}</VarTag>을(를) 깨우는 법.
+        </SectionTitle>
 
         <HanjaScale
           activeLevel={p.charm_current}
           targetLevel={p.charm_target}
         />
+
+        <CardsGrid>
+          {p.charm_practice_cards.map((c) => (
+            <CardGood key={c.label} label={c.label} value={c.value} sub={c.sub} />
+          ))}
+        </CardsGrid>
 
         <SectionBody>{p.charm_practice_body}</SectionBody>
 
@@ -275,7 +290,7 @@ function HanjaScale({
                   wordBreak: "keep-all",
                 }}
               >
-                {item.desc}
+                {getStageDesc(item.char, activeLevel, targetLevel, item.meaning)}
               </span>
             </div>
           );

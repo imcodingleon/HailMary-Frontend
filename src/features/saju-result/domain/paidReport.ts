@@ -264,8 +264,40 @@ export interface PaidChapterP8 {
   bubble: string;                    // 강연우 멘트 (고정)
 }
 
+// ── P-9 (六 실천 가이드) — 6-1 오행 보완 + 6-2 매력살 활용 ────
+
+export interface OhangMethodCard {
+  label: string;
+  value: string;
+  sub: string;
+}
+
+export type CharmStage = "微" | "弱" | "中" | "強" | "極";
+
+export interface CharmPracticeCard {
+  label: string;
+  value: string;
+  sub: string;
+}
+
+export interface PaidChapterP9 {
+  // 6-1
+  ohang_lack: string;                                  // "토(土)" 한자 포함
+  ohang_method_cards: ReadonlyArray<OhangMethodCard>;  // 3 (색/공간/행동)
+  ai_ohang: string;                                    // 3 단락
+  // 6-2
+  primary_charm_key: string;       // "do_hwa_sal" / "am_rok" 등
+  primary_charm_label: string;     // "도화살(桃花煞)"
+  charm_count: number;             // 0~6
+  charm_current: CharmStage;
+  charm_target: CharmStage;
+  charm_practice_cards: ReadonlyArray<CharmPracticeCard>;  // 3 (감각/태도/언어)
+  charm_practice_body: string;     // 카드 3 요약 + 단계 변화 한 줄
+  ai_charm: string;                // 3 단락
+}
+
 // ── chapters wrapper ──────────────────────────────────────────
-// P-9 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
+// P-10 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
 // 프론트는 MOCK fallback (`*Page.tsx`의 MOCK_PN)으로 렌더한다.
 
 export interface PaidChapters {
@@ -278,7 +310,8 @@ export interface PaidChapters {
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
   p8?: PaidChapterP8;
-  // p9 ~ p11은 templates 작성 후 추가.
+  p9?: PaidChapterP9;
+  // p10 ~ p11은 templates 작성 후 추가.
 }
 
 export interface PaidReport {
