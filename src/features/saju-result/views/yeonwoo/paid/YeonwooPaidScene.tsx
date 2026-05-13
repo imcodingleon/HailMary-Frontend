@@ -29,7 +29,7 @@ export default function YeonwooPaidScene({ report }: YeonwooPaidSceneProps) {
         <CharmPage data={report.chapters.p5} />
         <DestinedPart1Page data={report.chapters.p6} />
         <DestinedPart2Page data={report.chapters.p7} />
-        <TimingPage />
+        <TimingPage data={report.chapters.p8} />
         <PracticePage />
         <LetterPage />
         <EpiloguePage />

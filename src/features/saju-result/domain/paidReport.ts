@@ -244,8 +244,28 @@ export interface PaidChapterP7 {
   bubble: string;               // 강연우 멘트 (고정)
 }
 
+// ── P-8 (五 12개월 운명선) ─────────────────────────────────────
+// 5-1 12개월 타임라인 + 일간별 흐름 AI.
+
+export type KnotKind = "loose" | "tight" | "glowing";
+
+export interface MonthRow {
+  label: string;        // "5월 (이번달)" / "6월" / "'27. 1월"
+  hearts: number;       // 1~5
+  knot: KnotKind;
+  state: string;        // 시작/진입/상승/피크/심화/안정/정체/재상승/2차 피크/신뢰/충전/1년차 마무리
+  desc: string;
+  is_peak?: boolean;
+}
+
+export interface PaidChapterP8 {
+  months: ReadonlyArray<MonthRow>;   // 12
+  ai_intro: string;                  // 3 단락
+  bubble: string;                    // 강연우 멘트 (고정)
+}
+
 // ── chapters wrapper ──────────────────────────────────────────
-// P-8 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
+// P-9 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
 // 프론트는 MOCK fallback (`*Page.tsx`의 MOCK_PN)으로 렌더한다.
 
 export interface PaidChapters {
@@ -257,7 +277,8 @@ export interface PaidChapters {
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
-  // p8 ~ p11은 templates 작성 후 추가.
+  p8?: PaidChapterP8;
+  // p9 ~ p11은 templates 작성 후 추가.
 }
 
 export interface PaidReport {

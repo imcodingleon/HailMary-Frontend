@@ -1,0 +1,1082 @@
+[
+  {
+    "ilgan": "갑목",
+    "user_gender": "남자",
+    "yongSin": "토",
+    "day_branch": "자",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "7월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "9월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "11월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 8월과 10월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n갑목(甲木) 일간은 곧게 가는 결이야. 흐름이 막혀도 직진해. 피크에 한 방향으로 가는 게 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "을목",
+    "user_gender": "여자",
+    "yongSin": "토",
+    "day_branch": "묘",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "7월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "진입",
+          "desc": "실이 한 가닥 새로 묶여. 익숙한 자리에서 새 사람 보일 수 있어.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "11월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "12월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 10월과 11월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n을목(乙木) 일간은 휘어 살아남는 결이야. 흐름에 맞춰 휘되, 한 번 감기면 끝까지. 그게 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "병화",
+    "user_gender": "남자",
+    "yongSin": "토",
+    "day_branch": "인",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "진입",
+          "desc": "실이 한 가닥 새로 묶여. 익숙한 자리에서 새 사람 보일 수 있어.",
+          "is_peak": false
+        },
+        {
+          "label": "7월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "11월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "12월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 10월과 11월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n병화(丙火) 일간은 빛으로 사람을 끄는 결이야. 피크에 빨리 표현해. 식기 전에 닿는 게 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "정화",
+    "user_gender": "여자",
+    "yongSin": "목",
+    "day_branch": "미",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "7월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "11월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 4,
+          "knot": "tight",
+          "state": "심화",
+          "desc": "관계가 깊어지는 시기. 상대 페이스에 맞춰 움직여.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 6월과 '27. 2월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n정화(丁火) 일간은 한 사람만 비추는 결이야. 작게 오래 비추는 게 너에게 맞아. 피크엔 조용히 깊게 다가가.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "무토",
+    "user_gender": "남자",
+    "yongSin": "화",
+    "day_branch": "술",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "7월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "11월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 6월과 '27. 3월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n무토(戊土) 일간은 묵직하게 받쳐주는 결이야. 흔들리지 말고 자리에 있어. 피크엔 한 걸음 다가가는 게 너에게 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "기토",
+    "user_gender": "여자",
+    "yongSin": "화",
+    "day_branch": "축",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "6월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "7월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 4,
+          "knot": "tight",
+          "state": "심화",
+          "desc": "관계가 깊어지는 시기. 상대 페이스에 맞춰 움직여.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "11월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 4,
+          "knot": "tight",
+          "state": "심화",
+          "desc": "관계가 깊어지는 시기. 상대 페이스에 맞춰 움직여.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 5월과 6월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n기토(己土) 일간은 다정하게 키워주는 결이야. 피크엔 곁을 내주는 표현이 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "경금",
+    "user_gender": "남자",
+    "yongSin": "화",
+    "day_branch": "오",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "진입",
+          "desc": "실이 한 가닥 새로 묶여. 익숙한 자리에서 새 사람 보일 수 있어.",
+          "is_peak": false
+        },
+        {
+          "label": "7월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "8월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "10월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "11월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 7월과 9월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n경금(庚金) 일간은 결단력 있는 결이야. 피크엔 분명하게 한마디 던져. 단호함이 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "신금",
+    "user_gender": "여자",
+    "yongSin": "토",
+    "day_branch": "유",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "7월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "11월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 6월과 '27. 4월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n신금(辛金) 일간은 다듬어진 결이야. 피크에도 결을 흩지 마. 정갈한 한마디가 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "임수",
+    "user_gender": "남자",
+    "yongSin": "토",
+    "day_branch": "술",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "7월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "9월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "10월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "11월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 6월과 10월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n임수(壬水) 일간은 흐름을 거스르면 안 되는 결이야. 피크에 움직이고, 정체기엔 멈춰. 그게 너에게 가장 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  },
+  {
+    "ilgan": "계수",
+    "user_gender": "여자",
+    "yongSin": "금",
+    "day_branch": "사",
+    "result": {
+      "months": [
+        {
+          "label": "5월 (이번달)",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "시작",
+          "desc": "이번 달부터 흐름이 움직여. 큰 사건은 없어도 결이 바뀌는 시기야.",
+          "is_peak": false
+        },
+        {
+          "label": "6월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "7월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "8월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "피크",
+          "desc": "실이 가장 강하게 당겨지는 달. 이때 움직이면 매듭이 단단히 묶여.",
+          "is_peak": true
+        },
+        {
+          "label": "9월",
+          "hearts": 5,
+          "knot": "glowing",
+          "state": "2차 피크",
+          "desc": "실이 다시 한 번 강하게 당겨지는 달. 첫 피크 못 잡았어도 여기서 또 기회야. 표현을 분명히 해.",
+          "is_peak": true
+        },
+        {
+          "label": "10월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "11월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "12월",
+          "hearts": 3,
+          "knot": "tight",
+          "state": "안정",
+          "desc": "잔잔한 시기. 큰 변화보다 지금 흐름 유지가 좋아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 1월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "정체",
+          "desc": "잠깐 흐름이 막혀. 조급하게 밀어붙이면 매듭이 엉켜.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 2월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 3월",
+          "hearts": 1,
+          "knot": "loose",
+          "state": "충전",
+          "desc": "속을 비우는 달. 다음 흐름에 쓸 기운을 모아.",
+          "is_peak": false
+        },
+        {
+          "label": "'27. 4월",
+          "hearts": 2,
+          "knot": "loose",
+          "state": "1년차 마무리",
+          "desc": "1년이 한 바퀴 돌았어. 용기 있는 한마디가 다음 흐름을 바꿔.",
+          "is_peak": false
+        }
+      ],
+      "ai_intro": "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 8월과 9월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n계수(癸水) 일간은 분위기로 사랑하는 결이야. 흐름 따라 스며들어. 피크엔 분위기로 신호를 주는 게 너에게 잘 맞아.",
+      "bubble": "이 시기에 붉은 실이 가장 강하게 당겨."
+    }
+  }
+]

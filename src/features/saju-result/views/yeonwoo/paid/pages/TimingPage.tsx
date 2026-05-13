@@ -32,6 +32,7 @@ interface MonthRow {
 interface TimingData {
   months: ReadonlyArray<MonthRow>;
   ai_intro: string;          // 200~300자, {PEAK_LABEL_1}/{PEAK_LABEL_2}/{ILGAN} placeholder 자동 치환된 결과
+  bubble: string;            // 강연우 멘트 (고정)
 }
 
 const DEFAULT_MONTHS: ReadonlyArray<MonthRow> = [
@@ -55,6 +56,7 @@ const MOCK_P8: TimingData = {
     "한 해의 흐름이 보여. 일 년 내내 같은 결이 아니야. 강하게 당겨지는 달이 있고, 비워야 하는 달이 있어.\n\n" +
     "이번 달부터 1년을 봐. 너의 명줄에서 실이 가장 강하게 당겨지는 건 8월과 '27. 1월이야. 그 두 달은 가만히 있어도 사람이 들어와. 그 사이는 충전 구간이야. 조급해하지 마. 비우는 시간이 곧 채우는 시간이야.\n\n" +
     "임수(壬水) 일간은 흐름을 거스르면 안 되는 결이야. 피크에 움직이고, 정체기엔 멈춰. 그게 너에게 가장 잘 맞아.",
+  bubble: "이 시기에 붉은 실이 가장 강하게 당겨.",
 };
 
 export default function TimingPage({ data }: { data?: TimingData }) {
@@ -118,7 +120,7 @@ export default function TimingPage({ data }: { data?: TimingData }) {
           </div>
         </Scroll>
 
-        <YeonwooBubble text="이 시기에 붉은 실이 가장 강하게 당겨." />
+        <YeonwooBubble text={p.bubble} />
       </Sec>
     </section>
   );
@@ -131,9 +133,24 @@ export default function TimingPage({ data }: { data?: TimingData }) {
 //   - 좌측 thread_straight 세로 라인 (opacity 0.5)
 //   - 안쪽 텍스트 색: 다크 브라운 (#3a2a14)
 function Scroll({ children }: { children: React.ReactNode }) {
+  // 본문 marginTop/marginBottom -32%로 컨텐츠를 cap 한지 영역까지 끌어올리는 디자인.
+  // 외부 cap을 한 번 더 두어 두루마리가 자연스럽게 시작/끝나는 시각적 연장 효과.
   return (
-    <div className="my-3 relative">
-      {/* 두루마리 상단 cap (한지 + 위쪽 검정 막대) */}
+    <div className="mt-[70px] mb-[70px] relative">
+      {/* 외부 상단 cap — 두루마리 시각적 연장.
+          SVG 원본 비율(958x706 ≈ 16:12)로 그려서 검정 매듭이 내부 cap과 동일한 시각 크기.
+          내부 cap은 본문이 marginTop -32%로 한지 영역을 덮으므로 16:4 강제 압축이 의도된 디자인. */}
+      <div
+        aria-hidden
+        className="w-full"
+        style={{
+          aspectRatio: "958 / 706",
+          backgroundImage: "url(/yeonwoo/scroll/scroll_top_yw.svg)",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
+        }}
+      />
+      {/* 내부 상단 cap (한지 + 위쪽 검정 막대) — 본문이 한지 영역에 -32% 끌어올려짐 */}
       <div
         aria-hidden
         className="w-full"
@@ -179,7 +196,7 @@ function Scroll({ children }: { children: React.ReactNode }) {
         />
         {children}
       </div>
-      {/* 두루마리 하단 cap (한지 + 아래쪽 검정 막대) */}
+      {/* 내부 하단 cap (한지 + 아래쪽 검정 막대) */}
       <div
         aria-hidden
         className="w-full"
@@ -189,6 +206,17 @@ function Scroll({ children }: { children: React.ReactNode }) {
           backgroundRepeat: "no-repeat",
           backgroundSize: "100% 100%",
           backgroundPosition: "center top",
+        }}
+      />
+      {/* 외부 하단 cap — 두루마리 시각적 연장 (SVG 자연 비율로 검정 매듭 정상 크기). */}
+      <div
+        aria-hidden
+        className="w-full"
+        style={{
+          aspectRatio: "958 / 706",
+          backgroundImage: "url(/yeonwoo/scroll/scroll_bottom_yw.svg)",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "100% 100%",
         }}
       />
     </div>
