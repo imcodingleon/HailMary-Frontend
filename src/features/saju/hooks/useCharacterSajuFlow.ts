@@ -101,5 +101,5 @@ export function useCharacterSajuFlow(config: CharacterSajuFlowConfig) {
     [surveyKey],
   );
 
-  return { userName, userGender, userBirthYear, userBirthMonth, userCalendar, hasSubmittedInfo, surveyAnswers, setSurveyAnswers, submitInfo, finalizeSurvey };
+  return { userName, userGender, userBirthYear, userBirthMonth, userCalendar, hasSubmittedInfo, surveyAnswers, setSurveyAnswers, submitInfo, finalizeSurvey, sajuStatus: saju.status };
 }
