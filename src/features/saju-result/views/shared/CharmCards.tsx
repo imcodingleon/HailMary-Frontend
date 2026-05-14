@@ -97,16 +97,18 @@ const THEME_TOKENS = {
 const DOHWA_HUE_DARK = "#E6A88E";
 const DOHWA_HUE_BEIGE = "#E94E3F";
 
+// 일간 10종 LOVE_TYPE 라벨 (yeonwoo_p1_chapter_opening.py:LOVE_TYPE_BY_ILGAN과 동기화).
 const CHARM_TYPE_KO: Record<CharmTypeKey, string> = {
-  active: "능동형",
-  passive: "수용형",
-  expressive: "표현형",
-  mystery: "신비형",
-  charisma: "카리스마형",
-  dignified: "품격형",
-  free: "자유형",
-  withdrawn: "내향형",
-  balanced: "균형형",
+  gap: "직진 단단형",
+  eul: "깊이 감김형",
+  byeong: "빛으로 끌어당김형",
+  jeong: "은근한 정성형",
+  mu: "묵직한 안정형",
+  gi: "다정한 챙김형",
+  gyeong: "단호한 결단형",
+  shin: "단정한 자존형",
+  im: "깊고 잔잔한 결",
+  gye: "스며드는 섬세형",
 };
 
 const MANIFESTATION_KO: Record<CharmManifestationKey, string> = {

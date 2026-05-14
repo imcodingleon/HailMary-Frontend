@@ -103,27 +103,28 @@ const MOCK_DAYMASTER: DayMaster = {
 };
 
 const MOCK_CHARM: CharmView = {
-  typeKey: "active",
+  typeKey: "im",
   manifestationKey: "stable",
   variantTags: ["dohwa_pillar_day"],
   charmStrength: 72,
   charmPercentile: 85,
   showPercent: true,
-  label: "active",
+  label: "im",
   dohwa: { present: true, pillar: "day", hanja: "桃花" },
 };
 
 const MOCK_CHARM_COPIES: CharmCopyPool = {
   charmType: {
-    active: ["주도적으로 다가가는 결이 또렷하게 드러납니다."],
-    passive: [""],
-    expressive: [""],
-    mystery: [""],
-    charisma: [""],
-    dignified: [""],
-    free: [""],
-    withdrawn: [""],
-    balanced: [""],
+    gap: ["곧게 뻗는 결이 또렷하게 드러납니다."],
+    eul: [""],
+    byeong: [""],
+    jeong: [""],
+    mu: [""],
+    gi: [""],
+    gyeong: [""],
+    shin: [""],
+    im: ["깊고 잔잔한 결이 깊이로 발현됩니다."],
+    gye: [""],
   },
   manifestation: {
     stable: ["오랜 시간 변하지 않는 일관된 매력으로 자리잡음."],
@@ -139,7 +140,11 @@ const MOCK_CHARM_COPIES: CharmCopyPool = {
     day: "일주에 자리잡은 도화 — 본인 매력의 코어 그 자체.",
     hour: "",
     multi: "",
+    absent_cheoneul: "",
+    absent_hongyeom: "",
+    absent_geumyeo: "",
     absent_hwagae: "",
+    absent_gongmang: "",
     absent: "",
   },
   pickDohwaCopyKey: () => "day",

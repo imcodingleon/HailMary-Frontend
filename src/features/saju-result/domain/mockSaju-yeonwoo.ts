@@ -124,13 +124,13 @@ export const MOCK_SAJU: MockSaju = {
     ],
   },
   charm: {
-    typeKey: "mystery",
+    typeKey: "im",
     manifestationKey: "latent",
     variantTags: ["hwagae_present"],
     charmStrength: 52,
     charmPercentile: 45,
     showPercent: true,
-    label: "mystery",
+    label: "im",
     dohwa: {
       present: false,
       pillar: null,

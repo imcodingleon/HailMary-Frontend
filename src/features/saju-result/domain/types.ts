@@ -15,16 +15,19 @@ import type {
 
 // ── 매력 ──────────────────────────────────────────────────────
 
+// 매력 유형 = 일간 10종 (LOVE_TYPE_BY_ILGAN과 1:1). 사주 구조 분류 폐기.
+// 무료/유료 결과지에서 동일한 라벨을 노출해 사용자 혼동 방지.
 export type CharmTypeKey =
-  | "active"
-  | "passive"
-  | "expressive"
-  | "mystery"
-  | "charisma"
-  | "dignified"
-  | "free"
-  | "withdrawn"
-  | "balanced";
+  | "gap"     // 갑목
+  | "eul"     // 을목
+  | "byeong"  // 병화
+  | "jeong"   // 정화
+  | "mu"      // 무토
+  | "gi"      // 기토
+  | "gyeong"  // 경금
+  | "shin"    // 신금
+  | "im"      // 임수
+  | "gye";    // 계수
 
 export type CharmManifestationKey =
   | "stable"
@@ -41,7 +44,12 @@ export type CharmVariantTag =
   | "dohwa_pillar_day"
   | "dohwa_pillar_hour"
   | "dohwa_multi"
+  // 매력살 보유 태그 (도화 부재 시 카피 우선순위 판정용)
+  | "cheoneul_present"
+  | "hongyeom_present"
+  | "geumyeo_present"
   | "hwagae_present"
+  | "gongmang_present"
   | "yongsin_aligned"
   | "wuxing_dominant"
   | "wuxing_rare";
@@ -63,14 +71,19 @@ export interface CharmView {
   dohwa: CharmDohwaView;
 }
 
-// 도화 카피 키 — 캐릭터별 dialogue table에서 분기 lookup
+// 도화 카피 키 — 캐릭터별 dialogue table에서 분기 lookup.
+// 도화 부재 시 SAL_PRIORITY(천을귀인 > 홍염 > 금여 > 화개 > 공망) 순으로 카피 결정.
 export type DohwaCopyKey =
   | "year"
   | "month"
   | "day"
   | "hour"
   | "multi"
+  | "absent_cheoneul"
+  | "absent_hongyeom"
+  | "absent_geumyeo"
   | "absent_hwagae"
+  | "absent_gongmang"
   | "absent";
 
 export type CharmCopyPool = {
