@@ -26,6 +26,11 @@ function buildHeaders(extra?: HeadersInit): HeadersInit {
   if (token && !("Authorization" in headers) && !("authorization" in headers)) {
     headers["Authorization"] = `Bearer ${token}`;
   }
+  // QA 게이트 토큰 (APP_ENV=test 환경에서만 의미. 토큰 없으면 헤더 미첨부 → 운영 영향 0)
+  if (typeof window !== "undefined") {
+    const qa = window.localStorage.getItem("qa_access_token");
+    if (qa) headers["X-QA-Token"] = qa;
+  }
   return headers;
 }
 

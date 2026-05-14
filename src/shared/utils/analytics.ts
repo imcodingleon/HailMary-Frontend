@@ -39,8 +39,17 @@ import * as amplitude from "@amplitude/analytics-browser";
 
 let initialized = false;
 
+// QA 게이트 환경에선 Amplitude 전송 자체를 차단 — 운영 대시보드 오염 방지.
+// 환경변수로만 분기, 운영 빌드엔 변수 미설정 → 평소대로 전송.
+const IS_QA_MODE = process.env.NEXT_PUBLIC_QA_GATE_ENABLED === "1";
+
 export function initAmplitude(): void {
   if (initialized || typeof window === "undefined") return;
+  // QA 모드면 SDK init 자체 스킵
+  if (IS_QA_MODE) {
+    initialized = true;
+    return;
+  }
   const apiKey = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
   if (!apiKey) return;
   amplitude.init(apiKey, {
@@ -56,11 +65,13 @@ export function initAmplitude(): void {
 }
 
 export function getDeviceId(): string {
+  if (IS_QA_MODE) return "qa-mode";
   initAmplitude();
   return amplitude.getDeviceId() ?? "";
 }
 
 export function getSessionId(): string {
+  if (IS_QA_MODE) return "qa-mode";
   initAmplitude();
   const sid = amplitude.getSessionId();
   return sid != null ? String(sid) : "";
@@ -70,6 +81,13 @@ export function trackEvent(
   eventName: string,
   properties?: Record<string, unknown>
 ): void {
+  // QA 모드는 콘솔 로그만, Amplitude 전송 X
+  if (IS_QA_MODE) {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[Analytics:QA-noop]", eventName, properties);
+    }
+    return;
+  }
   initAmplitude();
 
   const payload = {
