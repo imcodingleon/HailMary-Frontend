@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getDeviceId, getSessionId, trackEvent } from "@/shared/utils/analytics";
+import EmailConfirmModal from "@/features/checkout/views/components/EmailConfirmModal";
 
 type ConfirmStatus = "pending" | "success" | "error";
 
@@ -17,6 +18,13 @@ interface ConfirmedPayment {
   expiresAt: string;
 }
 
+interface PendingCheckout {
+  character: string;
+  email: string;
+  amount?: number;
+  sessionToken?: string | null;
+}
+
 function SuccessBody() {
   const params = useSearchParams();
   const router = useRouter();
@@ -24,7 +32,10 @@ function SuccessBody() {
   const orderId = params.get("orderId") ?? "";
   const amount = params.get("amount") ?? "";
 
-  const [status, setStatus] = useState<ConfirmStatus>("pending");
+  // status: "verifying" 진입 검증 → "awaiting_confirm" 모달 노출 → "confirming" confirm 호출 중 → "success"/"error"
+  const [status, setStatus] = useState<ConfirmStatus | "awaiting_confirm" | "confirming" | "verifying">("verifying");
+  const [pending, setPending] = useState<PendingCheckout | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const [data, setData] = useState<ConfirmedPayment | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const viewSentRef = useRef(false);
@@ -44,41 +55,34 @@ function SuccessBody() {
     });
   }, [orderId]);
 
+  // 진입 시 결제 세션 검증만 — confirm 호출은 모달 확인 후
   useEffect(() => {
     if (!paymentKey || !orderId || !amount) {
       setStatus("error");
       setErrorMsg("결제 식별 정보가 누락되었어요.");
       return;
     }
-    let pending: {
-      character: string;
-      email: string;
-      amount?: number;
-      sessionToken?: string | null;
-    } | null = null;
+    let p: PendingCheckout | null = null;
     try {
       const raw = sessionStorage.getItem("checkoutPending");
-      if (raw) pending = JSON.parse(raw);
+      if (raw) p = JSON.parse(raw);
     } catch {}
 
-    if (!pending?.character || !pending?.email) {
+    if (!p?.character || !p?.email) {
       setStatus("error");
       setErrorMsg("결제 세션이 만료되었어요. 처음부터 다시 시도해 주세요.");
       return;
     }
-
-    if (!pending.sessionToken) {
+    if (!p.sessionToken) {
       setStatus("error");
       setErrorMsg("사용자 세션 정보가 없어요. 처음부터 다시 시도해 주세요.");
       return;
     }
-
-    // 금액 무결성 검증: 의도한 결제 금액과 successUrl의 amount가 일치하는지 확인
-    if (typeof pending.amount === "number" && pending.amount !== Number(amount)) {
+    if (typeof p.amount === "number" && p.amount !== Number(amount)) {
       trackEvent("payment_amount_mismatch", {
-        character_id: pending.character,
+        character_id: p.character,
         order_id: orderId,
-        intended_amount: pending.amount,
+        intended_amount: p.amount,
         received_amount: Number(amount),
       });
       setStatus("error");
@@ -86,10 +90,24 @@ function SuccessBody() {
       return;
     }
 
+    setPending(p);
+    setStatus("awaiting_confirm");
+    setShowModal(true);
+    trackEvent("email_confirm_modal_open", { character_id: p.character });
+  }, [paymentKey, orderId, amount]);
+
+  const runConfirm = useCallback((confirmedEmail: string) => {
+    if (!pending) return;
+    setShowModal(false);
+    setStatus("confirming");
+    const emailChanged = confirmedEmail !== pending.email;
+    trackEvent("email_confirm_modal_confirm", {
+      character_id: pending.character,
+      email_changed: emailChanged,
+    });
+
     const apiBase = process.env.NEXT_PUBLIC_API_URL ?? "";
     const url = `${apiBase}/api/payments/confirm`;
-    // 백엔드 payment_completed Amplitude 이벤트가 프론트와 동일 깔때기로 묶이도록 동봉.
-    // 누락이어도 confirm 자체에는 영향 없음 (백엔드가 user_id 기반으로 발화).
     const deviceId = getDeviceId() || null;
     const sessionIdRaw = getSessionId();
     const sessionIdNum = sessionIdRaw ? Number(sessionIdRaw) : NaN;
@@ -99,7 +117,7 @@ function SuccessBody() {
       orderId,
       amount: Number(amount),
       character: pending.character,
-      customerEmail: pending.email,
+      customerEmail: confirmedEmail,
       sessionToken: pending.sessionToken,
       deviceId,
       sessionId,
@@ -116,7 +134,6 @@ function SuccessBody() {
           const detail =
             (json?.detail?.message as string | undefined) ??
             (typeof json?.detail === "string" ? json.detail : null) ??
-            // FastAPI 검증 오류: detail이 [{loc, msg, type}, ...] 배열로 옴
             (Array.isArray(json?.detail)
               ? (json.detail as Array<{ loc?: unknown[]; msg?: string }>)
                   .map((d) => {
@@ -136,15 +153,10 @@ function SuccessBody() {
       .then((d) => {
         setData(d);
         setStatus("success");
-        try {
-          sessionStorage.removeItem("checkoutPending");
-        } catch {}
+        try { sessionStorage.removeItem("checkoutPending"); } catch {}
         if (!redirectSentRef.current) {
           redirectSentRef.current = true;
-          trackEvent("paid_result_redirect", {
-            order_id: d.orderId,
-            character: d.character,
-          });
+          trackEvent("paid_result_redirect", { order_id: d.orderId, character: d.character });
           router.replace(`/saju/paid/${encodeURIComponent(d.orderId)}/loading`);
         }
       })
@@ -153,17 +165,38 @@ function SuccessBody() {
         setErrorMsg(msg);
         setStatus("error");
         trackEvent("payment_confirm_failed", {
-          character_id: pending?.character ?? null,
+          character_id: pending.character,
           order_id: orderId,
           payment_key: paymentKey,
           amount: Number(amount),
           error_message: msg,
         });
       });
-  }, [paymentKey, orderId, amount]);
+  }, [pending, paymentKey, orderId, amount, router]);
+
 
   return (
     <main className="flex min-h-[100dvh] flex-1 flex-col items-center justify-center gap-6 bg-white px-6 py-10 text-neutral-900">
+      {(status === "verifying" || status === "awaiting_confirm") && (
+        <>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-900" aria-hidden />
+          <p className="text-[14px] text-neutral-700">결제 정보 확인 중…</p>
+        </>
+      )}
+
+      {status === "confirming" && (
+        <>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-900" aria-hidden />
+          <p className="text-[14px] text-neutral-700">결제 승인 처리 중…</p>
+        </>
+      )}
+
+      <EmailConfirmModal
+        open={showModal}
+        email={pending?.email ?? ""}
+        onConfirm={runConfirm}
+      />
+
       {status === "pending" && (
         <>
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-neutral-200 border-t-neutral-900" aria-hidden />
