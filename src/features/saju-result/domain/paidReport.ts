@@ -296,8 +296,23 @@ export interface PaidChapterP9 {
   ai_charm: string;                // 3 단락
 }
 
+// ── P-10 (七 편지) ─────────────────────────────────────────────
+// 박스 1·2·3 통합. 박스 3 답장은 AI 호출 1회 (fill-in-the-middle).
+
+export interface PaidChapterP10 {
+  ilju_with_hanja: string;     // "병인(丙寅)"
+  box1_body: string;            // 박스 1 (도입 멘트 + step1 부분집합 본문)
+  box2_body: string;            // 박스 2 (4단락 합성)
+  quote_text: string;           // step3 raw 또는 "..."
+  quote_label: string;          // "— 네가 적은 너의 고민" / "— 적지 못한 너의 고민"
+  box3_body: string;            // AI 답장 또는 폴백
+  emphasis: string;             // 박스 3 강조구 (일간 10셀)
+  tail: string;                 // 박스 3 꼬리 (고정)
+  uses_ai: boolean;             // AI 호출 여부 (감사 로그용)
+}
+
 // ── chapters wrapper ──────────────────────────────────────────
-// P-10 ~ P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
+// P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
 // 프론트는 MOCK fallback (`*Page.tsx`의 MOCK_PN)으로 렌더한다.
 
 export interface PaidChapters {
@@ -311,7 +326,8 @@ export interface PaidChapters {
   p7?: PaidChapterP7;
   p8?: PaidChapterP8;
   p9?: PaidChapterP9;
-  // p10 ~ p11은 templates 작성 후 추가.
+  p10?: PaidChapterP10;
+  // p11은 templates 작성 후 추가.
 }
 
 export interface PaidReport {

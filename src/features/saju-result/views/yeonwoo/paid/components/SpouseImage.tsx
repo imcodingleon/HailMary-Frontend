@@ -25,12 +25,12 @@ export default function SpouseImage({
       : `/images/spouse/${character}/paid/${type}/${safeSlot}.png`;
 
   return (
-    <div className="relative my-3 mx-auto w-full max-w-[280px] aspect-[3/4]">
+    <div className="relative my-3 mx-auto w-full max-w-[322px] aspect-[3/4]">
       <Image
         src={src}
         alt={alt ?? (type === "avoid" ? "악연 얼굴" : "인연 얼굴")}
         fill
-        sizes="280px"
+        sizes="322px"
         style={{ objectFit: "cover", borderRadius: "8px" }}
       />
     </div>

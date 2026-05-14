@@ -39,8 +39,8 @@ export default function DevFullPaidPage() {
         <DestinedPart2Page data={chapters.p7} />
         <TimingPage data={chapters.p8} />
         <PracticePage data={chapters.p9} />
-        {/* P-10 ~ P-11: 백엔드 templates 미작성 — 각 Page 내부 MOCK fallback */}
-        <LetterPage />
+        <LetterPage data={chapters.p10} />
+        {/* P-11: 백엔드 templates 미작성 — Page 내부 MOCK fallback */}
         <EpiloguePage />
       </PaidShell>
     </main>

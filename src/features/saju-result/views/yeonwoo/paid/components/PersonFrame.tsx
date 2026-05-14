@@ -20,9 +20,8 @@ export default function PersonFrame({ person, slotId }: PersonFrameProps) {
   const personImg = slotId
     ? `/images/spouse/yeonwoo/paid/${PERSON_TO_TYPE[person]}/${slotId}.png`
     : `/yeonwoo/person/person_${person}.png`;
-  const fullFrame = `/yeonwoo/frame/frame_${person}_yw_full.png`;
   return (
-    <div className="relative my-3 mx-auto w-full max-w-[280px] aspect-[3/4]">
+    <div className="relative my-3 mx-auto w-full max-w-[322px] aspect-[3/4]">
       {/* 1차 배경: 인물 사진 */}
       <div
         aria-hidden
@@ -31,12 +30,6 @@ export default function PersonFrame({ person, slotId }: PersonFrameProps) {
           backgroundImage: `url(${personImg})`,
           backgroundSize: "cover",
         }}
-      />
-      {/* fallback / 통합 프레임 */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-no-repeat bg-center bg-contain pointer-events-none"
-        style={{ backgroundImage: `url(${fullFrame})` }}
       />
       {/* 4모서리 SVG */}
       <FrameCorner person={person} pos="tl" />
