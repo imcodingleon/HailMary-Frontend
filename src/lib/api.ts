@@ -13,8 +13,10 @@ export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: ApiErrorCode; detail?: unknown; status?: number };
 
-// 외부 의존(FortuneTeller Lambda cold start, Claude API 등) 고려. 5s는 첫 호출 cold start에 짧음.
-const TIMEOUT_MS = 30000;
+// 외부 의존(FortuneTeller Lambda cold start, Claude API 등) 고려.
+// 90s: claude_client.max_retries=5의 expo backoff 누적(최악 ~60s) 흡수.
+// 30s였을 때 SDK retry 도중 fetch가 abort되어 retry 강화 의미가 없었음.
+const TIMEOUT_MS = 90000;
 
 function buildHeaders(extra?: HeadersInit): HeadersInit {
   const headers: Record<string, string> = {};
