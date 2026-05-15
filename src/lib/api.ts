@@ -13,7 +13,8 @@ export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: ApiErrorCode; detail?: unknown; status?: number };
 
-const TIMEOUT_MS = 5000;
+// 외부 의존(FortuneTeller Lambda cold start, Claude API 등) 고려. 5s는 첫 호출 cold start에 짧음.
+const TIMEOUT_MS = 30000;
 
 function buildHeaders(extra?: HeadersInit): HeadersInit {
   const headers: Record<string, string> = {};
