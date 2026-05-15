@@ -1,11 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   PaidResultLoading,
   usePaidResultPolling,
 } from "@/features/saju-result";
+
+// Next.js static export + CloudFront dynamic-route fallback에서는 useParams가
+// 빌드된 placeholder path("_placeholder")를 반환할 수 있다. 브라우저 URL의
+// 실제 order_id를 보장하기 위해 window.location.pathname을 직접 파싱.
+function extractOrderIdFromUrl(): string {
+  if (typeof window === "undefined") return "";
+  const m = window.location.pathname.match(/\/saju\/paid\/([^/]+)/);
+  const id = m?.[1] ?? "";
+  return id === "_placeholder" ? "" : id;
+}
 
 function PaidLoadingInner({ orderId }: { orderId: string }) {
   const router = useRouter();
@@ -33,7 +43,9 @@ function PaidLoadingInner({ orderId }: { orderId: string }) {
 }
 
 export default function PaidLoadingClient() {
-  const params = useParams<{ order_id: string }>();
-  const orderId = params?.order_id ?? "";
+  const [orderId, setOrderId] = useState<string>("");
+  useEffect(() => {
+    setOrderId(extractOrderIdFromUrl());
+  }, []);
   return <PaidLoadingInner orderId={orderId} />;
 }

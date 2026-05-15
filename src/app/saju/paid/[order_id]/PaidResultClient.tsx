@@ -1,12 +1,21 @@
 "use client";
 
-import { useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   PaidResultLoading,
   YeonwooPaidScene,
   usePaidReport,
 } from "@/features/saju-result";
+
+// CloudFront dynamic-route fallback에서 useParams가 "_placeholder"를 반환할 수
+// 있어 브라우저 URL을 직접 파싱.
+function extractOrderIdFromUrl(): string {
+  if (typeof window === "undefined") return "";
+  const m = window.location.pathname.match(/\/saju\/paid\/([^/]+)/);
+  const id = m?.[1] ?? "";
+  return id === "_placeholder" ? "" : id;
+}
 
 function PaidPageInner({ orderId }: { orderId: string }) {
   const router = useRouter();
@@ -59,7 +68,9 @@ function PaidPageInner({ orderId }: { orderId: string }) {
 }
 
 export default function PaidResultClient() {
-  const params = useParams<{ order_id: string }>();
-  const orderId = params?.order_id ?? "";
+  const [orderId, setOrderId] = useState<string>("");
+  useEffect(() => {
+    setOrderId(extractOrderIdFromUrl());
+  }, []);
   return <PaidPageInner orderId={orderId} />;
 }
