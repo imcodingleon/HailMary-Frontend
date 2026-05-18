@@ -1,0 +1,31 @@
+import type { PaidReport } from "../../../domain/paidReport";
+import PaidShell from "../../shared/PaidShell";
+import { DOYOON_SHELL_CONFIG } from "../../shared/paidShellConfig";
+import DoyoonProloguePage from "./pages/DoyoonProloguePage";
+import DoyoonStubPage from "./pages/DoyoonStubPage";
+
+interface DoyoonPaidSceneProps {
+  report: PaidReport;
+}
+
+// 12 페이지 셸. 현재 P-0만 본격 구현, P-1~P-11은 stub (해당 페이즈 진입 시 교체).
+export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
+  return (
+    <main data-paid-scene="doyoon">
+      <PaidShell config={DOYOON_SHELL_CONFIG}>
+        <DoyoonProloguePage data={report.chapters.p0_doyoon} />
+        <DoyoonStubPage chapter="Ch 1 · 1/2" title="당신이라는 사람 (1/2)" />
+        <DoyoonStubPage chapter="Ch 1 · 2/2" title="당신이라는 사람 (2/2)" />
+        <DoyoonStubPage chapter="Ch 2 · 1/2" title="지금 연애를 막는 것 (1/2)" />
+        <DoyoonStubPage chapter="Ch 2 · 2/2" title="지금 연애를 막는 것 (2/2)" />
+        <DoyoonStubPage chapter="Ch 3" title="매력 분석" />
+        <DoyoonStubPage chapter="Ch 4 · 1/2" title="운명의 짝 (1/2)" />
+        <DoyoonStubPage chapter="Ch 4 · 2/2" title="운명의 짝 · 결말 (2/2)" />
+        <DoyoonStubPage chapter="Ch 5" title="인연이 오는 시간" />
+        <DoyoonStubPage chapter="Ch 6" title="실천 가이드" />
+        <DoyoonStubPage chapter="Ch 7" title="도윤의 편지" />
+        <DoyoonStubPage chapter="에필로그" title="도윤의 마지막 말" />
+      </PaidShell>
+    </main>
+  );
+}

@@ -4,6 +4,8 @@
 
 export type PaidReportStatus = "pending" | "ready" | "expired";
 
+export type CharacterKey = "yeonwoo" | "doyoon";
+
 export interface PaidReportStatusResponse {
   status: PaidReportStatus;
 }
@@ -58,6 +60,30 @@ export interface PaidChapterP0 {
   ohang_lack: OhangKey;
   ilgan: string;
   ilgan_card: IlganCard;
+  ai_intro: string;
+}
+
+// ── P-0 도윤 패널 ─────────────────────────────────────────────
+// 백엔드 `domains/ai`의 PaidChapterP0Doyoon과 1:1 매칭.
+// 연우와 별도 chapters 키 (`p0_doyoon`). ilgan_card 스키마가 다름 + user_name 호명.
+
+export interface DoyoonIlganCard {
+  name_kor: string;
+  name_han: string;
+  subtitle: string;
+  data_traits: ReadonlyArray<string>;
+  love_variables: ReadonlyArray<string>;
+  main_conflict: string;
+}
+
+export interface PaidChapterP0Doyoon {
+  saju_pillars: SajuPillarsP0;        // 연우와 공유
+  ohang_strength: OhangStrength;      // 연우와 공유
+  ohang_excess: OhangKey;
+  ohang_lack: OhangKey;
+  ilgan: string;
+  user_name: string;
+  ilgan_card: DoyoonIlganCard;
   ai_intro: string;
 }
 
@@ -317,6 +343,7 @@ export interface PaidChapterP10 {
 
 export interface PaidChapters {
   p0?: PaidChapterP0;
+  p0_doyoon?: PaidChapterP0Doyoon;
   p1?: PaidChapterP1;
   p2?: PaidChapterP2;
   p3?: PaidChapterP3;
@@ -335,4 +362,5 @@ export interface PaidReport {
   status: PaidReportStatus;
   chapters: PaidChapters;
   expires_at: string;
+  character: CharacterKey;
 }

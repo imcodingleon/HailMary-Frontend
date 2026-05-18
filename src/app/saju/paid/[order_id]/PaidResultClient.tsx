@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  DoyoonPaidScene,
   PaidResultLoading,
   YeonwooPaidScene,
   usePaidReport,
@@ -64,7 +65,11 @@ function PaidPageInner({ orderId }: { orderId: string }) {
     return <PaidResultLoading />;
   }
 
-  return <YeonwooPaidScene report={state.report} />;
+  return state.report.character === "doyoon" ? (
+    <DoyoonPaidScene report={state.report} />
+  ) : (
+    <YeonwooPaidScene report={state.report} />
+  );
 }
 
 export default function PaidResultClient() {

@@ -13,7 +13,6 @@ export interface PaidShellNav {
   jumpTo: (idx: number) => void;
   prevDisabled: boolean;
   isLast: boolean;
-  nextLabel: string;
   progressPct: number;
 }
 
@@ -46,7 +45,6 @@ export function usePaidShellNav(total: number): PaidShellNav {
       jumpTo,
       prevDisabled: currentIdx === 0,
       isLast,
-      nextLabel: isLast ? "끝까지 다 봤어" : "다음 →",
       progressPct: total > 0 ? ((currentIdx + 1) / total) * 100 : 0,
     };
   }, [currentIdx, total, goPrev, goNext, jumpTo]);

@@ -4,7 +4,8 @@
 // P-9 6-2(매력살 활용)와 P-10~P-11: 백엔드 templates 미작성 → 각 Page 내부 MOCK fallback.
 //
 // fixture 재생성: backend 디렉토리에서 python 스크립트로 DB 조회 + compose → 이 파일 덮어쓰기.
-import PaidShell from "@/features/saju-result/views/yeonwoo/paid/PaidShell";
+import PaidShell from "@/features/saju-result/views/shared/PaidShell";
+import { YEONWOO_SHELL_CONFIG } from "@/features/saju-result/views/shared/paidShellConfig";
 import ProloguePage from "@/features/saju-result/views/yeonwoo/paid/pages/ProloguePage";
 import SelfPart1Page from "@/features/saju-result/views/yeonwoo/paid/pages/SelfPart1Page";
 import SelfPart2Page from "@/features/saju-result/views/yeonwoo/paid/pages/SelfPart2Page";
@@ -28,7 +29,7 @@ const chapters = fixture as unknown as PaidChapters;
 export default function DevFullPaidPage() {
   return (
     <main className="bg-[#151513]">
-      <PaidShell>
+      <PaidShell config={YEONWOO_SHELL_CONFIG}>
         <ProloguePage data={chapters.p0} />
         <SelfPart1Page data={chapters.p1} />
         <SelfPart2Page data={chapters.p2} />

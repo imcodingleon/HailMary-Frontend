@@ -1,5 +1,6 @@
 import type { PaidReport } from "../../../domain/paidReport";
-import PaidShell from "./PaidShell";
+import PaidShell from "../../shared/PaidShell";
+import { YEONWOO_SHELL_CONFIG } from "../../shared/paidShellConfig";
 import ProloguePage from "./pages/ProloguePage";
 import SelfPart1Page from "./pages/SelfPart1Page";
 import SelfPart2Page from "./pages/SelfPart2Page";
@@ -20,7 +21,7 @@ interface YeonwooPaidSceneProps {
 export default function YeonwooPaidScene({ report }: YeonwooPaidSceneProps) {
   return (
     <main data-paid-scene="yeonwoo" className="bg-[#151513]">
-      <PaidShell>
+      <PaidShell config={YEONWOO_SHELL_CONFIG}>
         <ProloguePage data={report.chapters.p0} />
         <SelfPart1Page data={report.chapters.p1} />
         <SelfPart2Page data={report.chapters.p2} />

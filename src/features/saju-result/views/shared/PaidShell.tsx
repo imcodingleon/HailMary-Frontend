@@ -8,17 +8,19 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { usePaidShellNav } from "../../../hooks/usePaidShellNav";
-import TocModal from "./components/TocModal";
+import { usePaidShellNav } from "../../hooks/usePaidShellNav";
+import PaidTocModal from "./PaidTocModal";
+import type { PaidShellConfig } from "./paidShellConfig";
 
 interface PaidShellProps {
   children: ReactNode;
+  config: PaidShellConfig;
 }
 
-// 12 페이지 슬라이드 컨테이너. top-header / pages-track / bottom-nav / TocModal 일체.
+// 유료 12 페이지 슬라이드 셸 — 양 캐릭터 공용. 헤더 텍스트·골드 색·인장·TOC 라벨은 config로.
 // 디자인 원본: 연우_final.html line 1457~1473 (header), 2796~2891 (nav+toc), 2898~2960 (slide JS).
 
-export default function PaidShell({ children }: PaidShellProps) {
+export default function PaidShell({ children, config }: PaidShellProps) {
   const childArray = Children.toArray(children);
   const total = childArray.length;
   const nav = usePaidShellNav(total);
@@ -48,6 +50,8 @@ export default function PaidShell({ children }: PaidShellProps) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [nav.currentIdx]);
 
+  const nextLabel = nav.isLast ? config.lastNavLabel : config.nextNavLabel;
+
   return (
     <div
       className="relative mx-auto max-w-[430px] min-h-[100dvh] bg-[#0a0a09] z-[1]"
@@ -60,37 +64,40 @@ export default function PaidShell({ children }: PaidShellProps) {
       {/* 상단 헤더 */}
       <div
         className="sticky top-0 z-50 flex items-center justify-between bg-[#111110] px-3.5 py-2.5"
-        style={{ borderBottom: "0.5px solid rgba(200,168,112,0.15)" }}
+        style={{ borderBottom: `0.5px solid ${config.goldFaint}` }}
       >
         <div className="flex items-center gap-2">
           <span
             aria-hidden
             className="inline-block w-[42px] h-[42px] bg-no-repeat bg-center bg-contain"
             style={{
-              backgroundImage: "url(/yeonwoo/motif/motif_seal_myeong.svg)",
-              filter: "drop-shadow(0 0 10px rgba(200,168,112,0.5))",
+              backgroundImage: `url(${config.sealImage})`,
+              filter: `drop-shadow(0 0 10px ${config.goldDim})`,
             }}
           />
           <div>
             <div
-              className="text-[15px] font-semibold text-[#E8C9A0]"
-              style={{ letterSpacing: "0.05em" }}
+              className="text-[15px] font-semibold"
+              style={{ letterSpacing: "0.05em", color: config.gold }}
             >
-              강연우
+              {config.name}
             </div>
             <div
               className="text-[12px] text-[#888780]"
               style={{ letterSpacing: "0.1em" }}
             >
-              직관 풀이
+              {config.role}
             </div>
           </div>
         </div>
         <button
           type="button"
           onClick={() => setTocOpen(true)}
-          className="bg-[#1a1a18] text-[#E8C9A0] rounded-md px-[13px] py-[7px] text-[14px] font-medium"
-          style={{ border: "0.5px solid rgba(200,168,112,0.3)" }}
+          className="bg-[#1a1a18] rounded-md px-[13px] py-[7px] text-[14px] font-medium"
+          style={{
+            color: config.gold,
+            border: `0.5px solid ${config.goldDim}`,
+          }}
         >
           ≡ 목차
         </button>
@@ -133,17 +140,18 @@ export default function PaidShell({ children }: PaidShellProps) {
             background: "rgba(15,15,13,0.95)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
-            borderTop: "0.5px solid rgba(200,168,112,0.15)",
+            borderTop: `0.5px solid ${config.goldFaint}`,
           }}
         >
           <div className="flex items-center gap-2.5 mb-2">
             <div
               className="flex-1 h-1 rounded-[2px] overflow-hidden"
-              style={{ background: "rgba(200,168,112,0.12)" }}
+              style={{ background: `${config.goldFaint}` }}
             >
               <div
-                className="h-full rounded-[2px] bg-[#E8C9A0]"
+                className="h-full rounded-[2px]"
                 style={{
+                  background: config.gold,
                   width: `${nav.progressPct}%`,
                   transition: "width .35s ease",
                 }}
@@ -162,8 +170,11 @@ export default function PaidShell({ children }: PaidShellProps) {
               onClick={nav.goPrev}
               disabled={nav.prevDisabled}
               aria-label="이전"
-              className="h-[38px] min-w-[38px] bg-[#1a1a18] text-[#E8C9A0] rounded-lg text-[17px] font-medium flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
-              style={{ border: "0.5px solid rgba(200,168,112,0.3)" }}
+              className="h-[38px] min-w-[38px] bg-[#1a1a18] rounded-lg text-[17px] font-medium flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{
+                color: config.gold,
+                border: `0.5px solid ${config.goldDim}`,
+              }}
             >
               ←
             </button>
@@ -173,21 +184,21 @@ export default function PaidShell({ children }: PaidShellProps) {
               disabled={nav.isLast}
               className="flex-1 h-[38px] rounded-lg text-[16px] font-semibold flex items-center justify-center"
               style={{
-                background: nav.isLast ? "#1a1a18" : "#E8C9A0",
+                background: nav.isLast ? "#1a1a18" : config.gold,
                 color: nav.isLast ? "#888780" : "#2c1a08",
                 border: nav.isLast
-                  ? "0.5px solid rgba(200,168,112,0.3)"
+                  ? `0.5px solid ${config.goldDim}`
                   : "none",
                 letterSpacing: "0.02em",
               }}
             >
-              {nav.nextLabel}
+              {nextLabel}
             </button>
           </div>
         </div>
       </div>
 
-      <TocModal
+      <PaidTocModal
         open={tocOpen}
         currentIdx={nav.currentIdx}
         onClose={() => setTocOpen(false)}
@@ -195,6 +206,7 @@ export default function PaidShell({ children }: PaidShellProps) {
           nav.jumpTo(idx);
           setTocOpen(false);
         }}
+        config={config}
       />
     </div>
   );
