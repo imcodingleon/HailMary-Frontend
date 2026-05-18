@@ -13,6 +13,12 @@ export interface PaidShellConfig {
   name: string;              // "강연우" / "한도윤"
   role: string;              // "직관 풀이" / "데이터 분석"
   sealImage: string;         // 상단 헤더 인장 경로 (public/ 기준)
+  // 배경
+  pageBg: string;            // 페이지 본문 — 다크 "#0a0a09" / 라이트 "#fffdf7"
+  shellHeaderBg: string;     // 상단 sticky 헤더 — 다크 "#111110" / 라이트 "#fffaf0"
+  shellNavBg: string;        // 하단 네비 — 다크 "rgba(15,15,13,0.95)" / 라이트 "rgba(255,250,240,0.95)"
+  buttonBg: string;          // 보조 버튼(목차/이전) — 다크 "#1a1a18" / 라이트 "#fff8ec"
+  nextButtonTextColor: string; // 다음 버튼 텍스트 — 다크 "#2c1a08" / 라이트 "#fff"
   // 색
   gold: string;              // "#E8C9A0" / "#8B6914"
   goldDim: string;           // 진행바 배경 등 30% 톤
@@ -31,6 +37,11 @@ export const YEONWOO_SHELL_CONFIG: PaidShellConfig = {
   name: "강연우",
   role: "직관 풀이",
   sealImage: "/yeonwoo/motif/motif_seal_myeong.svg",
+  pageBg: "#0a0a09",
+  shellHeaderBg: "#111110",
+  shellNavBg: "rgba(15,15,13,0.95)",
+  buttonBg: "#1a1a18",
+  nextButtonTextColor: "#2c1a08",
   gold: "#E8C9A0",
   goldDim: "rgba(200,168,112,0.3)",
   goldFaint: "rgba(200,168,112,0.15)",
@@ -54,7 +65,12 @@ export const YEONWOO_SHELL_CONFIG: PaidShellConfig = {
 export const DOYOON_SHELL_CONFIG: PaidShellConfig = {
   name: "한도윤",
   role: "데이터 분석",
-  sealImage: "/doyoon/dy_sub/seal_bunseok_dy_.png",
+  sealImage: "/doyoon/motif/motif_seal_yeon_full.png",
+  pageBg: "#fffdf7",
+  shellHeaderBg: "#fffaf0",
+  shellNavBg: "rgba(255,250,240,0.95)",
+  buttonBg: "#fff8ec",
+  nextButtonTextColor: "#fff",
   gold: "#8B6914",
   goldDim: "rgba(139,105,20,0.3)",
   goldFaint: "rgba(139,105,20,0.15)",

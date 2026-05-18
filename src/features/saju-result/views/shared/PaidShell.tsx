@@ -54,8 +54,9 @@ export default function PaidShell({ children, config }: PaidShellProps) {
 
   return (
     <div
-      className="relative mx-auto max-w-[430px] min-h-[100dvh] bg-[#0a0a09] z-[1]"
+      className="relative mx-auto max-w-[430px] min-h-[100dvh] z-[1]"
       style={{
+        background: config.pageBg,
         paddingBottom: 100,
         boxShadow:
           "0 0 60px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(255,255,255,0.04)",
@@ -63,8 +64,11 @@ export default function PaidShell({ children, config }: PaidShellProps) {
     >
       {/* 상단 헤더 */}
       <div
-        className="sticky top-0 z-50 flex items-center justify-between bg-[#111110] px-3.5 py-2.5"
-        style={{ borderBottom: `0.5px solid ${config.goldFaint}` }}
+        className="sticky top-0 z-50 flex items-center justify-between px-3.5 py-2.5"
+        style={{
+          background: config.shellHeaderBg,
+          borderBottom: `0.5px solid ${config.goldFaint}`,
+        }}
       >
         <div className="flex items-center gap-2">
           <span
@@ -93,8 +97,9 @@ export default function PaidShell({ children, config }: PaidShellProps) {
         <button
           type="button"
           onClick={() => setTocOpen(true)}
-          className="bg-[#1a1a18] rounded-md px-[13px] py-[7px] text-[14px] font-medium"
+          className="rounded-md px-[13px] py-[7px] text-[14px] font-medium"
           style={{
+            background: config.buttonBg,
             color: config.gold,
             border: `0.5px solid ${config.goldDim}`,
           }}
@@ -137,7 +142,7 @@ export default function PaidShell({ children, config }: PaidShellProps) {
         <div
           className="mx-auto max-w-[430px] px-3.5 pt-2.5 pb-3.5 pointer-events-auto"
           style={{
-            background: "rgba(15,15,13,0.95)",
+            background: config.shellNavBg,
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
             borderTop: `0.5px solid ${config.goldFaint}`,
@@ -170,8 +175,9 @@ export default function PaidShell({ children, config }: PaidShellProps) {
               onClick={nav.goPrev}
               disabled={nav.prevDisabled}
               aria-label="이전"
-              className="h-[38px] min-w-[38px] bg-[#1a1a18] rounded-lg text-[17px] font-medium flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
+              className="h-[38px] min-w-[38px] rounded-lg text-[17px] font-medium flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed"
               style={{
+                background: config.buttonBg,
                 color: config.gold,
                 border: `0.5px solid ${config.goldDim}`,
               }}
@@ -184,12 +190,13 @@ export default function PaidShell({ children, config }: PaidShellProps) {
               disabled={nav.isLast}
               className="flex-1 h-[38px] rounded-lg text-[16px] font-semibold flex items-center justify-center"
               style={{
-                background: nav.isLast ? "#1a1a18" : config.gold,
-                color: nav.isLast ? "#888780" : "#2c1a08",
+                background: nav.isLast ? config.buttonBg : config.gold,
+                color: nav.isLast ? config.gold : config.nextButtonTextColor,
                 border: nav.isLast
                   ? `0.5px solid ${config.goldDim}`
                   : "none",
                 letterSpacing: "0.02em",
+                opacity: nav.isLast ? 0.7 : 1,
               }}
             >
               {nextLabel}

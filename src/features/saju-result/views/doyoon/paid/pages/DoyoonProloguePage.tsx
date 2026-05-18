@@ -28,7 +28,7 @@ const MOCK_P0: PaidChapterP0Doyoon = {
     subtitle: "큰 물 / 깊은 바다 유형",
     data_traits: [
       "깊이감 평균 대비 1.7배",
-      "표현 빈도 0.4배",
+      "표현 빈도 평균 대비 0.4배",
       "감정 회복 속도 1.4배 느림",
     ],
     love_variables: [
@@ -71,7 +71,7 @@ export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
   return (
     <div className="rounded-md" style={{ background: C.bg, color: C.text }}>
       {/* 페이지 헤더 */}
-      <DoyoonPageHead title="시작에 앞서" sub="분석 시작 전 데이터 요약" ch="0" />
+      <DoyoonPageHead title="시작에 앞서" sub="분석 시작 전 데이터 요약" ch="0" hanja="序" />
 
       {/* 0-1 사주 원국 데이터 */}
       <SectionDy>
@@ -142,42 +142,131 @@ export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
 // Inline sub-components (P-0 전용; P-1+ 진입 시 공통 추출 검토)
 // ════════════════════════════════════════════════════════════════════
 
-function DoyoonPageHead({ title, sub, ch }: { title: string; sub: string; ch: string }) {
+// 도윤_final.html line 391~470 미러. badge는 한자/영문 세로 스택 + 4모서리 데코,
+// ch="0"은 motif_seal_yeon 풀 opacity + saturate 필터.
+function DoyoonPageHead({
+  title, sub, ch, hanja,
+}: { title: string; sub: string; ch: string; hanja: string }) {
   return (
     <div
-      className="flex items-center gap-3 px-3.5 py-3 relative"
-      style={{ borderBottom: `0.5px solid rgba(139,105,20,0.10)` }}
+      className="relative flex items-center gap-3 mb-3.5"
+      style={{
+        padding: "18px 8px 14px",
+        background: "linear-gradient(180deg, #fffaf0, #fdf3e7)",
+        borderRadius: 10,
+        borderBottom: "0.5px solid rgba(139,105,20,0.20)",
+      }}
     >
-      <span
-        className="inline-flex items-center justify-center min-w-[50px] h-[34px] rounded-[5px] px-2"
+      {/* 배지 — 한자/영문 세로 스택 + 4모서리 */}
+      <div
+        className="relative flex flex-col items-center justify-center flex-shrink-0"
         style={{
-          background: "rgba(139,105,20,0.10)",
-          border: "0.5px solid rgba(139,105,20,0.25)",
-          color: C.warmGold,
-          fontWeight: 700,
-          fontSize: 13,
-          letterSpacing: "0.08em",
+          padding: "8px 12px",
+          background: "rgba(139,105,20,0.05)",
+          border: "0.5px solid rgba(139,105,20,0.45)",
+          borderRadius: 2,
+          gap: 4,
         }}
       >
-        序 · CH-{ch}
-      </span>
-      <div className="flex-1">
-        <div className="text-[16px] font-bold" style={{ color: C.text }}>
+        <span
+          className="font-bold"
+          style={{
+            fontFamily: "var(--font-serif, serif)",
+            fontSize: 18,
+            color: C.warmGold,
+            letterSpacing: "0.05em",
+            lineHeight: 1.4,
+            textShadow: "0 0 8px rgba(139,105,20,0.18)",
+          }}
+        >
+          {hanja}
+        </span>
+        <span
+          className="uppercase font-bold"
+          style={{
+            fontSize: 13,
+            color: C.goldSoft,
+            letterSpacing: "0.10em",
+            lineHeight: 1.5,
+          }}
+        >
+          CH-{ch}
+        </span>
+        <BadgeCorner pos="tl" />
+        <BadgeCorner pos="tr" />
+        <BadgeCorner pos="bl" />
+        <BadgeCorner pos="br" />
+      </div>
+
+      {/* 타이틀 + 서브 */}
+      <div className="flex-1 min-w-0">
+        <div
+          className="font-bold"
+          style={{
+            fontSize: 18,
+            color: C.text,
+            lineHeight: 1.4,
+            marginBottom: 4,
+            letterSpacing: "-0.01em",
+            wordBreak: "keep-all",
+          }}
+        >
           {title}
         </div>
-        <div className="text-[12px] mt-[2px]" style={{ color: C.goldSoft }}>
+        <div
+          style={{
+            fontSize: 13,
+            color: C.goldSoft,
+            letterSpacing: "0.02em",
+            wordBreak: "keep-all",
+            lineHeight: 1.5,
+          }}
+        >
           {sub}
         </div>
       </div>
-      <span
+
+      {/* 우측 챕터 아이콘 — ch="0"은 seal_yeon 인장, 풀 opacity + saturate */}
+      <div
         aria-hidden
-        className="inline-block w-[42px] h-[42px] bg-no-repeat bg-center bg-contain"
+        className="flex-shrink-0 bg-no-repeat bg-center bg-contain"
         style={{
-          backgroundImage: "url(/doyoon/dy_sub/seal_bunseok_dy_.png)",
-          opacity: 0.35,
+          width: 48,
+          height: 48,
+          backgroundImage: "url(/doyoon/motif/motif_seal_yeon.png)",
+          backgroundColor: "rgba(255,250,235,0.95)",
+          border: "1px solid rgba(139,105,20,0.55)",
+          borderRadius: 6,
+          padding: 4,
+          boxSizing: "border-box",
+          filter:
+            "saturate(1.6) contrast(1.15) drop-shadow(0 1px 2px rgba(80,50,10,0.25))",
         }}
       />
     </div>
+  );
+}
+
+function BadgeCorner({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
+  const offset: Record<"tl" | "tr" | "bl" | "br", { top?: number; bottom?: number; left?: number; right?: number; transform?: string }> = {
+    tl: { top: -4, left: -4 },
+    tr: { top: -4, right: -4, transform: "scaleX(-1)" },
+    bl: { bottom: -4, left: -4, transform: "scaleY(-1)" },
+    br: { bottom: -4, right: -4, transform: "scale(-1,-1)" },
+  };
+  return (
+    <span
+      aria-hidden
+      className="absolute pointer-events-none bg-no-repeat bg-contain"
+      style={{
+        ...offset[pos],
+        width: 14,
+        height: 14,
+        backgroundImage: "url(/doyoon/motif/motif_corner_frame_piece.png)",
+        opacity: 1,
+        filter: "hue-rotate(-12deg) saturate(1.6) brightness(0.85)",
+      }}
+    />
   );
 }
 
@@ -248,14 +337,14 @@ function SajuTableDoyoon({ pillars }: { pillars: SajuPillarsP0 }) {
     { label: "年 연주", g: pillars.yr_g, j: pillars.yr_j, isIlgan: false },
   ];
   return (
-    <div className="grid grid-cols-4 gap-1.5 my-2">
+    <div className="grid grid-cols-4 gap-1.5 my-2.5">
       {cols.map((col, i) => (
-        <div key={i} className="flex flex-col items-center">
+        <div key={i} className="flex flex-col items-center gap-1.5 w-full">
           <div
-            className="text-[12px] font-semibold mb-1"
+            className="text-[13px] font-bold"
             style={{
               color: col.isIlgan ? C.pink : C.goldSoft,
-              letterSpacing: "0.05em",
+              letterSpacing: "0.1em",
             }}
           >
             {col.label}
@@ -271,14 +360,18 @@ function SajuTableDoyoon({ pillars }: { pillars: SajuPillarsP0 }) {
 function SajuCellDoyoon({ char, isIlgan }: { char: string; isIlgan: boolean }) {
   return (
     <div
-      className="flex items-center justify-center w-full text-[22px] font-bold mb-1 rounded-md"
+      className="flex items-center justify-center w-full text-[22px] font-bold rounded-md"
       style={{
-        height: 56,
-        background: isIlgan ? "rgba(212,83,126,0.10)" : "#fff8ec",
+        aspectRatio: "1",
+        background: isIlgan
+          ? "linear-gradient(180deg, #fde9ee 0%, #fcdce4 100%)"
+          : "#fff8ec",
         border: isIlgan
-          ? `0.5px solid ${C.pink}`
+          ? `1px solid ${C.pink}`
           : "0.5px solid rgba(139,105,20,0.22)",
         color: isIlgan ? C.pink : C.text,
+        boxShadow: isIlgan ? "0 0 10px rgba(212,83,126,0.18)" : undefined,
+        fontFamily: "var(--font-serif, serif)",
       }}
     >
       {char}
@@ -338,12 +431,23 @@ function IlganCardDoyoon({
 }: { userName: string; card: PaidChapterP0Doyoon["ilgan_card"] }) {
   return (
     <div
-      className="rounded-lg px-4 py-3.5 my-2 relative"
+      className="rounded-xl my-2.5 relative"
       style={{
-        background: "#fff8ec",
-        border: "0.5px solid rgba(139,105,20,0.22)",
+        background: "linear-gradient(180deg, #fff8f0 0%, #fdf3e7 100%)",
+        border: "0.5px solid rgba(139,105,20,0.30)",
+        padding: 14,
       }}
     >
+      {/* 상단 골드 그라데이션 라인 */}
+      <span
+        aria-hidden
+        className="absolute top-0 left-0 right-0 rounded-t-xl"
+        style={{
+          height: 2,
+          background:
+            `linear-gradient(90deg, transparent, ${C.warmGold}, transparent)`,
+        }}
+      />
       <div
         className="text-[16px] font-bold"
         style={{ color: C.warmGold }}
