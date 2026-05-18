@@ -87,6 +87,37 @@ export interface PaidChapterP0Doyoon {
   ai_intro: string;
 }
 
+// ── P-1 도윤 패널 ─────────────────────────────────────────────
+// 백엔드 PaidChapterP1Doyoon과 1:1.
+
+export interface EmotionPointDoyoon {
+  label: string;
+  pct: number;
+  is_crisis: boolean;
+}
+
+export interface PaidChapterP1Doyoon {
+  user_name: string;
+  ilgan: string;                              // "임수(壬水)"
+  ilju: string;                               // "임술(壬戌)"
+  // 1-1
+  love_type: string;
+  pct_value: number;
+  distribution_pct: number;
+  ai_opening: string;
+  // 1-2
+  trigger_1: string;
+  trigger_2: string;
+  trigger_3: string;
+  trigger_flow_pcts: ReadonlyArray<number>;   // 3 — (30, 62, 88)
+  ai_trigger: string;
+  // 1-3
+  emotion_curve: ReadonlyArray<EmotionPointDoyoon>;  // 4
+  crisis_multiplier: string;                  // "1.8배"
+  ai_emotion: string;
+  bubble_quote: string;
+}
+
 // ── P-1 (一 너라는 사람 1/2) ──────────────────────────────────
 // 1-1 챕터 오프닝 + 1-2 트리거 + 1-3 감정 폭발 패턴.
 // 백엔드 `yeonwoo_p1_*.compose_*` 결과 1:1 매핑.
@@ -345,6 +376,7 @@ export interface PaidChapters {
   p0?: PaidChapterP0;
   p0_doyoon?: PaidChapterP0Doyoon;
   p1?: PaidChapterP1;
+  p1_doyoon?: PaidChapterP1Doyoon;
   p2?: PaidChapterP2;
   p3?: PaidChapterP3;
   p4?: PaidChapterP4;

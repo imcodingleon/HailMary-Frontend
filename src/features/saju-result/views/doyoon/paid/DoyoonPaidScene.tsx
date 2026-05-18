@@ -2,19 +2,20 @@ import type { PaidReport } from "../../../domain/paidReport";
 import PaidShell from "../../shared/PaidShell";
 import { DOYOON_SHELL_CONFIG } from "../../shared/paidShellConfig";
 import DoyoonProloguePage from "./pages/DoyoonProloguePage";
+import DoyoonSelfPart1Page from "./pages/DoyoonSelfPart1Page";
 import DoyoonStubPage from "./pages/DoyoonStubPage";
 
 interface DoyoonPaidSceneProps {
   report: PaidReport;
 }
 
-// 12 페이지 셸. 현재 P-0만 본격 구현, P-1~P-11은 stub (해당 페이즈 진입 시 교체).
+// 12 페이지 셸. P-0/P-1 본격 구현, P-2~P-11은 stub (해당 페이즈 진입 시 교체).
 export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
   return (
     <main data-paid-scene="doyoon">
       <PaidShell config={DOYOON_SHELL_CONFIG}>
         <DoyoonProloguePage data={report.chapters.p0_doyoon} />
-        <DoyoonStubPage chapter="Ch 1 · 1/2" title="당신이라는 사람 (1/2)" />
+        <DoyoonSelfPart1Page data={report.chapters.p1_doyoon} />
         <DoyoonStubPage chapter="Ch 1 · 2/2" title="당신이라는 사람 (2/2)" />
         <DoyoonStubPage chapter="Ch 2 · 1/2" title="지금 연애를 막는 것 (1/2)" />
         <DoyoonStubPage chapter="Ch 2 · 2/2" title="지금 연애를 막는 것 (2/2)" />
