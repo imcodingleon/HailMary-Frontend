@@ -54,12 +54,13 @@ export default function PaidShell({ children, config }: PaidShellProps) {
 
   return (
     <div
-      className="relative mx-auto max-w-[430px] min-h-[100dvh] z-[1]"
+      data-paid-scene={config.name === "한도윤" ? "doyoon" : "yeonwoo"}
+      className="relative w-full min-h-[100dvh] z-[1] mx-auto"
       style={{
+        // 연우 구조 미러 — 430px 컨테이너에 solid pageBg. 양쪽 사이드는 body의 outerBg.
         background: config.pageBg,
         paddingBottom: 100,
-        boxShadow:
-          "0 0 60px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(255,255,255,0.04)",
+        maxWidth: 430,
       }}
     >
       {/* 상단 헤더 */}

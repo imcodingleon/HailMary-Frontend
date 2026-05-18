@@ -56,6 +56,30 @@ body {
   user-select: none;
 }
 
+/* 유료 결과지(paid scene) 진입 시 body 제약 해제 + 캐릭터별 배경 직접 적용.
+   - 기본 body가 max-w-md(448px) + dark bg(#0a0a0a)라서 430px 셸과 사이에 다크 띠가 보임.
+   - paid scene에서는 body를 viewport 전체 폭으로 확장 + 캐릭터 배경으로 덮음.
+   - 도윤: radial-gradient (가운데 cream → 가장자리 wheat amber). 원본 도윤_final.html line 284.
+   - 연우: 다크 그대로 (#0a0a09). */
+body:has([data-paid-scene]) {
+  max-width: none;
+}
+body:has([data-paid-scene="doyoon"]) {
+  /* 도윤_final.html 원본 톤 미러 — 가운데 밝은 영역 넓게 + 가장자리 옅은 wheat.
+     원본 100% stop(#e8d2a8)은 시각상 너무 진해서 70% stop(#f4e2c2)을 가장자리로.
+     중간 stop을 50%까지 끌어와 가운데 밝은 면적 확대. */
+  background: radial-gradient(
+    ellipse at 50% 25%,
+    #fffaf0 0%,
+    #fdf2dc 55%,
+    #f4e2c2 100%
+  );
+  background-attachment: fixed;
+}
+body:has([data-paid-scene="yeonwoo"]) {
+  background: #0a0a09;
+}
+
 /* 유료 결과 페이지(paid scene)와 페이지 컨테이너(data-page-idx)는
    텍스트 선택/복사 허용. 사용자가 결과지의 멘트를 복사·공유할 수 있도록.
    dev 미리보기 라우트(/dev/yeonwoo/...)와 실전 라우트(/saju/paid/...) 모두 적용. */

@@ -32,7 +32,7 @@ export default function PaidTocModal({
     <div
       className="fixed inset-0 z-[200] flex items-end justify-center"
       style={{
-        background: "rgba(0,0,0,0.55)",
+        background: config.modalOverlay,
         backdropFilter: "blur(6px)",
         WebkitBackdropFilter: "blur(6px)",
       }}
@@ -41,8 +41,9 @@ export default function PaidTocModal({
       aria-modal="true"
     >
       <div
-        className="w-full max-w-[430px] bg-[#111110] px-4 pt-[18px] pb-[22px] max-h-[80vh] overflow-y-auto"
+        className="w-full max-w-[430px] px-4 pt-[18px] pb-[22px] max-h-[80vh] overflow-y-auto"
         style={{
+          background: config.modalInnerBg,
           borderTop: `1px solid ${config.goldDim}`,
           borderRadius: "18px 18px 0 0",
           animation: "tocSlideUp .25s cubic-bezier(.22,.94,.26,1)",
@@ -53,15 +54,21 @@ export default function PaidTocModal({
           className="flex items-center justify-between mb-3.5 pb-2.5"
           style={{ borderBottom: `0.5px solid ${config.goldDim}` }}
         >
-          <div className="text-[16px] font-semibold text-[#d8d6d0] tracking-[0.05em]">
+          <div
+            className="text-[16px] font-bold tracking-[0.05em]"
+            style={{ color: config.modalTextColor }}
+          >
             {config.tocHeaderLabel}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="목차 닫기"
-            className="bg-transparent text-[#888780] rounded-full w-[26px] h-[26px] text-[17px] flex items-center justify-center"
-            style={{ border: `0.5px solid ${config.goldDim}` }}
+            className="bg-transparent rounded-full w-[26px] h-[26px] text-[17px] flex items-center justify-center"
+            style={{
+              color: config.modalSubTextColor,
+              border: `0.5px solid ${config.goldDim}`,
+            }}
           >
             ×
           </button>
@@ -79,22 +86,28 @@ export default function PaidTocModal({
                 border: isCurrent
                   ? `0.5px solid ${config.goldDim}`
                   : "0.5px solid transparent",
-                background: isCurrent ? "#1a1a18" : "transparent",
+                background: isCurrent ? config.modalCurrentBg : "transparent",
                 transition: "background .15s",
               }}
             >
               <span
-                className="text-[12px] font-semibold min-w-[36px] pt-px"
+                className="text-[12px] font-bold min-w-[46px] pt-px"
                 style={{ letterSpacing: "0.08em", color: config.gold }}
               >
                 {item.num}
               </span>
               <div className="flex-1">
-                <div className="text-[16px] font-medium text-[#d8d6d0] mb-0.5">
+                <div
+                  className="text-[16px] font-semibold mb-0.5"
+                  style={{ color: config.modalTextColor }}
+                >
                   {item.title}
                 </div>
                 {item.sub && (
-                  <div className="text-[12px] text-[#888780] leading-[1.4]">
+                  <div
+                    className="text-[12px] leading-[1.4]"
+                    style={{ color: config.modalSubTextColor }}
+                  >
                     {item.sub}
                   </div>
                 )}

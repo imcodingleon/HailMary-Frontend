@@ -65,11 +65,69 @@ const C = {
   lack: "#a8a07a",
 };
 
+// 무료 WuxingChartSection과 동일 hue 셋 — 도윤 5 오행 색
+const DOYOON_WUXING_HUES: Record<OhangKey, string> = {
+  mok: "#4FB84F",
+  hwa: "#E94E3F",
+  to: "#E5A938",
+  geum: "#ABABAA",
+  su: "#4180DC",
+};
+// 일주 강조용 — 진한 톤
+const DOYOON_WUXING_HUES_DAY: Record<OhangKey, string> = {
+  mok: "#3A933A",
+  hwa: "#B8392E",
+  to: "#B0822A",
+  geum: "#828180",
+  su: "#2D5BA8",
+};
+
+// 천간 한자 → {한글, 오행}
+const STEM_MAP: Record<string, { hangul: string; el: OhangKey }> = {
+  "甲": { hangul: "갑", el: "mok" },
+  "乙": { hangul: "을", el: "mok" },
+  "丙": { hangul: "병", el: "hwa" },
+  "丁": { hangul: "정", el: "hwa" },
+  "戊": { hangul: "무", el: "to" },
+  "己": { hangul: "기", el: "to" },
+  "庚": { hangul: "경", el: "geum" },
+  "辛": { hangul: "신", el: "geum" },
+  "壬": { hangul: "임", el: "su" },
+  "癸": { hangul: "계", el: "su" },
+};
+
+// 지지 한자 → {한글, 오행}
+const BRANCH_MAP: Record<string, { hangul: string; el: OhangKey }> = {
+  "子": { hangul: "자", el: "su" },
+  "丑": { hangul: "축", el: "to" },
+  "寅": { hangul: "인", el: "mok" },
+  "卯": { hangul: "묘", el: "mok" },
+  "辰": { hangul: "진", el: "to" },
+  "巳": { hangul: "사", el: "hwa" },
+  "午": { hangul: "오", el: "hwa" },
+  "未": { hangul: "미", el: "to" },
+  "申": { hangul: "신", el: "geum" },
+  "酉": { hangul: "유", el: "geum" },
+  "戌": { hangul: "술", el: "to" },
+  "亥": { hangul: "해", el: "su" },
+};
+
+function lookupStem(hanja: string): { hangul: string; el: OhangKey } {
+  return STEM_MAP[hanja] ?? { hangul: "?", el: "su" };
+}
+function lookupBranch(hanja: string): { hangul: string; el: OhangKey } {
+  return BRANCH_MAP[hanja] ?? { hangul: "?", el: "su" };
+}
+
 export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
   const d = data ?? MOCK_P0;
 
+  // 연우 구조 미러: section/data-page-idx + 페이지 전체 채우는 솔리드 bg (라운드 X).
   return (
-    <div className="rounded-md" style={{ background: C.bg, color: C.text }}>
+    <section
+      data-page-idx="0"
+      style={{ background: C.bg, color: C.text }}
+    >
       {/* 페이지 헤더 */}
       <DoyoonPageHead title="시작에 앞서" sub="분석 시작 전 데이터 요약" ch="0" hanja="序" />
 
@@ -92,6 +150,7 @@ export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
           strength={d.ohang_strength}
           excess={d.ohang_excess}
           lack={d.ohang_lack}
+          ilgan={d.ilgan}
         />
         <SBody>
           오행 5개 변수의 강도예요. 평균 대비 +1.7배 이상은 과다, -0.6배 이하는 부족으로
@@ -134,7 +193,7 @@ export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
           quote="이게 분석의 출발점이에요. 차근차근 가볼게요."
         />
       </SectionDy>
-    </div>
+    </section>
   );
 }
 
@@ -271,9 +330,10 @@ function BadgeCorner({ pos }: { pos: "tl" | "tr" | "bl" | "br" }) {
 }
 
 function SectionDy({ children }: { children: React.ReactNode }) {
+  // 연우 구조 미러: px-[14px] py-5 + border-b 톤(도윤 골드 10% 알파).
   return (
     <div
-      className="px-3.5 py-5 relative"
+      className="px-[14px] py-5 relative"
       style={{ borderBottom: `0.5px solid rgba(139,105,20,0.10)` }}
     >
       {children}
@@ -315,113 +375,399 @@ function SBody({ children }: { children: React.ReactNode }) {
 }
 
 function VarTag({ children }: { children: React.ReactNode }) {
+  // 사용자 피드백 2026-05-18: 박스/배경 완전 제거 — 본문 흐름 안에서 보라 bold 텍스트로만.
   return (
-    <span
-      className="inline-block rounded px-[7px] py-[2px] text-[13px] font-medium"
-      style={{
-        background: "#EEEDFE",
-        color: "#3C3489",
-        border: "0.5px solid #AFA9EC",
-      }}
-    >
+    <span className="font-bold" style={{ color: "#3C3489" }}>
       {children}
     </span>
   );
 }
 
-function SajuTableDoyoon({ pillars }: { pillars: SajuPillarsP0 }) {
+// 무료 SajuChartSection 디자인 미러 — 한자 큰 글씨(오행 색) + 한글 작게 + 일간(천간만) 강조.
+// 사용자 결정 2026-05-18: 0-1 사주 셀을 free 디자인으로 교체.
+// 추가 결정: 하단 캡션 제거 + 일주 column 중 위 셀(천간/일간)만 강조 — 유료 P-0 톤 정합.
+function SajuTableDoyoon({
+  pillars,
+}: { pillars: SajuPillarsP0 }) {
   const cols = [
-    { label: "時 시주", g: pillars.si_g, j: pillars.si_j, isIlgan: false },
-    { label: "日 일주", g: pillars.il_g, j: pillars.il_j, isIlgan: true },
-    { label: "月 월주", g: pillars.wl_g, j: pillars.wl_j, isIlgan: false },
-    { label: "年 연주", g: pillars.yr_g, j: pillars.yr_j, isIlgan: false },
+    { label: "시주", g: pillars.si_g, j: pillars.si_j, isDayCol: false },
+    { label: "일주", g: pillars.il_g, j: pillars.il_j, isDayCol: true },
+    { label: "월주", g: pillars.wl_g, j: pillars.wl_j, isDayCol: false },
+    { label: "년주", g: pillars.yr_g, j: pillars.yr_j, isDayCol: false },
   ];
-  return (
-    <div className="grid grid-cols-4 gap-1.5 my-2.5">
-      {cols.map((col, i) => (
-        <div key={i} className="flex flex-col items-center gap-1.5 w-full">
-          <div
-            className="text-[13px] font-bold"
-            style={{
-              color: col.isIlgan ? C.pink : C.goldSoft,
-              letterSpacing: "0.1em",
-            }}
-          >
-            {col.label}
-          </div>
-          <SajuCellDoyoon char={col.g} isIlgan={col.isIlgan} />
-          <SajuCellDoyoon char={col.j} isIlgan={false} />
-        </div>
-      ))}
-    </div>
-  );
-}
 
-function SajuCellDoyoon({ char, isIlgan }: { char: string; isIlgan: boolean }) {
   return (
     <div
-      className="flex items-center justify-center w-full text-[22px] font-bold rounded-md"
+      className="my-3 overflow-hidden"
       style={{
-        aspectRatio: "1",
-        background: isIlgan
-          ? "linear-gradient(180deg, #fde9ee 0%, #fcdce4 100%)"
-          : "#fff8ec",
-        border: isIlgan
-          ? `1px solid ${C.pink}`
-          : "0.5px solid rgba(139,105,20,0.22)",
-        color: isIlgan ? C.pink : C.text,
-        boxShadow: isIlgan ? "0 0 10px rgba(212,83,126,0.18)" : undefined,
-        fontFamily: "var(--font-serif, serif)",
+        background: "#FDF5EA",
+        borderRadius: 28,
+        border: "1px solid #E0CFB6",
       }}
     >
-      {char}
+      <div style={{ padding: "20px 16px 22px" }}>
+        <div className="grid grid-cols-4 gap-2">
+          {cols.map((col) => (
+            <PillarColumn key={col.label} col={col} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
 
-function OhangListDoyoon({
-  strength, excess, lack,
-}: { strength: OhangStrength; excess: OhangKey; lack: OhangKey }) {
-  const valueFor = (k: OhangKey): number => strength[k];
-  const tagFor = (k: OhangKey, v: number): { label: string; tone: "excess" | "lack" | "normal" } => {
-    if (k === excess) return { label: "과다", tone: "excess" };
-    if (k === lack) return { label: "부족", tone: "lack" };
-    if (v >= 60) return { label: "보통", tone: "normal" };
-    return { label: "낮음", tone: "normal" };
-  };
+function PillarColumn({
+  col,
+}: { col: { label: string; g: string; j: string; isDayCol: boolean } }) {
+  const stem = lookupStem(col.g);
+  const branch = lookupBranch(col.j);
+  // 일간(천간)만 강조 색·하이라이트. 지지는 일반 색.
+  const stemHue = col.isDayCol
+    ? DOYOON_WUXING_HUES_DAY[stem.el]
+    : DOYOON_WUXING_HUES[stem.el];
+  const branchHue = DOYOON_WUXING_HUES[branch.el];
+
   return (
-    <div className="flex flex-col gap-1.5 my-2">
-      {OHANG_ORDER.map((k) => {
-        const v = valueFor(k);
-        const t = tagFor(k, v);
-        const fillColor = t.tone === "excess" ? C.excess : t.tone === "lack" ? C.lack : C.warmGold;
-        const tagColor = t.tone === "excess" ? C.excess : t.tone === "lack" ? "#888" : C.goldSoft;
-        return (
-          <div key={k} className="flex items-center gap-2.5">
+    <div className="flex flex-col items-center gap-1.5">
+      <p
+        className="text-center"
+        style={{
+          fontSize: 13,
+          fontWeight: 500,
+          color: "#A89272",
+        }}
+      >
+        {col.label}
+      </p>
+      <PillarBox hanja={col.g} hangul={stem.hangul} hue={stemHue} highlight={col.isDayCol} />
+      <PillarBox hanja={col.j} hangul={branch.hangul} hue={branchHue} highlight={false} />
+    </div>
+  );
+}
+
+function PillarBox({
+  hanja, hangul, hue, highlight,
+}: { hanja: string; hangul: string; hue: string; highlight: boolean }) {
+  return (
+    <div
+      className="w-full flex flex-col items-center justify-center rounded-xl gap-1.5"
+      style={{
+        background: highlight ? "#FCEFD9" : "#FDF5EA",
+        border: `${highlight ? "1.5px" : "1px"} solid ${highlight ? "#C9A96E" : "#E0CFB6"}`,
+        aspectRatio: "9 / 11",
+      }}
+    >
+      <span
+        style={{
+          fontFamily: '"NotoSerifTC", "ChosunNm", serif',
+          fontWeight: 700,
+          fontSize: "clamp(24px, 6.5vw, 36px)",
+          lineHeight: 1,
+          color: hue,
+        }}
+      >
+        {hanja}
+      </span>
+      <span
+        style={{
+          fontFamily: '"JejuMyeongjo", "Pretendard", serif',
+          fontWeight: 400,
+          fontSize: 11,
+          color: "#9C8A6D",
+        }}
+      >
+        {hangul}
+      </span>
+    </div>
+  );
+}
+
+// 0-2 오행 분포 — 무료 WuxingChartSection 디자인 차용 (세로 막대 + 좌측 일간 강조).
+// 사용자 결정 2026-05-18: 가로 막대 → 세로 막대 차트로 교체.
+function OhangListDoyoon({
+  strength, excess, lack, ilgan,
+}: { strength: OhangStrength; excess: OhangKey; lack: OhangKey; ilgan: string }) {
+  const Y_TICKS = [100, 75, 50, 25, 0];
+  const BAR_AREA_H = 154;
+  const X_LABEL_H = 22;
+  const BAR_WIDTH = 28;
+  const Y_LABEL_W = 32;
+
+  const ratios = OHANG_ORDER.map((k) => strength[k]);
+  const maxRatio = Math.max(...ratios);
+  const denom = maxRatio > 0 ? maxRatio : 1;
+
+  // ilgan은 "임수(壬水)" 또는 "임수" 형태. 한자 표기 분해.
+  const ilganMatch = ilgan.match(/^([가-힣]+)\(?([一-鿿]+)?/);
+  const ilganKor = ilganMatch?.[1] ?? ilgan;
+  const ilganHanja = ilganMatch?.[2] ?? "";
+  // 일간의 오행 한 글자 추출 (ilgan 마지막 글자 = 오행)
+  const elementKor = ilganKor.slice(-1); // 갑목 → 목
+  const elementKey = (Object.entries(OHANG_LABELS).find(
+    ([, v]) => v.hangul === elementKor,
+  )?.[0] ?? "su") as OhangKey;
+  const dayColor = DOYOON_WUXING_HUES[elementKey];
+
+  return (
+    <div
+      className="my-3 overflow-hidden"
+      style={{
+        background: "#FDF5EA",
+        borderRadius: 22,
+        border: "1px solid #E0CFB6",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          padding: "20px 20px 16px",
+          gap: 8,
+          alignItems: "stretch",
+        }}
+      >
+        {/* 좌측 일간 강조 — 무료와 동일 */}
+        <div
+          style={{
+            flexShrink: 0,
+            width: "38%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              marginTop: 54,
+              display: "flex",
+              alignItems: "baseline",
+              gap: 6,
+              justifyContent: "center",
+            }}
+          >
             <span
-              className="text-[14px] font-semibold min-w-[50px]"
-              style={{ color: C.text }}
+              style={{
+                fontFamily: '"NotoSerifTC", "ChosunNm", serif',
+                fontWeight: 700,
+                fontSize: "clamp(33px, 9.5vw, 43px)",
+                lineHeight: 1.1,
+                color: dayColor,
+                letterSpacing: "0.02em",
+                whiteSpace: "nowrap",
+              }}
             >
-              {OHANG_LABELS[k].hanja} ({OHANG_LABELS[k].hangul})
+              {ilganHanja || ilganKor}
             </span>
-            <div
-              className="flex-1 h-[10px] rounded-[5px] overflow-hidden"
-              style={{ background: "rgba(139,105,20,0.10)" }}
-            >
-              <div
-                className="h-full rounded-[5px]"
-                style={{ background: fillColor, width: `${v}%` }}
-              />
-            </div>
-            <span
-              className="text-[13px] min-w-[42px] text-right font-semibold"
-              style={{ color: tagColor }}
-            >
-              {t.label}
-            </span>
+            {ilganHanja && (
+              <span
+                style={{
+                  fontSize: 16,
+                  color: dayColor,
+                  opacity: 0.6,
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                ({ilganKor})
+              </span>
+            )}
           </div>
-        );
-      })}
+          <div
+            style={{
+              marginTop: 8,
+              fontSize: 18,
+              fontWeight: 500,
+              color: "#9C8A6D",
+              letterSpacing: "0.12em",
+              textAlign: "center",
+            }}
+          >
+            일 간
+          </div>
+        </div>
+
+        {/* 우측 세로 막대 차트 */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: "#AD7D38",
+              letterSpacing: "0.05em",
+              marginBottom: 8,
+            }}
+          >
+            오행 강약
+          </div>
+          <div
+            style={{
+              position: "relative",
+              height: `${BAR_AREA_H + X_LABEL_H}px`,
+            }}
+          >
+            {/* Y 눈금선 */}
+            <div
+              style={{
+                position: "absolute",
+                left: Y_LABEL_W,
+                right: 0,
+                top: 0,
+                height: BAR_AREA_H,
+              }}
+            >
+              {Y_TICKS.map((tick) => {
+                const topPx = BAR_AREA_H - (tick / 100) * BAR_AREA_H;
+                return (
+                  <div
+                    key={tick}
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      top: topPx,
+                      height: 1,
+                      background: "#E5D8C3",
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Y 라벨 */}
+            <div
+              style={{
+                position: "absolute",
+                left: 0,
+                width: Y_LABEL_W,
+                top: 0,
+                height: BAR_AREA_H,
+              }}
+            >
+              {Y_TICKS.map((tick) => {
+                const topPx = BAR_AREA_H - (tick / 100) * BAR_AREA_H;
+                return (
+                  <div
+                    key={tick}
+                    style={{
+                      position: "absolute",
+                      right: 4,
+                      top: topPx,
+                      transform: "translateY(-50%)",
+                      fontSize: 9,
+                      fontWeight: 400,
+                      color: "#B0997A",
+                      lineHeight: 1,
+                      whiteSpace: "nowrap",
+                      textAlign: "right",
+                    }}
+                  >
+                    {tick}%
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* 막대 + X 라벨 */}
+            <div
+              style={{
+                position: "absolute",
+                left: Y_LABEL_W,
+                right: 0,
+                top: 0,
+                height: `${BAR_AREA_H + X_LABEL_H}px`,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "flex-end",
+                justifyContent: "space-around",
+                paddingBottom: 0,
+              }}
+            >
+              {OHANG_ORDER.map((k, i) => {
+                const ratio = ratios[i];
+                const color = DOYOON_WUXING_HUES[k];
+                const rawH = Math.round((ratio / denom) * BAR_AREA_H);
+                const barH = ratio > 0 ? Math.max(rawH, 4) : 0;
+                return (
+                  <div
+                    key={k}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      height: `${BAR_AREA_H + X_LABEL_H}px`,
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: BAR_WIDTH,
+                        height: barH > 0 ? barH : 2,
+                        background: color,
+                        borderRadius: "4px 4px 0 0",
+                        flexShrink: 0,
+                        opacity: barH > 0 ? 1 : 0.15,
+                      }}
+                    />
+                    <div
+                      style={{
+                        height: X_LABEL_H,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 16,
+                        fontWeight: 500,
+                        color,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {OHANG_LABELS[k].hangul}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 캡션 — 과다/부족 한자 + 라벨 */}
+      <div
+        style={{
+          textAlign: "center",
+          paddingBottom: 20,
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 4,
+          lineHeight: 1.7,
+        }}
+      >
+        <span style={{ fontSize: 16, fontWeight: 400, color: "#7A6B55" }}>
+          <span
+            style={{
+              fontFamily: '"NotoSerifTC", "ChosunNm", serif',
+              fontWeight: 600,
+              fontSize: 18,
+              color: DOYOON_WUXING_HUES[excess],
+            }}
+          >
+            {OHANG_LABELS[excess].hanja}
+          </span>{" "}
+          과다
+        </span>
+        <span style={{ fontSize: 16, color: "#7A6B55" }}> · </span>
+        <span style={{ fontSize: 16, fontWeight: 400, color: "#7A6B55" }}>
+          <span
+            style={{
+              fontFamily: '"NotoSerifTC", "ChosunNm", serif',
+              fontWeight: 600,
+              fontSize: 18,
+              color: DOYOON_WUXING_HUES[lack],
+            }}
+          >
+            {OHANG_LABELS[lack].hanja}
+          </span>{" "}
+          부족
+        </span>
+      </div>
     </div>
   );
 }
@@ -608,9 +954,9 @@ function AiBlockDoyoon({ body }: { body: string }) {
       <Corner pos="bl" />
       <Corner pos="br" />
       <div
-        className="absolute right-[10px] top-[10px] w-[96px] h-[72px] bg-no-repeat bg-right-top bg-contain"
+        className="absolute right-[10px] top-[10px] w-[96px] h-[96px] bg-no-repeat bg-right-top bg-contain"
         style={{
-          backgroundImage: "url(/doyoon/icon/icon_line_chart.png)",
+          backgroundImage: "url(/doyoon/dy_sub/seal_bunseok_dy_.png)",
           opacity: 0.13,
           pointerEvents: "none",
         }}
