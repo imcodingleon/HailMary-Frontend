@@ -31,7 +31,7 @@ jobs:
           NEXT_PUBLIC_API_URL: ${{ secrets.STAGING_API_URL }}
           NEXT_PUBLIC_QA_GATE_ENABLED: ${{ secrets.NEXT_PUBLIC_QA_GATE_ENABLED }}
           NEXT_PUBLIC_TOSS_CLIENT_KEY: ${{ secrets.NEXT_PUBLIC_TOSS_CLIENT_KEY }}
-          NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ secrets.NEXT_PUBLIC_AMPLITUDE_API_KEY }}
+          NEXT_PUBLIC_AMPLITUDE_API_KEY: ${{ secrets.STAGING_AMPLITUDE_API_KEY }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
