@@ -330,9 +330,23 @@ export interface PaidChapters {
   // p11은 templates 작성 후 추가.
 }
 
+// Amplitude user property 가공값 (백엔드 PaidUserPropertiesResponse 와 동일 형상).
+export interface PaidReportUser {
+  user_id: string;
+  user_nickname: string | null;
+  user_name_initial: string;
+  user_email_domain: string;
+  user_email_hash: string;
+  birth_year: number;
+  age_group: string;
+  birth_branch: string | null;
+  gender: string;
+}
+
 export interface PaidReport {
   order_id: string;
   status: PaidReportStatus;
   chapters: PaidChapters;
   expires_at: string;
+  user?: PaidReportUser | null;
 }

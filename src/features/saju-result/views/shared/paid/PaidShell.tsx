@@ -9,21 +9,58 @@ import {
   type ReactNode,
 } from "react";
 import { usePaidShellNav } from "../../../hooks/usePaidShellNav";
-import TocModal from "./components/TocModal";
+import { usePaidPageTracking } from "../../../hooks/usePaidPageTracking";
+import {
+  usePaidUserPropertiesSync,
+  type PaidUserProperties,
+} from "../../../hooks/usePaidUserPropertiesSync";
+import { PAID_PAGES, type PaidPageMeta } from "../../../domain/paidPageMeta";
+import TocModal from "./TocModal";
+import type { PaidShellBranding, TocItem } from "./types";
 
 interface PaidShellProps {
   children: ReactNode;
+  orderId: string;
+  character: string;                       // "yeonwoo" | "doyoon"
+  branding: PaidShellBranding;             // 헤더·TOC 캐릭터 정보
+  tocItems: ReadonlyArray<TocItem>;        // 캐릭터별 TOC 항목
+  pages?: ReadonlyArray<PaidPageMeta>;     // page 슬러그가 달라질 가능성 대비. 미지정 시 PAID_PAGES.
+  user?: PaidUserProperties | null;
 }
 
-// 12 페이지 슬라이드 컨테이너. top-header / pages-track / bottom-nav / TocModal 일체.
+// 12 페이지 슬라이드 컨테이너 + 페이지 트래킹 + p0 user identify.
+// character-agnostic — 캐릭터별 차이는 branding/tocItems/pages props 로만 들어옴.
 // 디자인 원본: 연우_final.html line 1457~1473 (header), 2796~2891 (nav+toc), 2898~2960 (slide JS).
 
-export default function PaidShell({ children }: PaidShellProps) {
+export default function PaidShell({
+  children,
+  orderId,
+  character,
+  branding,
+  tocItems,
+  pages,
+  user,
+}: PaidShellProps) {
   const childArray = Children.toArray(children);
   const total = childArray.length;
   const nav = usePaidShellNav(total);
 
   const [tocOpen, setTocOpen] = useState(false);
+
+  // 페이지 진입/이탈 트래킹. 인덱스 순서가 pages 와 일치한다고 가정 (caller 책임).
+  // hooks 규칙상 조건부 호출 불가 → pages.length 만큼 호출하고 active 로 분기.
+  const pageMetas = pages ?? PAID_PAGES;
+  for (let i = 0; i < pageMetas.length; i++) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    usePaidPageTracking({
+      meta: pageMetas[i],
+      orderId,
+      character,
+      active: nav.currentIdx === i,
+    });
+  }
+  // p0 진입 시 1회 identify
+  usePaidUserPropertiesSync({ user, active: nav.currentIdx === 0 });
 
   // 페이지 높이 동적 조정 — 현재 페이지 콘텐츠 높이로 wrap 높이 맞춤.
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -67,7 +104,7 @@ export default function PaidShell({ children }: PaidShellProps) {
             aria-hidden
             className="inline-block w-[42px] h-[42px] bg-no-repeat bg-center bg-contain"
             style={{
-              backgroundImage: "url(/yeonwoo/motif/motif_seal_myeong.svg)",
+              backgroundImage: `url(${branding.motifUrl})`,
               filter: "drop-shadow(0 0 10px rgba(200,168,112,0.5))",
             }}
           />
@@ -76,13 +113,13 @@ export default function PaidShell({ children }: PaidShellProps) {
               className="text-[15px] font-semibold text-[#E8C9A0]"
               style={{ letterSpacing: "0.05em" }}
             >
-              강연우
+              {branding.headerName}
             </div>
             <div
               className="text-[12px] text-[#888780]"
               style={{ letterSpacing: "0.1em" }}
             >
-              직관 풀이
+              {branding.headerSubtitle}
             </div>
           </div>
         </div>
@@ -195,6 +232,8 @@ export default function PaidShell({ children }: PaidShellProps) {
           nav.jumpTo(idx);
           setTocOpen(false);
         }}
+        title={branding.tocTitle}
+        items={tocItems}
       />
     </div>
   );

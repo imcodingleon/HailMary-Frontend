@@ -64,7 +64,7 @@ function PaidPageInner({ orderId }: { orderId: string }) {
     return <PaidResultLoading />;
   }
 
-  return <YeonwooPaidScene report={state.report} />;
+  return <YeonwooPaidScene report={state.report} user={state.report.user} />;
 }
 
 export default function PaidResultClient() {

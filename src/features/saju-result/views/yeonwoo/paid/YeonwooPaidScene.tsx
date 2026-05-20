@@ -1,5 +1,7 @@
 import type { PaidReport } from "../../../domain/paidReport";
-import PaidShell from "./PaidShell";
+import type { PaidUserProperties } from "../../../hooks/usePaidUserPropertiesSync";
+import PaidShell from "../../shared/paid/PaidShell";
+import { YEONWOO_BRANDING, YEONWOO_TOC_ITEMS } from "./yeonwooPaidConfig";
 import ProloguePage from "./pages/ProloguePage";
 import SelfPart1Page from "./pages/SelfPart1Page";
 import SelfPart2Page from "./pages/SelfPart2Page";
@@ -15,12 +17,19 @@ import EpiloguePage from "./pages/EpiloguePage";
 
 interface YeonwooPaidSceneProps {
   report: PaidReport;
+  user?: PaidUserProperties | null;
 }
 
-export default function YeonwooPaidScene({ report }: YeonwooPaidSceneProps) {
+export default function YeonwooPaidScene({ report, user }: YeonwooPaidSceneProps) {
   return (
     <main data-paid-scene="yeonwoo" className="bg-[#151513]">
-      <PaidShell>
+      <PaidShell
+        orderId={report.order_id}
+        character="yeonwoo"
+        branding={YEONWOO_BRANDING}
+        tocItems={YEONWOO_TOC_ITEMS}
+        user={user}
+      >
         <ProloguePage data={report.chapters.p0} />
         <SelfPart1Page data={report.chapters.p1} />
         <SelfPart2Page data={report.chapters.p2} />

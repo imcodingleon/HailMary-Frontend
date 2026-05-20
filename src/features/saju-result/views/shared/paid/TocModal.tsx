@@ -1,37 +1,29 @@
 "use client";
 
-interface TocItem {
-  jumpTo: number;
-  num: string;
-  title: string;
-  sub?: string;
-}
-
-const TOC_ITEMS: ReadonlyArray<TocItem> = [
-  { jumpTo: 0, num: "시작에 앞서", title: "네 사주, 한눈에 보기", sub: "너의 명줄을 펼치기 전에" },
-  { jumpTo: 1, num: "Ch 1", title: "너라는 사람", sub: "연애 유형 · 감정 구조 · 매력" },
-  { jumpTo: 3, num: "Ch 2", title: "지금 연애를 막는 것", sub: "방해 구조 · 반복 패턴 · 악연 컷팅" },
-  { jumpTo: 5, num: "Ch 3", title: "나의 매력 분석", sub: "매력 지수 · 끌리는 방식 · 감각적 매력" },
-  { jumpTo: 6, num: "Ch 4", title: "운명의 짝 · 그 사람", sub: "인연 프로파일 · 속마음 · 결말 예측" },
-  { jumpTo: 8, num: "Ch 5", title: "인연이 오는 시간", sub: "12개월 연애운 전체" },
-  { jumpTo: 9, num: "Ch 6", title: "연애운 상승 실천 가이드", sub: "오행 보완 · 매력살 활용" },
-  { jumpTo: 10, num: "Ch 7", title: "연우의 편지", sub: "너의 한 줄에 답하다" },
-  { jumpTo: 11, num: "에필로그", title: "연우의 마지막 말" },
-];
+import type { TocItem } from "./types";
 
 interface TocModalProps {
   open: boolean;
   currentIdx: number;
   onClose: () => void;
   onJump: (idx: number) => void;
+  title: string;          // 헤더 우측 캐릭터 식별 텍스트 (예: "강연우 · 직관 풀이")
+  items: ReadonlyArray<TocItem>;
 }
 
-export default function TocModal({ open, currentIdx, onClose, onJump }: TocModalProps) {
+export default function TocModal({
+  open,
+  currentIdx,
+  onClose,
+  onJump,
+  title,
+  items,
+}: TocModalProps) {
   if (!open) return null;
 
   // 현재 페이지가 속한 챕터 항목 찾기 (시작 인덱스 ≤ currentIdx 중 가장 큰 값)
   let belongTo = 0;
-  for (const item of TOC_ITEMS) {
+  for (const item of items) {
     if (item.jumpTo <= currentIdx) belongTo = item.jumpTo;
   }
 
@@ -61,7 +53,7 @@ export default function TocModal({ open, currentIdx, onClose, onJump }: TocModal
           style={{ borderBottom: "0.5px solid rgba(200,168,112,0.3)" }}
         >
           <div className="text-[16px] font-semibold text-[#d8d6d0] tracking-[0.05em]">
-            목차 · 강연우 · 직관 풀이
+            목차 · {title}
           </div>
           <button
             type="button"
@@ -74,7 +66,7 @@ export default function TocModal({ open, currentIdx, onClose, onJump }: TocModal
           </button>
         </div>
 
-        {TOC_ITEMS.map((item) => {
+        {items.map((item) => {
           const isCurrent = item.jumpTo === belongTo;
           return (
             <button
