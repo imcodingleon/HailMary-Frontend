@@ -118,6 +118,34 @@ export interface PaidChapterP1Doyoon {
   bubble_quote: string;
 }
 
+// ── P-2 도윤 패널 ─────────────────────────────────────────────
+// 백엔드 PaidChapterP2Doyoon과 1:1. 2026-05-21 원본 도윤_final.html 구조 정합 재설계.
+
+export interface HurtTypeDoyoon {
+  keyword: string;       // "무관심 신호 인지"
+  risk_pct: string;      // "78%"
+  desc: string;
+}
+
+export interface RecoveryMeterDoyoon {
+  label: string;         // "직후" / "1개월" / "3개월" / "6개월"
+  pct: number;           // 0~100 회복률
+}
+
+export interface PaidChapterP2Doyoon {
+  user_name: string;
+  // 1-4 약점 트리거 (card-warn × 2)
+  hurt_type_1: HurtTypeDoyoon;
+  hurt_type_2: HurtTypeDoyoon;
+  ai_hurt: string;
+  // 1-5 회복 곡선 (meter × 4 + SD + bubble)
+  meters: ReadonlyArray<RecoveryMeterDoyoon>;   // 4
+  recovery_lag_multiplier: string;              // "1.4배"
+  ai_recovery: string;
+  sd_avatar_asset: string;                      // "dy_03" 등
+  recovery_bubble: string;
+}
+
 // ── P-1 (一 너라는 사람 1/2) ──────────────────────────────────
 // 1-1 챕터 오프닝 + 1-2 트리거 + 1-3 감정 폭발 패턴.
 // 백엔드 `yeonwoo_p1_*.compose_*` 결과 1:1 매핑.
@@ -378,6 +406,7 @@ export interface PaidChapters {
   p1?: PaidChapterP1;
   p1_doyoon?: PaidChapterP1Doyoon;
   p2?: PaidChapterP2;
+  p2_doyoon?: PaidChapterP2Doyoon;
   p3?: PaidChapterP3;
   p4?: PaidChapterP4;
   p5?: PaidChapterP5;
