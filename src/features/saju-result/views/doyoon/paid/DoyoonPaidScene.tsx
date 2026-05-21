@@ -13,7 +13,12 @@ interface DoyoonPaidSceneProps {
 export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
   return (
     <main data-paid-scene="doyoon">
-      <PaidShell config={DOYOON_SHELL_CONFIG}>
+      <PaidShell
+        config={DOYOON_SHELL_CONFIG}
+        orderId={report.order_id}
+        character="doyoon"
+        user={report.user}
+      >
         <DoyoonProloguePage data={report.chapters.p0_doyoon} />
         <DoyoonSelfPart1Page data={report.chapters.p1_doyoon} />
         <DoyoonStubPage chapter="Ch 1 · 2/2" title="당신이라는 사람 (2/2)" />

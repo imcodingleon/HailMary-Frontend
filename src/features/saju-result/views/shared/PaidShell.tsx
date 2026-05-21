@@ -9,23 +9,54 @@ import {
   type ReactNode,
 } from "react";
 import { usePaidShellNav } from "../../hooks/usePaidShellNav";
+import { usePaidPageTracking } from "../../hooks/usePaidPageTracking";
+import { usePaidUserPropertiesSync } from "../../hooks/usePaidUserPropertiesSync";
+import { PAID_PAGES, type PaidPageMeta } from "../../domain/paidPageMeta";
+import type { PaidReportUser } from "../../domain/paidReport";
 import PaidTocModal from "./PaidTocModal";
 import type { PaidShellConfig } from "./paidShellConfig";
 
 interface PaidShellProps {
   children: ReactNode;
   config: PaidShellConfig;
+  orderId: string;
+  character: string;                         // "yeonwoo" | "doyoon"
+  user?: PaidReportUser | null;
+  pages?: ReadonlyArray<PaidPageMeta>;       // 슬러그 override (기본 PAID_PAGES)
 }
 
 // 유료 12 페이지 슬라이드 셸 — 양 캐릭터 공용. 헤더 텍스트·골드 색·인장·TOC 라벨은 config로.
+// 페이지 진입/이탈 트래킹 + p0 진입 시 1회 identify 함께 처리.
 // 디자인 원본: 연우_final.html line 1457~1473 (header), 2796~2891 (nav+toc), 2898~2960 (slide JS).
 
-export default function PaidShell({ children, config }: PaidShellProps) {
+export default function PaidShell({
+  children,
+  config,
+  orderId,
+  character,
+  user,
+  pages,
+}: PaidShellProps) {
   const childArray = Children.toArray(children);
   const total = childArray.length;
   const nav = usePaidShellNav(total);
 
   const [tocOpen, setTocOpen] = useState(false);
+
+  // 페이지 진입/이탈 트래킹. hooks 규칙상 조건부 호출 불가 → pageMetas 길이만큼
+  // 호출하고 active 로 분기. pageMetas 는 런타임에 길이가 바뀌면 안 됨 (정적).
+  const pageMetas = pages ?? PAID_PAGES;
+  for (let i = 0; i < pageMetas.length; i++) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    usePaidPageTracking({
+      meta: pageMetas[i],
+      orderId,
+      character,
+      active: nav.currentIdx === i,
+    });
+  }
+  // p0 진입 시 1회 identify
+  usePaidUserPropertiesSync({ user, active: nav.currentIdx === 0 });
 
   // 페이지 높이 동적 조정 — 현재 페이지 콘텐츠 높이로 wrap 높이 맞춤.
   const pageRefs = useRef<Array<HTMLDivElement | null>>([]);

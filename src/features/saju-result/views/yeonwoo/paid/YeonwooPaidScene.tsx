@@ -21,7 +21,12 @@ interface YeonwooPaidSceneProps {
 export default function YeonwooPaidScene({ report }: YeonwooPaidSceneProps) {
   return (
     <main data-paid-scene="yeonwoo" className="bg-[#151513]">
-      <PaidShell config={YEONWOO_SHELL_CONFIG}>
+      <PaidShell
+        config={YEONWOO_SHELL_CONFIG}
+        orderId={report.order_id}
+        character="yeonwoo"
+        user={report.user}
+      >
         <ProloguePage data={report.chapters.p0} />
         <SelfPart1Page data={report.chapters.p1} />
         <SelfPart2Page data={report.chapters.p2} />

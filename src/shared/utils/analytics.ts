@@ -70,6 +70,24 @@ export function getSessionId(): string {
   return sid != null ? String(sid) : "";
 }
 
+export function setUserId(userId: string | null): void {
+  initAmplitude();
+  amplitude.setUserId(userId ?? undefined);
+}
+
+export function setUserProperties(properties: Record<string, unknown>): void {
+  initAmplitude();
+  const identify = new amplitude.Identify();
+  for (const [key, value] of Object.entries(properties)) {
+    if (value === undefined || value === null) continue;
+    identify.set(key, value as string | number | boolean);
+  }
+  amplitude.identify(identify);
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Analytics] identify", properties);
+  }
+}
+
 export function trackEvent(
   eventName: string,
   properties?: Record<string, unknown>

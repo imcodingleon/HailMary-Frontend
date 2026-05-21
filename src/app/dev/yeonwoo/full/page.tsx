@@ -29,7 +29,11 @@ const chapters = fixture as unknown as PaidChapters;
 export default function DevFullPaidPage() {
   return (
     <main className="bg-[#151513]">
-      <PaidShell config={YEONWOO_SHELL_CONFIG}>
+      <PaidShell
+        config={YEONWOO_SHELL_CONFIG}
+        orderId="dev-fixture"
+        character="yeonwoo"
+      >
         <ProloguePage data={chapters.p0} />
         <SelfPart1Page data={chapters.p1} />
         <SelfPart2Page data={chapters.p2} />

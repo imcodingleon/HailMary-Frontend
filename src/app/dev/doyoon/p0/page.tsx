@@ -8,7 +8,11 @@ import DoyoonStubPage from "@/features/saju-result/views/doyoon/paid/pages/Doyoo
 
 export default function DevDoyoonProloguePage() {
   return (
-    <PaidShell config={DOYOON_SHELL_CONFIG}>
+    <PaidShell
+      config={DOYOON_SHELL_CONFIG}
+      orderId="dev-fixture"
+      character="doyoon"
+    >
       <DoyoonProloguePage />
       <DoyoonStubPage chapter="Ch 1 · 1/2" title="당신이라는 사람 (1/2)" />
       <DoyoonStubPage chapter="Ch 1 · 2/2" title="당신이라는 사람 (2/2)" />

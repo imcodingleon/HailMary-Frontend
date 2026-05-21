@@ -6,7 +6,11 @@ import DoyoonStubPage from "@/features/saju-result/views/doyoon/paid/pages/Doyoo
 
 export default function DevDoyoonP1Page() {
   return (
-    <PaidShell config={DOYOON_SHELL_CONFIG}>
+    <PaidShell
+      config={DOYOON_SHELL_CONFIG}
+      orderId="dev-fixture"
+      character="doyoon"
+    >
       <DoyoonSelfPart1Page />
       <DoyoonStubPage chapter="Ch 1 · 2/2" title="당신이라는 사람 (2/2)" />
       <DoyoonStubPage chapter="Ch 2 · 1/2" title="지금 연애를 막는 것 (1/2)" />
