@@ -146,6 +146,44 @@ export interface PaidChapterP2Doyoon {
   recovery_bubble: string;
 }
 
+// ── P-3 도윤 패널 ─────────────────────────────────────────────
+// 백엔드 PaidChapterP3Doyoon과 1:1.
+
+export interface BlockadeOhangP3Doyoon {
+  ohang_excess: string;            // "수"
+  ohang_excess_hanja: string;      // "水"
+  blockade_pct: string;            // "상위 15%"
+  blockade_multiplier: string;     // "1.7배"
+}
+
+export interface PatternEntryDoyoon {
+  keyword: string;
+  pct: string;
+  desc: string;
+}
+
+export interface ControlStrategyDoyoon {
+  keyword: string;
+  desc: string;
+  effect_pct: string;
+}
+
+export interface PaidChapterP3Doyoon {
+  user_name: string;
+  // 2-1 구조적 원인
+  blockade: BlockadeOhangP3Doyoon;
+  ai_blockade: string;
+  blockade_bubble: string;
+  // 2-2 반복 패턴
+  patterns: ReadonlyArray<PatternEntryDoyoon>;   // 3
+  ai_pattern: string;
+  pattern_bubble: string;
+  // 2-2-1 변수 통제
+  strategies: ReadonlyArray<ControlStrategyDoyoon>;   // 2
+  strategy_bubble: string;
+  sd_avatar_asset: string;
+}
+
 // ── P-1 (一 너라는 사람 1/2) ──────────────────────────────────
 // 1-1 챕터 오프닝 + 1-2 트리거 + 1-3 감정 폭발 패턴.
 // 백엔드 `yeonwoo_p1_*.compose_*` 결과 1:1 매핑.
@@ -408,6 +446,7 @@ export interface PaidChapters {
   p2?: PaidChapterP2;
   p2_doyoon?: PaidChapterP2Doyoon;
   p3?: PaidChapterP3;
+  p3_doyoon?: PaidChapterP3Doyoon;
   p4?: PaidChapterP4;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
