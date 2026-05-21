@@ -37,7 +37,22 @@ export function DoyoonAiBlock({ body }: DoyoonAiBlockProps) {
         className="relative text-[14px] leading-[1.95] whitespace-pre-line"
         style={{ color: DOYOON_TOKENS.textSoft, zIndex: 1 }}
       >
-        {body}
+        {body.length > 0 && (
+          <span
+            style={{
+              float: "left",
+              fontSize: "32px",
+              lineHeight: 0.95,
+              fontWeight: 700,
+              color: DOYOON_TOKENS.warmGold,
+              padding: "2px 6px 0 0",
+              fontFamily: '"NotoSerifTC", "ChosunNm", serif',
+            }}
+          >
+            {body.charAt(0)}
+          </span>
+        )}
+        {body.substring(1)}
       </p>
     </div>
   );

@@ -2,6 +2,7 @@ import type { PaidReport } from "../../../domain/paidReport";
 import PaidShell from "../../shared/PaidShell";
 import { DOYOON_SHELL_CONFIG } from "../../shared/paidShellConfig";
 import DoyoonBlockingPart1Page from "./pages/DoyoonBlockingPart1Page";
+import DoyoonBlockingPart2Page from "./pages/DoyoonBlockingPart2Page";
 import DoyoonProloguePage from "./pages/DoyoonProloguePage";
 import DoyoonSelfPart1Page from "./pages/DoyoonSelfPart1Page";
 import DoyoonSelfPart2Page from "./pages/DoyoonSelfPart2Page";
@@ -25,7 +26,7 @@ export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
         <DoyoonSelfPart1Page data={report.chapters.p1_doyoon} />
         <DoyoonSelfPart2Page data={report.chapters.p2_doyoon} />
         <DoyoonBlockingPart1Page data={report.chapters.p3_doyoon} />
-        <DoyoonStubPage chapter="Ch 2 · 2/2" title="지금 연애를 막는 것 (2/2)" />
+        <DoyoonBlockingPart2Page data={report.chapters.p4_doyoon} />
         <DoyoonStubPage chapter="Ch 3" title="매력 분석" />
         <DoyoonStubPage chapter="Ch 4 · 1/2" title="운명의 짝 (1/2)" />
         <DoyoonStubPage chapter="Ch 4 · 2/2" title="운명의 짝 · 결말 (2/2)" />

@@ -184,6 +184,40 @@ export interface PaidChapterP3Doyoon {
   sd_avatar_asset: string;
 }
 
+// ── P-4 도윤 패널 ─────────────────────────────────────────────
+// 백엔드 PaidChapterP4Doyoon과 1:1.
+
+export interface AkyonInfoRowDoyoon {
+  key: string;
+  val: string;
+}
+
+export interface IllusionSignDoyoon {
+  keyword: string;
+  pct: string;
+  desc: string;
+}
+
+export interface PaidChapterP4Doyoon {
+  user_name: string;
+  // 2-3 비호환
+  akyon_slot_id: string;
+  keyword_tags: ReadonlyArray<string>;            // 5
+  info_rows: ReadonlyArray<AkyonInfoRowDoyoon>;   // 10
+  ai_akyon: string;
+  sd_avatar_asset: string;                         // "dy_08"
+  akyon_bubble: string;
+  // 2-4 착각 인연
+  illusion_signs: ReadonlyArray<IllusionSignDoyoon>;   // 3
+  ai_illusion: string;
+  illusion_bubble: string;
+  // 결정 분기점 (모든 일간 공통)
+  decisive_gradient_label: string;
+  real_growth_pct: string;
+  fake_drop_pct: string;
+  accuracy_multiplier: string;
+}
+
 // ── P-1 (一 너라는 사람 1/2) ──────────────────────────────────
 // 1-1 챕터 오프닝 + 1-2 트리거 + 1-3 감정 폭발 패턴.
 // 백엔드 `yeonwoo_p1_*.compose_*` 결과 1:1 매핑.
@@ -448,6 +482,7 @@ export interface PaidChapters {
   p3?: PaidChapterP3;
   p3_doyoon?: PaidChapterP3Doyoon;
   p4?: PaidChapterP4;
+  p4_doyoon?: PaidChapterP4Doyoon;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
