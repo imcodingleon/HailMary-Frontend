@@ -168,6 +168,39 @@ export interface ControlStrategyDoyoon {
   effect_pct: string;
 }
 
+// ── P-5 도윤 패널 ─────────────────────────────────────────────
+
+export interface RadarAxisDoyoon {
+  name: string;
+  value: number;
+}
+
+export interface ConversionStepDoyoon {
+  label: string;
+  pct: number;
+}
+
+export interface AppealMeterDoyoon {
+  name: string;
+  value: number;
+}
+
+export interface PaidChapterP5Doyoon {
+  user_name: string;
+  charm_pct: string;
+  radar: ReadonlyArray<RadarAxisDoyoon>;
+  strength_axis_1: string;
+  strength_axis_2: string;
+  strength_multiplier: string;
+  ai_charm_index: string;
+  sd_avatar_asset: string;
+  charm_bubble: string;
+  conversion_steps: ReadonlyArray<ConversionStepDoyoon>;
+  ai_conversion: string;
+  appeal_meters: ReadonlyArray<AppealMeterDoyoon>;
+  ai_appeal: string;
+}
+
 export interface PaidChapterP3Doyoon {
   user_name: string;
   // 2-1 구조적 원인
@@ -483,6 +516,7 @@ export interface PaidChapters {
   p3_doyoon?: PaidChapterP3Doyoon;
   p4?: PaidChapterP4;
   p4_doyoon?: PaidChapterP4Doyoon;
+  p5_doyoon?: PaidChapterP5Doyoon;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
