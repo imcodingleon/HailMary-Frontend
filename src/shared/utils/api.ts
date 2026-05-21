@@ -1,25 +1,10 @@
 // throw 기반 인터페이스(ApiError + Promise<T>)를 유지하는 얇은 어댑터.
 // 실제 fetch + timeout + Authorization 헤더는 모두 @/lib/api로 위임.
 // 메모리 feedback_frontend_dual_api_wrapper: 공통 헤더 추가 시 lib/api 한 곳만 수정.
-import { api as libApi, type ApiErrorCode } from "@/lib/api";
+import { api as libApi, qaToken as libQaToken, type ApiErrorCode } from "@/lib/api";
 
-// QA 토큰 localStorage 키 (Phase 1.5 — APP_ENV=test 환경에서만 사용)
-const QA_TOKEN_KEY = "qa_access_token";
-
-export const qaToken = {
-  get: (): string | null => {
-    if (typeof window === "undefined") return null;
-    return window.localStorage.getItem(QA_TOKEN_KEY);
-  },
-  set: (token: string): void => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(QA_TOKEN_KEY, token);
-  },
-  clear: (): void => {
-    if (typeof window === "undefined") return;
-    window.localStorage.removeItem(QA_TOKEN_KEY);
-  },
-};
+// qaToken은 lib/api의 단일 진실원을 re-export (만료 가드 포함).
+export const qaToken = libQaToken;
 
 export class ApiError extends Error {
   status: number;

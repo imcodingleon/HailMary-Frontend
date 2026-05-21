@@ -18,6 +18,47 @@ export type ApiResult<T> =
 // 30s였을 때 SDK retry 도중 fetch가 abort되어 retry 강화 의미가 없었음.
 const TIMEOUT_MS = 90000;
 
+// ── QA 토큰 스토어 (단일 진실원) ───────────────────────────────────
+// QaAuthGuard / buildHeaders 양쪽에서 사용. shared/utils/api.ts가 re-export.
+// 만료 가드: set 시 expiresAt(+3일) 같이 저장, get 시 만료된 토큰 자동 클리어.
+// Legacy 토큰(expires 키 없음)은 호환 위해 통과 — 다음 로그인부터 만료 가드 활성.
+
+const QA_TOKEN_KEY = "qa_access_token";
+const QA_TOKEN_EXPIRES_KEY = "qa_access_token_expires_at";
+const QA_TOKEN_TTL_MS = 3 * 24 * 60 * 60 * 1000; // 3일
+
+export const qaToken = {
+  get: (): string | null => {
+    if (typeof window === "undefined") return null;
+    const token = window.localStorage.getItem(QA_TOKEN_KEY);
+    if (!token) return null;
+    const expiresAtStr = window.localStorage.getItem(QA_TOKEN_EXPIRES_KEY);
+    if (expiresAtStr) {
+      const expiresAt = Number(expiresAtStr);
+      if (Number.isFinite(expiresAt) && Date.now() > expiresAt) {
+        window.localStorage.removeItem(QA_TOKEN_KEY);
+        window.localStorage.removeItem(QA_TOKEN_EXPIRES_KEY);
+        return null;
+      }
+    }
+    // expiresAt 없는 legacy 토큰 (이전 버전 발급분) → 통과. 재로그인 유도.
+    return token;
+  },
+  set: (token: string): void => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(QA_TOKEN_KEY, token);
+    window.localStorage.setItem(
+      QA_TOKEN_EXPIRES_KEY,
+      String(Date.now() + QA_TOKEN_TTL_MS),
+    );
+  },
+  clear: (): void => {
+    if (typeof window === "undefined") return;
+    window.localStorage.removeItem(QA_TOKEN_KEY);
+    window.localStorage.removeItem(QA_TOKEN_EXPIRES_KEY);
+  },
+};
+
 function buildHeaders(extra?: HeadersInit): HeadersInit {
   const headers: Record<string, string> = {};
   if (extra) {
@@ -30,10 +71,8 @@ function buildHeaders(extra?: HeadersInit): HeadersInit {
     headers["Authorization"] = `Bearer ${token}`;
   }
   // QA 게이트 토큰 (APP_ENV=test 환경에서만 의미. 토큰 없으면 헤더 미첨부 → 운영 영향 0)
-  if (typeof window !== "undefined") {
-    const qa = window.localStorage.getItem("qa_access_token");
-    if (qa) headers["X-QA-Token"] = qa;
-  }
+  const qa = qaToken.get();
+  if (qa) headers["X-QA-Token"] = qa;
   return headers;
 }
 
