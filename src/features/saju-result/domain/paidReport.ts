@@ -168,6 +168,37 @@ export interface ControlStrategyDoyoon {
   effect_pct: string;
 }
 
+// ── P-6 도윤 패널 ─────────────────────────────────────────────
+
+export interface InyonInfoRowDoyoon {
+  key: string;
+  val: string;
+}
+
+export interface BehaviorCardDoyoon {
+  label: string;
+  keyword: string;
+  desc: string;
+}
+
+export interface PaidChapterP6Doyoon {
+  user_name: string;
+  match_slot_id: string;
+  pct_value: string;
+  keyword_tags: ReadonlyArray<string>;
+  info_rows: ReadonlyArray<InyonInfoRowDoyoon>;
+  compatibility_pct: string;
+  ai_profile: string;
+  ai_meeting: string;
+  profile_bubble: string;
+  interest_score: number;
+  expression_score: number;
+  durability_score: number;
+  behavior_cards: ReadonlyArray<BehaviorCardDoyoon>;
+  ai_pattern: string;
+  sd_avatar_asset: string;
+}
+
 // ── P-5 도윤 패널 ─────────────────────────────────────────────
 
 export interface RadarAxisDoyoon {
@@ -517,6 +548,7 @@ export interface PaidChapters {
   p4?: PaidChapterP4;
   p4_doyoon?: PaidChapterP4Doyoon;
   p5_doyoon?: PaidChapterP5Doyoon;
+  p6_doyoon?: PaidChapterP6Doyoon;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
