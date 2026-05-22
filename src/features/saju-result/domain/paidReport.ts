@@ -268,6 +268,36 @@ export interface PaidChapterP8Doyoon {
   bubble: string;
 }
 
+// ── P-9 도윤 패널 ─────────────────────────────────────────────
+
+export interface OhangMethodCardDoyoon {
+  label: string;
+  keyword: string;
+  desc: string;
+}
+
+export interface RiskCardDoyoon {
+  label: string;
+  tone: "warn" | "amber";
+  keyword: string;
+  desc: string;
+}
+
+export interface PaidChapterP9Doyoon {
+  user_name: string;
+  ohang_lack: string;
+  ohang_methods: ReadonlyArray<OhangMethodCardDoyoon>;
+  ohang_boost_pct: string;
+  ai_ohang: string;
+  risk_cards: ReadonlyArray<RiskCardDoyoon>;
+  ai_risk: string;
+  current_score: number;
+  target_score: number;
+  ai_optimize: string;
+  sd_avatar_asset: string;
+  optimize_bubble: string;
+}
+
 export interface PaidChapterP3Doyoon {
   user_name: string;
   // 2-1 구조적 원인
@@ -587,6 +617,7 @@ export interface PaidChapters {
   p6_doyoon?: PaidChapterP6Doyoon;
   p7_doyoon?: PaidChapterP7Doyoon;
   p8_doyoon?: PaidChapterP8Doyoon;
+  p9_doyoon?: PaidChapterP9Doyoon;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
