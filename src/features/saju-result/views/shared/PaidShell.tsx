@@ -92,6 +92,11 @@ export default function PaidShell({
         background: config.pageBg,
         paddingBottom: 100,
         maxWidth: 430,
+        // 도윤 — 원본 도윤_final.html --font-sans 토큰 매핑
+        ...(character === "doyoon" && {
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif',
+        }),
       }}
     >
       {/* 상단 헤더 */}

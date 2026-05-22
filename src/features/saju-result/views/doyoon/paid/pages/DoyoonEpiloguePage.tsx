@@ -1,0 +1,144 @@
+import { DoyoonPageHead } from "../components/DoyoonPageHead";
+import {
+  DoyoonSection,
+} from "../components/DoyoonSection";
+import { DOYOON_TOKENS } from "../components/doyoonTokens";
+
+// P-11 EPILOG — 도윤의 마지막 말 (고정, AI 없음).
+// 원본 도윤_final.html data-page-idx=11.
+
+interface DoyoonEpiloguePageProps {
+  userName?: string;
+}
+
+export default function DoyoonEpiloguePage({ userName }: DoyoonEpiloguePageProps) {
+  const name = userName ?? "홍길동";
+
+  return (
+    <section
+      data-page-idx="11"
+      style={{ background: DOYOON_TOKENS.bg, color: DOYOON_TOKENS.text }}
+    >
+      <DoyoonPageHead
+        ch="ep"
+        hanja="終"
+        title="에필로그"
+        sub="도윤의 마지막 말"
+      />
+
+      <DoyoonSection>
+        <SdClosingDy09 />
+        <ClosingBubble userName={name} />
+        <EpilogSeal />
+      </DoyoonSection>
+    </section>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════
+// 인라인 컴포넌트
+// ════════════════════════════════════════════════════════════════════
+
+function SdClosingDy09() {
+  return (
+    <div className="relative mx-auto my-3" style={{ width: 260, height: 260 }}>
+      <ThreadCorner pos="tl" />
+      <ThreadCorner pos="br" />
+      <div
+        aria-label="한도윤 — 창가 노을 (클로징)"
+        style={{
+          width: "100%",
+          height: "100%",
+          backgroundImage: "url(/doyoon/sd_dy/dy_09.png)",
+          backgroundSize: "contain",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          filter: "drop-shadow(0 0 18px rgba(232,193,84,0.30))",
+        }}
+      />
+    </div>
+  );
+}
+
+function ThreadCorner({ pos }: { pos: "tl" | "br" }) {
+  const map: Record<"tl" | "br", React.CSSProperties> = {
+    tl: { top: -8, left: -8, transform: "rotate(-90deg)" },
+    br: { bottom: -8, right: -8, transform: "rotate(90deg)" },
+  };
+  return (
+    <span
+      aria-hidden
+      className="absolute pointer-events-none"
+      style={{
+        ...map[pos],
+        width: 110,
+        height: 110,
+        backgroundImage: "url(/doyoon/thread/thread_corner.png)",
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        opacity: 0.55,
+        zIndex: 3,
+      }}
+    />
+  );
+}
+
+function ClosingBubble({ userName }: { userName: string }) {
+  return (
+    <div
+      className="my-3 rounded-[12px]"
+      style={{
+        background: "rgba(212,83,126,0.06)",
+        border: "0.5px solid rgba(212,83,126,0.22)",
+        padding: 14,
+      }}
+    >
+      <div
+        className="text-[12px] font-semibold mb-2"
+        style={{ color: DOYOON_TOKENS.pink, letterSpacing: "0.03em" }}
+      >
+        한도윤
+      </div>
+      <div
+        className="text-[12px]"
+        style={{ color: DOYOON_TOKENS.text, lineHeight: 1.9, wordBreak: "keep-all" }}
+      >
+        &ldquo;다 읽으셨나요? 데이터가 할 수 있는 말은 여기까지입니다.<br />
+        이제부터는 <span style={{ color: DOYOON_TOKENS.warmGold, fontWeight: 600 }}>{userName}</span>님의 선택이라는 변수가 결과값을 결정하겠죠.<br />
+        데이터상으로 {userName}님의 조합은 오차 범위를 감안해도 기대값이 굉장히 높게 측정됩니다.<br />
+        스스로를 의심하지 마세요. {userName}님은 이미 가장 완벽한 답안지를 갖고 계시니까요.&rdquo;
+      </div>
+    </div>
+  );
+}
+
+function EpilogSeal() {
+  return (
+    <div className="flex flex-col items-center my-8">
+      <div
+        aria-hidden
+        style={{
+          width: 90,
+          height: 90,
+          backgroundImage: "url(/doyoon/motif/motif_seal_yeon.png)",
+          backgroundSize: "contain",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.85,
+          marginBottom: 12,
+        }}
+      />
+      <div
+        className="text-[13px] text-center"
+        style={{
+          color: DOYOON_TOKENS.warmGold,
+          letterSpacing: "0.15em",
+          fontWeight: 600,
+        }}
+      >
+        緣 · 당신의 인연은 여기에
+      </div>
+    </div>
+  );
+}

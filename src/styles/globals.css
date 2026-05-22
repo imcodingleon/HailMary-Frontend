@@ -1,10 +1,14 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap");
 @import "tailwindcss";
 
 @theme {
   --font-pretendard: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-nanum-myeongjo: "Nanum Myeongjo", serif;
+  /* 도윤 — 원본 도윤_final.html 폰트 토큰 매핑 */
+  --font-doyoon-serif: "Noto Serif KR", "Nanum Myeongjo", serif;
+  --font-doyoon-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
   /* base (다크 무드) */
   --color-base-900: #0a0518;
   --color-base-800: #0f0a22;

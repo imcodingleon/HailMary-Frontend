@@ -1,6 +1,13 @@
 // 도윤 유료 페이지 공통 색 토큰. 페이지/컴포넌트 어디서나 이 상수 import.
 // 도윤_final.html v1.7 CSS 변수 매핑 (line 195~210).
 
+// 도윤 폰트 토큰 — 원본 도윤_final.html 매핑
+// --font-sans: 시스템 폰트 (대부분 텍스트)
+// --font-serif: Noto Serif KR (한자/일주/오행 이름)
+export const DOYOON_FONT_SANS =
+  '-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif';
+export const DOYOON_FONT_SERIF = '"Noto Serif KR", "Nanum Myeongjo", serif';
+
 export const DOYOON_TOKENS = {
   bg: "#fffdf7",
   warmGold: "#8B6914",

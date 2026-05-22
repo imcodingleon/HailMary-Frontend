@@ -6,22 +6,28 @@ import DoyoonBlockingPart2Page from "./pages/DoyoonBlockingPart2Page";
 import DoyoonCharmPage from "./pages/DoyoonCharmPage";
 import DoyoonDestinedPart1Page from "./pages/DoyoonDestinedPart1Page";
 import DoyoonDestinedPart2Page from "./pages/DoyoonDestinedPart2Page";
+import DoyoonEpiloguePage from "./pages/DoyoonEpiloguePage";
 import DoyoonLetterPage from "./pages/DoyoonLetterPage";
 import DoyoonOpportunityPage from "./pages/DoyoonOpportunityPage";
 import DoyoonOptimizationPage from "./pages/DoyoonOptimizationPage";
 import DoyoonProloguePage from "./pages/DoyoonProloguePage";
 import DoyoonSelfPart1Page from "./pages/DoyoonSelfPart1Page";
 import DoyoonSelfPart2Page from "./pages/DoyoonSelfPart2Page";
-import DoyoonStubPage from "./pages/DoyoonStubPage";
 
 interface DoyoonPaidSceneProps {
   report: PaidReport;
 }
 
-// 12 페이지 셸. P-0/P-1 본격 구현, P-2~P-11은 stub (해당 페이즈 진입 시 교체).
+// 12 페이지 셸. P-0~P-11 모두 본격 구현 완료.
 export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
   return (
-    <main data-paid-scene="doyoon">
+    <main
+      data-paid-scene="doyoon"
+      style={{
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif',
+      }}
+    >
       <PaidShell
         config={DOYOON_SHELL_CONFIG}
         orderId={report.order_id}
@@ -42,7 +48,9 @@ export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
           data={report.chapters.p10}
           userName={report.user?.user_nickname ?? report.user?.user_name_initial}
         />
-        <DoyoonStubPage chapter="에필로그" title="도윤의 마지막 말" />
+        <DoyoonEpiloguePage
+          userName={report.user?.user_nickname ?? report.user?.user_name_initial}
+        />
       </PaidShell>
     </main>
   );
