@@ -249,6 +249,25 @@ export interface PaidChapterP7Doyoon {
   ending_bubble: string;
 }
 
+// ── P-8 도윤 패널 ─────────────────────────────────────────────
+
+export interface MonthRowDoyoon {
+  label: string;
+  hearts: number;       // 1~5
+  pct: number;
+  state: string;
+  desc: string;
+  is_peak: boolean;
+}
+
+export interface PaidChapterP8Doyoon {
+  user_name: string;
+  months: ReadonlyArray<MonthRowDoyoon>;
+  ai_intro: string;
+  sd_avatar_asset: string;
+  bubble: string;
+}
+
 export interface PaidChapterP3Doyoon {
   user_name: string;
   // 2-1 구조적 원인
@@ -567,6 +586,7 @@ export interface PaidChapters {
   p5_doyoon?: PaidChapterP5Doyoon;
   p6_doyoon?: PaidChapterP6Doyoon;
   p7_doyoon?: PaidChapterP7Doyoon;
+  p8_doyoon?: PaidChapterP8Doyoon;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
