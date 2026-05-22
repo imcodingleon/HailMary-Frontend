@@ -232,6 +232,23 @@ export interface PaidChapterP5Doyoon {
   ai_appeal: string;
 }
 
+// ── P-7 도윤 패널 ─────────────────────────────────────────────
+
+export interface ScenarioCardDoyoon {
+  prob_label: string;
+  prob_tone: "low" | "high" | "best";
+  title: string;
+  desc: string;
+}
+
+export interface PaidChapterP7Doyoon {
+  user_name: string;
+  scenarios: ReadonlyArray<ScenarioCardDoyoon>;
+  ai_ending: string;
+  sd_avatar_asset: string;
+  ending_bubble: string;
+}
+
 export interface PaidChapterP3Doyoon {
   user_name: string;
   // 2-1 구조적 원인
@@ -549,6 +566,7 @@ export interface PaidChapters {
   p4_doyoon?: PaidChapterP4Doyoon;
   p5_doyoon?: PaidChapterP5Doyoon;
   p6_doyoon?: PaidChapterP6Doyoon;
+  p7_doyoon?: PaidChapterP7Doyoon;
   p5?: PaidChapterP5;
   p6?: PaidChapterP6;
   p7?: PaidChapterP7;
