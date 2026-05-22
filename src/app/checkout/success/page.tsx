@@ -156,7 +156,7 @@ function SuccessBody() {
         try { sessionStorage.removeItem("checkoutPending"); } catch {}
         if (!redirectSentRef.current) {
           redirectSentRef.current = true;
-          trackEvent("paid_result_redirect", { order_id: d.orderId, character: d.character });
+          trackEvent("paid_result_redirect", { order_id: d.orderId, character_id: d.character });
           router.replace(`/saju/paid/${encodeURIComponent(d.orderId)}/loading`);
         }
       })

@@ -310,11 +310,10 @@
 - **목적:** **결제 후 백엔드 단계 실패율의 단일 진실원.** `checkout_success_view → payment_confirm_failed` 비율 = 사용자 입장에서 "돈은 빠져나갔는데 결과지를 못 받은" 사고 발생률. 0%가 정상. 올라가면 백엔드/토스 시크릿 키/스키마 회귀 시그널(예: 2026-05-08 `userId` 필수 필드 추가 회귀).
 - **분석 활용:** `error_message`에 FastAPI 검증 오류(`session_token: Field required`), 502 PaymentGatewayError 메시지 등이 그대로 들어가 원인 분포 즉석 도출 가능.
 
-#### 36) `paid_result_redirect` *(2026-05-11 정식 등재)*
-- **핵심 속성:** `order_id`, `character`
+#### 36) `paid_result_redirect` *(2026-05-11 정식 등재 · 2026-05-21 `character` → `character_id` 정규화)*
+- **핵심 속성:** `order_id`, `character_id`
 - **발생 시점:** `/checkout/success`에서 백엔드 confirm 응답이 성공(`201 Created`)으로 떨어진 직후, `/saju/paid/[order_id]/loading`으로 라우팅하기 직전 1회 발화. `redirectSentRef`로 중복 방지.
 - **목적:** **F/E 관점의 진짜 결제 성공 단일 진실원.** `checkout_success_view`와 달리 백엔드 검증까지 통과한 상태만 카운트되므로 유료 결과지 도달 KPI의 분자로 사용.
-- ⚠️ `character_id`가 아니라 `character` 키로 전송됨(success 페이지 응답 객체 필드명 그대로). 다른 이벤트와 segment 결합 시 주의.
 
 ---
 
