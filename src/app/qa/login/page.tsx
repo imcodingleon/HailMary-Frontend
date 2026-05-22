@@ -39,9 +39,10 @@ function QaLoginBody() {
         return;
       }
       qaToken.set(res.access_token);
-      // QA 진입 디폴트는 /qa/test (스토리/캐릭터 선택 스킵하고 설문 폼 바로).
-      // ?next= 쿼리로 명시 지정 시 그쪽 우선.
-      const next = searchParams.get("next") || "/qa/test";
+      // QA 진입 디폴트는 /select (캐릭터 선택 → 각 캐릭터 정식 flow:
+      // 설문 → 무료 결과 → 결제 → 유료 결과). 연우/도윤 모두 QA 검증.
+      // ?next= 쿼리로 명시 지정 시 그쪽 우선 (예: /qa/test 빠른 테스트).
+      const next = searchParams.get("next") || "/select";
       router.replace(next);
     } catch (err) {
       if (err instanceof ApiError) {
