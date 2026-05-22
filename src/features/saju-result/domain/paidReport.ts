@@ -596,6 +596,9 @@ export interface PaidChapterP10 {
   emphasis: string;             // 박스 3 강조구 (일간 10셀)
   tail: string;                 // 박스 3 꼬리 (고정)
   uses_ai: boolean;             // AI 호출 여부 (감사 로그용)
+  // 도윤 패널 chip 표시용 (연우는 null)
+  step1_labels?: string[] | null;
+  step2_labels?: string[] | null;
 }
 
 // ── chapters wrapper ──────────────────────────────────────────

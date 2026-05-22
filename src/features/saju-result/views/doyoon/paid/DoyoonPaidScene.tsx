@@ -6,6 +6,7 @@ import DoyoonBlockingPart2Page from "./pages/DoyoonBlockingPart2Page";
 import DoyoonCharmPage from "./pages/DoyoonCharmPage";
 import DoyoonDestinedPart1Page from "./pages/DoyoonDestinedPart1Page";
 import DoyoonDestinedPart2Page from "./pages/DoyoonDestinedPart2Page";
+import DoyoonLetterPage from "./pages/DoyoonLetterPage";
 import DoyoonOpportunityPage from "./pages/DoyoonOpportunityPage";
 import DoyoonOptimizationPage from "./pages/DoyoonOptimizationPage";
 import DoyoonProloguePage from "./pages/DoyoonProloguePage";
@@ -37,7 +38,10 @@ export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
         <DoyoonDestinedPart2Page data={report.chapters.p7_doyoon} />
         <DoyoonOpportunityPage data={report.chapters.p8_doyoon} />
         <DoyoonOptimizationPage data={report.chapters.p9_doyoon} />
-        <DoyoonStubPage chapter="Ch 7" title="도윤의 편지" />
+        <DoyoonLetterPage
+          data={report.chapters.p10}
+          userName={report.user?.user_nickname ?? report.user?.user_name_initial}
+        />
         <DoyoonStubPage chapter="에필로그" title="도윤의 마지막 말" />
       </PaidShell>
     </main>
