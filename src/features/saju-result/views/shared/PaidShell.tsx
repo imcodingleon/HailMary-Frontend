@@ -97,6 +97,17 @@ export default function PaidShell({
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif',
         }),
+        // 연우 — 원본 연우_final.html 폰트 매핑
+        // .root: -apple-system + Noto Sans KR (sans, UI/제목)
+        // .ai-txt-yw 등 본문: Noto Serif KR (명조)
+        // CSS 변수 override — yeonwoo wrapper 안 모든 자식의 var(--font-pretendard) /
+        // var(--font-nanum-myeongjo) 자동 재정의. 다른 영역 영향 X.
+        ...(character === "yeonwoo" && {
+          "--font-pretendard":
+            '-apple-system, BlinkMacSystemFont, "Noto Sans KR", "Pretendard Variable", "Pretendard", sans-serif',
+          "--font-nanum-myeongjo":
+            '"Noto Serif KR", "Nanum Myeongjo", serif',
+        } as React.CSSProperties),
       }}
     >
       {/* 상단 헤더 */}
