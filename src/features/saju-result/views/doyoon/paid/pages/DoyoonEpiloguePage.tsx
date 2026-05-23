@@ -1,3 +1,4 @@
+import type { PaidChapterP11Doyoon } from "../../../../domain/paidReport";
 import { DoyoonPageHead } from "../components/DoyoonPageHead";
 import {
   DoyoonSection,
@@ -6,13 +7,23 @@ import { DOYOON_TOKENS } from "../components/doyoonTokens";
 
 // P-11 EPILOG — 도윤의 마지막 말 (고정, AI 없음).
 // 원본 도윤_final.html data-page-idx=11.
+// data 우선 사용 (백엔드에서 user_name 치환된 텍스트), 없으면 userName fallback.
 
 interface DoyoonEpiloguePageProps {
+  data?: PaidChapterP11Doyoon;
   userName?: string;
 }
 
-export default function DoyoonEpiloguePage({ userName }: DoyoonEpiloguePageProps) {
+const MOCK_CLOSING = (name: string) =>
+  `다 읽으셨나요? 데이터가 할 수 있는 말은 여기까지입니다.\n` +
+  `이제부터는 ${name}님의 선택이라는 변수가 결과값을 결정하겠죠.\n` +
+  `데이터상으로 ${name}님의 조합은 오차 범위를 감안해도 기대값이 굉장히 높게 측정됩니다.\n` +
+  `스스로를 의심하지 마세요. ${name}님은 이미 가장 완벽한 답안지를 갖고 계시니까요.`;
+
+export default function DoyoonEpiloguePage({ data, userName }: DoyoonEpiloguePageProps) {
   const name = userName ?? "홍길동";
+  const closing = data?.closing_bubble ?? MOCK_CLOSING(name);
+  const seal = data?.seal_text ?? "緣 · 당신의 인연은 여기에";
 
   return (
     <section
@@ -28,8 +39,8 @@ export default function DoyoonEpiloguePage({ userName }: DoyoonEpiloguePageProps
 
       <DoyoonSection>
         <SdClosingDy09 />
-        <ClosingBubble userName={name} />
-        <EpilogSeal />
+        <ClosingBubble body={closing} />
+        <EpilogSeal text={seal} />
       </DoyoonSection>
     </section>
   );
@@ -84,7 +95,7 @@ function ThreadCorner({ pos }: { pos: "tl" | "br" }) {
   );
 }
 
-function ClosingBubble({ userName }: { userName: string }) {
+function ClosingBubble({ body }: { body: string }) {
   return (
     <div
       className="my-3 rounded-[12px]"
@@ -101,19 +112,16 @@ function ClosingBubble({ userName }: { userName: string }) {
         한도윤
       </div>
       <div
-        className="text-[12px]"
+        className="text-[12px] whitespace-pre-line"
         style={{ color: DOYOON_TOKENS.text, lineHeight: 1.9, wordBreak: "keep-all" }}
       >
-        &ldquo;다 읽으셨나요? 데이터가 할 수 있는 말은 여기까지입니다.<br />
-        이제부터는 <span style={{ color: DOYOON_TOKENS.warmGold, fontWeight: 600 }}>{userName}</span>님의 선택이라는 변수가 결과값을 결정하겠죠.<br />
-        데이터상으로 {userName}님의 조합은 오차 범위를 감안해도 기대값이 굉장히 높게 측정됩니다.<br />
-        스스로를 의심하지 마세요. {userName}님은 이미 가장 완벽한 답안지를 갖고 계시니까요.&rdquo;
+        &ldquo;{body}&rdquo;
       </div>
     </div>
   );
 }
 
-function EpilogSeal() {
+function EpilogSeal({ text }: { text: string }) {
   return (
     <div className="flex flex-col items-center my-8">
       <div
@@ -137,7 +145,7 @@ function EpilogSeal() {
           fontWeight: 600,
         }}
       >
-        緣 · 당신의 인연은 여기에
+        {text}
       </div>
     </div>
   );

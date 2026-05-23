@@ -49,6 +49,7 @@ export default function DoyoonPaidScene({ report }: DoyoonPaidSceneProps) {
           userName={report.user?.user_nickname ?? report.user?.user_name_initial}
         />
         <DoyoonEpiloguePage
+          data={report.chapters.p11_doyoon}
           userName={report.user?.user_nickname ?? report.user?.user_name_initial}
         />
       </PaidShell>

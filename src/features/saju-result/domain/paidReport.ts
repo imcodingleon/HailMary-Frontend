@@ -601,6 +601,15 @@ export interface PaidChapterP10 {
   step2_labels?: string[] | null;
 }
 
+// ── P-11 도윤 패널 (에필로그) ──────────────────────────────────
+// 클로징 bubble은 백엔드에서 user_name 치환 완료된 텍스트 받음.
+// PaidReportUser의 마스킹된 user_name_initial fallback 회피.
+
+export interface PaidChapterP11Doyoon {
+  closing_bubble: string;
+  seal_text: string;
+}
+
 // ── chapters wrapper ──────────────────────────────────────────
 // P-11은 백엔드 templates 작성 후 확장. 현재는 응답에 없으므로
 // 프론트는 MOCK fallback (`*Page.tsx`의 MOCK_PN)으로 렌더한다.
@@ -627,6 +636,7 @@ export interface PaidChapters {
   p8?: PaidChapterP8;
   p9?: PaidChapterP9;
   p10?: PaidChapterP10;
+  p11_doyoon?: PaidChapterP11Doyoon;
   // p11은 templates 작성 후 추가.
 }
 
