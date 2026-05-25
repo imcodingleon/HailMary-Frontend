@@ -158,7 +158,7 @@ export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
       <DoyoonSection>
         <DoyoonSLabel>0-4 알아두면 좋은 사주 용어</DoyoonSLabel>
         <DoyoonSTitle>앞으로 자주 나올 용어들.</DoyoonSTitle>
-        <GlossaryDoyoon />
+        <GlossaryDoyoon userName={d.user_name} />
       </DoyoonSection>
 
       {/* 0-5 분석 진입 요약 */}
@@ -530,7 +530,7 @@ const GLOSSARY: ReadonlyArray<{
   desc: string;
   subs?: ReadonlyArray<{ name: string; desc: string }>;
 }> = [
-  { term: "일간 (日干)", desc: "사주 8글자 중 가운데 글자. 너 자신을 나타내는 핵심 기준점." },
+  { term: "일간 (日干)", desc: "사주 8글자 중 가운데 글자. {USER}님을 나타내는 핵심 기준점." },
   { term: "일주 (日柱)", desc: "일간과 그 아래 지지 한 쌍. 본바탕을 가장 진하게 보여주는 기둥." },
   { term: "오행 (五行)", desc: "목·화·토·금·수 다섯 기운. 사주 안 분포 강약을 본다." },
   { term: "천간 / 지지", desc: "글자의 위(천간) / 아래(지지). 8글자는 천간 4 + 지지 4로 구성." },
@@ -545,10 +545,12 @@ const GLOSSARY: ReadonlyArray<{
     ],
   },
   { term: "십성 (十星)", desc: "일간을 기준으로 한 다른 글자들과의 관계. 비견·식신·재성·관성·인성 등 10가지 분류." },
-  { term: "용신 (用神)", desc: "너에게 가장 도움이 되는 기운. 부족한 자리를 채워주는 핵심 변수." },
+  { term: "용신 (用神)", desc: "{USER}님 사주에 가장 도움이 되는 기운. 부족한 자리를 채워주는 핵심 변수." },
 ];
 
-function GlossaryDoyoon() {
+function GlossaryDoyoon({ userName }: { userName: string }) {
+  // {USER} placeholder → 백엔드 사전 분류로 결정된 호명용 이름으로 치환
+  const fillUser = (s: string) => s.replace(/\{USER\}/g, userName);
   return (
     <div
       className="rounded-lg px-3.5 py-3 my-2"
@@ -569,7 +571,7 @@ function GlossaryDoyoon() {
             {g.term}
           </div>
           <div className="text-[13px] leading-[1.6]" style={{ color: DOYOON_TOKENS.textMeta }}>
-            {g.desc}
+            {fillUser(g.desc)}
           </div>
           {g.subs && (
             <div className="mt-1.5 pl-2">
