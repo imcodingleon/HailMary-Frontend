@@ -106,8 +106,6 @@ export default function DoyoonDestinedPart1Page({ data }: DoyoonDestinedPart1Pag
 
         <InfoGridInyonDoyoon rows={d.info_rows} compatibility_pct={d.compatibility_pct} />
 
-        <CompatibilityMeterDoyoon value={parseInt(d.compatibility_pct, 10) || 0} />
-
         <DoyoonAiBlock body={d.ai_profile} />
 
         <DoyoonAiBlock body={d.ai_meeting} />
@@ -239,39 +237,6 @@ function InfoGridInyonDoyoon({
           </div>
         );
       })}
-    </div>
-  );
-}
-
-function CompatibilityMeterDoyoon({ value }: { value: number }) {
-  const pct = Math.max(0, Math.min(100, value));
-  return (
-    <div className="my-3 flex items-center gap-2">
-      <span
-        className="text-[13px] font-medium flex-shrink-0"
-        style={{ color: DOYOON_TOKENS.textMeta, letterSpacing: "0.02em", width: 88, lineHeight: 1.6 }}
-      >
-        궁합 지수
-      </span>
-      <div
-        className="flex-1 rounded-full overflow-hidden"
-        style={{ height: 10, background: "rgba(139,105,20,0.10)" }}
-      >
-        <div
-          className="h-full rounded-full"
-          style={{
-            width: `${pct}%`,
-            background: `linear-gradient(90deg, ${DOYOON_TOKENS.pink} 0%, #b03a64 100%)`,
-            transition: "width .35s ease",
-          }}
-        />
-      </div>
-      <span
-        className="text-[13px] font-bold w-[36px] text-right flex-shrink-0"
-        style={{ color: DOYOON_TOKENS.pink }}
-      >
-        {pct}
-      </span>
     </div>
   );
 }
