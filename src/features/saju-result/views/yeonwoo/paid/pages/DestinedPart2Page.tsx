@@ -6,6 +6,7 @@ import {
   SectionLabel,
   YeonwooBubble,
 } from "../components/Section";
+import { PaidStoryCut } from "../components/PaidStoryCut";
 
 // HTML 명세 (line 2338~2398) 정밀 포팅.
 // 4-3 결말 예측 시나리오:
@@ -125,6 +126,39 @@ export default function DestinedPart2Page({ data }: { data?: DestinedPart2Data }
           </div>
         </div>
       </Sec>
+
+      {/* 8페이지 마지막 컷 페어 — Timing(9P) 진입 직전, 서로 페이드로 자연 연결 */}
+      <PaidStoryCut
+        src="/yeonwoo/paid-cuts/cut-p8-end-1.png"
+        alt="강연우 — 운명의 그 사람"
+        text={
+          <>
+            운명의 그 사람은.<br />… 마음에 들어?
+          </>
+        }
+        fadeBottom
+        topPad={50}
+        bottomPad={20}
+        bubbleTopPct={0}
+        bubbleOffsetY={-30}
+      />
+      <PaidStoryCut
+        src="/yeonwoo/paid-cuts/cut-p8-end-2.png"
+        alt="강연우 — 그 실이 가장 당겨지는 달"
+        text={
+          <>
+            근데 사랑만큼 중요한 게 시간이야.<br />
+            그 실이 가장 강하게 당겨지는 달.<br />
+            그걸 짚어줄게.
+          </>
+        }
+        fadeTop
+        topPad={50}
+        bubbleTopPct={0}
+        textSize={15}
+        lineHeight="26px"
+        paddingX={24}
+      />
     </section>
   );
 }

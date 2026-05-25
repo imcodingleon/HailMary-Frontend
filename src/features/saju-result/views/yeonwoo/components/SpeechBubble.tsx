@@ -11,9 +11,12 @@ type Props = {
   children: ReactNode;
   widthPct?: number;
   tail?: boolean;
+  tailPosition?: "top" | "bottom";
   radius?: number;
   textSize?: number;
+  lineHeight?: string;
   paddingX?: number;
+  paddingY?: number;
 };
 
 export function SpeechBubble({
@@ -21,10 +24,17 @@ export function SpeechBubble({
   children,
   widthPct = 64,
   tail = true,
+  tailPosition = "top",
   radius = 33,
   textSize = 16,
+  lineHeight = "28px",
   paddingX = 24,
+  paddingY = 20,
 }: Props) {
+  const tailStyle =
+    tailPosition === "top"
+      ? { top: -15 }
+      : { bottom: -15, transform: "scaleY(-1)" };
   return (
     <div className="relative inline-block" style={{ maxWidth: `${widthPct}%` }}>
       {tail && (
@@ -34,7 +44,7 @@ export function SpeechBubble({
           viewBox="0 0 16 17"
           style={{
             position: "absolute",
-            top: -15,
+            ...tailStyle,
             left: `calc(${TAIL_LEFT_PCT}% - 8px)`,
             pointerEvents: "none",
             zIndex: 1,
@@ -56,7 +66,7 @@ export function SpeechBubble({
           background: BUBBLE_BG,
           border: `1.5px solid ${BUBBLE_BORDER}`,
           borderRadius: `${radius}px`,
-          padding: `20px ${paddingX}px`,
+          padding: `${paddingY}px ${paddingX}px`,
         }}
       >
         {speaker && (
@@ -79,7 +89,7 @@ export function SpeechBubble({
             fontFamily: "Pretendard, sans-serif",
             fontSize: `${textSize}px`,
             fontWeight: 500,
-            lineHeight: "28px",
+            lineHeight,
             letterSpacing: "0.36px",
           }}
         >

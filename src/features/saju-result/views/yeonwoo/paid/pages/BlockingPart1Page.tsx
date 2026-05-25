@@ -9,6 +9,7 @@ import {
   VarTag,
   YeonwooBubble,
 } from "../components/Section";
+import { SpeechBubble } from "../../components/SpeechBubble";
 
 // HTML 명세 (line 1895~1973) 정밀 포팅.
 // 2-1 명줄에 걸린 것: card-warn 과다 구조 + AI + 강연우 버블
@@ -70,6 +71,20 @@ export default function BlockingPart1Page({ data }: { data?: BlockingPart1Data }
         title="연애를 막는 것 (1/2)"
         sub="방해 구조 · 반복 패턴 · 악연 컷팅"
         iconAsset="/yeonwoo/icon/icon_broken_thread.svg"
+      />
+
+      {/* 2-1 진입 컷 — 강연우 풀샷 (말풍선 위 / 꼬리 아래) */}
+      <OpeningCut
+        src="/yeonwoo/paid-cuts/cut-p4-top.png"
+        alt="강연우 — 펼쳐 놓고"
+        text={
+          <>
+            펼쳐 놓고 보니까…<br />
+            네 연줄에 뭐가 끼어 있어.<br />
+            그게 너를 막고 있는 거야.<br />
+            보여줄게.
+          </>
+        }
       />
 
       {/* ── 2-1 명줄에 걸린 것 ── */}
@@ -134,6 +149,63 @@ export default function BlockingPart1Page({ data }: { data?: BlockingPart1Data }
         <YeonwooBubble text="이게 독인지 약인지는 네가 어떻게 쓰냐에 달려있어." />
       </Sec>
     </section>
+  );
+}
+
+// 페이지 진입 컷: 사진 위에 같은 bg색 헤드룸 영역을 붙여 라운드 박스 하나로 묶고,
+// 말풍선은 그 빈 영역에 absolute(%). 사진 비율이 고정이라 모든 폭에서 같은 위치.
+function OpeningCut({
+  src,
+  alt,
+  text,
+  bubbleTopPct = 3,
+  headroomPct = 30, // 사진 위 가상 영역 = 사진 폭의 N%
+}: {
+  src: string;
+  alt: string;
+  text: React.ReactNode;
+  bubbleTopPct?: number;
+  headroomPct?: number;
+}) {
+  const IMG_W = 977;
+  const IMG_H = 1612;
+  const extra = (IMG_W * headroomPct) / 100;
+  return (
+    <div className="relative w-full -mx-1 pt-[20px] pb-[60px] bg-[#0a0a09]">
+      <div
+        className="relative w-full overflow-hidden rounded-[60px] bg-[#0a0a09]"
+        style={{ aspectRatio: `${IMG_W} / ${IMG_H + extra}` }}
+      >
+        {/* 사진은 하단 정렬 + 원본 비율 유지 */}
+        <div
+          className="absolute inset-x-0 bottom-0"
+          style={{ aspectRatio: `${IMG_W} / ${IMG_H}` }}
+        >
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="(max-width:480px) 100vw, 430px"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+        {/* 말풍선 — 상단 헤드룸 영역에 absolute */}
+        <div
+          className="absolute left-0 right-0 flex justify-center"
+          style={{ top: `${bubbleTopPct}%` }}
+        >
+          <SpeechBubble
+            speaker="강연우"
+            widthPct={72}
+            paddingX={28}
+            radius={40}
+            tailPosition="bottom"
+          >
+            {text}
+          </SpeechBubble>
+        </div>
+      </div>
+    </div>
   );
 }
 

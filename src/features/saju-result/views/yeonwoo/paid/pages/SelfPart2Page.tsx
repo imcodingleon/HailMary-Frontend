@@ -7,6 +7,7 @@ import {
   SectionTitle,
   YeonwooBubble,
 } from "../components/Section";
+import { SpeechBubble } from "../../components/SpeechBubble";
 
 // HTML 명세 (line 1797~1893) 정밀 포팅.
 // 1-4 상처받는 순간: card-warn × 2 + AI + 강연우 버블
@@ -158,7 +159,45 @@ export default function SelfPart2Page({ data }: { data?: SelfPart2Data }) {
           </div>
         </div>
       </Sec>
+
+      {/* 페이지 끝 컷 — 강연우 풀샷 + 무료 결과 톤 SpeechBubble */}
+      <ClosingCut
+        src="/yeonwoo/paid-cuts/cut-p2-end.jpeg"
+        alt="강연우 — 너를 들여다보다"
+        text={
+          <>
+            여기까지가 너야.<br />… 보면서 무슨 생각 들어?
+          </>
+        }
+      />
     </section>
+  );
+}
+
+// 페이지 끝 컷: 풀블리드 이미지 + 그 위에 SpeechBubble (무료 결과 페이지 톤 동일)
+function ClosingCut({
+  src,
+  alt,
+  text,
+}: {
+  src: string;
+  alt: string;
+  text: React.ReactNode;
+}) {
+  return (
+    <div className="relative w-full -mx-1 pt-[60px] bg-[#0a0a09]">
+      <div
+        className="relative w-full overflow-hidden rounded-[24px]"
+        style={{ aspectRatio: "977 / 1612" }}
+      >
+        <Image src={src} alt={alt} fill sizes="(max-width:480px) 100vw, 430px" style={{ objectFit: "cover" }} priority={false} />
+      </div>
+      <div className="w-full flex justify-center pt-[30px] pb-[40px]">
+        <SpeechBubble speaker="강연우" widthPct={72} paddingX={28}>
+          {text}
+        </SpeechBubble>
+      </div>
+    </div>
   );
 }
 

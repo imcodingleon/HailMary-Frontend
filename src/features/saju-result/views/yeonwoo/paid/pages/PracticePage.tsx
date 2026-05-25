@@ -9,6 +9,7 @@ import {
   VarTag,
   YeonwooBubble,
 } from "../components/Section";
+import { PaidStoryCut } from "../components/PaidStoryCut";
 
 // HTML 명세 (line 2585~2678) 정밀 포팅.
 // 6-1 오행 보완: stitle + card-good × 3 (색/공간/행동) + AI
@@ -161,6 +162,40 @@ export default function PracticePage({ data }: { data?: PracticeData }) {
           </div>
         </div>
       </Sec>
+
+      {/* 10페이지 마지막 컷 페어 — Letter(11P) 진입 직전, 페이드로 자연 연결 */}
+      <PaidStoryCut
+        src="/yeonwoo/paid-cuts/cut-p10-end-1.png"
+        alt="강연우 — 여기까지가 풀이야"
+        text={
+          <>
+            여기까지가 풀이야.<br />개운법도 다 줬고.
+          </>
+        }
+        fadeBottom
+        topPad={50}
+        bottomPad={20}
+        bubbleTopPct={3}
+        bubbleOffsetY={20}
+      />
+      <PaidStoryCut
+        src="/yeonwoo/paid-cuts/cut-p10-end-2.png"
+        alt="강연우 — 너한테 한 통 써뒀어"
+        text={
+          <>
+            근데 한 마디만 더. 풀이 말고….<br />
+            그냥 너한테. 한 통 써뒀어.
+          </>
+        }
+        fadeTop
+        topPad={50}
+        bubbleTopPct={3}
+        bubbleOffsetY={20}
+        textSize={15}
+        lineHeight="26px"
+        paddingX={24}
+        widthPct={96}
+      />
     </section>
   );
 }

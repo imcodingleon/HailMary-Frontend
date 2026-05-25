@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import PageHead from "../components/PageHead";
 import { Sec } from "../components/Section";
 
@@ -17,7 +20,21 @@ const EPILOGUE_LINES: ReadonlyArray<string> = [
   "... 가봐.",
 ];
 
+// URL에서 orderId 추출 — PaidLoadingClient와 동일 패턴
+function extractOrderIdFromUrl(): string {
+  if (typeof window === "undefined") return "";
+  const m = window.location.pathname.match(/\/saju\/paid\/([^/]+)/);
+  const id = m?.[1] ?? "";
+  return id === "_placeholder" ? "" : id;
+}
+
 export default function EpiloguePage() {
+  const router = useRouter();
+  const handleClosingCta = () => {
+    // dev/full 등 orderId가 없는 환경에서는 placeholder로 fallback
+    const orderId = extractOrderIdFromUrl() || "test-order-id";
+    router.push(`/saju/paid/${encodeURIComponent(orderId)}/closing`);
+  };
   return (
     <section
       data-page-idx="11"
@@ -122,6 +139,47 @@ export default function EpiloguePage() {
           >
             緣 — 이 결이 너를 어디로 데려갈지, 그건 시간이 답해.
           </span>
+        </div>
+
+        {/* 클로징 씬 진입 CTA — 강연우 멘트 톤 */}
+        <div className="mt-10 mb-2">
+          <div
+            className="rounded-[14px] p-5"
+            style={{
+              background: "rgba(232,201,160,0.04)",
+              border: "0.5px solid rgba(232,201,160,0.22)",
+            }}
+          >
+            <p
+              className="text-[14px] mb-4 italic"
+              style={{
+                color: "#d8d4cc",
+                lineHeight: 1.7,
+                letterSpacing: "-0.01em",
+                wordBreak: "keep-all",
+              }}
+            >
+              <span
+                className="not-italic mr-2 text-[12px]"
+                style={{ color: "#E8C9A0", letterSpacing: "0.05em" }}
+              >
+                강연우
+              </span>
+              <br />
+              &ldquo;...아직 안 끝났어. 한마디만 더 듣고 가.&rdquo;
+            </p>
+            <button
+              type="button"
+              onClick={handleClosingCta}
+              className="w-full rounded-md py-3.5 text-[14px] font-semibold tracking-[0.05em] text-[#1a1612] cursor-pointer transition-opacity hover:opacity-90 active:opacity-80"
+              style={{
+                background: "linear-gradient(180deg, #E6C58E 0%, #C9A56B 100%)",
+                boxShadow: "0 4px 14px rgba(201,165,107,0.30)",
+              }}
+            >
+              마지막 한마디 들으러 가기 →
+            </button>
+          </div>
         </div>
       </Sec>
     </section>
