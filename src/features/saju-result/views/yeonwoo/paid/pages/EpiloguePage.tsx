@@ -100,14 +100,12 @@ export default function EpiloguePage() {
           >
             강연우
           </div>
-          &ldquo;
           {EPILOGUE_LINES.map((line, i) => (
             <span key={i}>
               {line}
               {i < EPILOGUE_LINES.length - 1 && <br />}
             </span>
           ))}
-          &rdquo;
         </div>
 
         {/* 단청 디바이더 */}
@@ -166,7 +164,7 @@ export default function EpiloguePage() {
                 강연우
               </span>
               <br />
-              &ldquo;...아직 안 끝났어. 한마디만 더 듣고 가.&rdquo;
+              ...아직 안 끝났어. 한마디만 더 듣고 가.
             </p>
             <button
               type="button"

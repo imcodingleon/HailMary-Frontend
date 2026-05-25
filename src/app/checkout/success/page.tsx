@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getDeviceId, getSessionId, trackEvent } from "@/shared/utils/analytics";
 import EmailConfirmModal from "@/features/checkout/views/components/EmailConfirmModal";
-import { PaidIntroScene } from "@/features/saju-result/views/yeonwoo/paid/paid-intro/PaidIntroScene";
+import { PaidIntroScene as YeonwooPaidIntroScene } from "@/features/saju-result/views/yeonwoo/paid/paid-intro/PaidIntroScene";
+import { PaidIntroScene as DoyoonPaidIntroScene } from "@/features/saju-result/views/doyoon/paid/paid-intro/PaidIntroScene";
 
 type ConfirmStatus = "pending" | "success" | "error";
 
@@ -154,8 +155,8 @@ function SuccessBody() {
       .then((d) => {
         setData(d);
         try { sessionStorage.removeItem("checkoutPending"); } catch {}
-        // 연우는 인트로 씬 → CTA 클릭 시 로딩으로. 도윤은 바로 로딩.
-        if (d.character === "yeonwoo") {
+        // 양 캐릭터 모두 인트로 씬 → CTA 클릭 시 로딩으로
+        if (d.character === "yeonwoo" || d.character === "doyoon") {
           setStatus("intro_play");
         } else {
           setStatus("success");
@@ -182,15 +183,16 @@ function SuccessBody() {
 
 
   if (status === "intro_play" && data) {
-    return (
-      <PaidIntroScene
-        onCta={() => {
-          if (redirectSentRef.current) return;
-          redirectSentRef.current = true;
-          trackEvent("paid_result_redirect", { order_id: data.orderId, character_id: data.character });
-          router.replace(`/saju/paid/${encodeURIComponent(data.orderId)}/loading`);
-        }}
-      />
+    const handleIntroCta = () => {
+      if (redirectSentRef.current) return;
+      redirectSentRef.current = true;
+      trackEvent("paid_result_redirect", { order_id: data.orderId, character_id: data.character });
+      router.replace(`/saju/paid/${encodeURIComponent(data.orderId)}/loading`);
+    };
+    return data.character === "doyoon" ? (
+      <DoyoonPaidIntroScene onCta={handleIntroCta} />
+    ) : (
+      <YeonwooPaidIntroScene onCta={handleIntroCta} />
     );
   }
 
