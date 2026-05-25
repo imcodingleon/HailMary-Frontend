@@ -8,6 +8,7 @@ import {
   DoyoonSection,
 } from "../components/DoyoonSection";
 import { DOYOON_TOKENS } from "../components/doyoonTokens";
+import { DoyoonPaidStoryCut } from "../components/DoyoonPaidStoryCut";
 
 interface DoyoonOptimizationPageProps {
   data?: PaidChapterP9Doyoon;
@@ -128,6 +129,42 @@ export default function DoyoonOptimizationPage({ data }: DoyoonOptimizationPageP
           flow="left"
         />
       </DoyoonSection>
+
+      {/* 10페이지 마지막 컷 페어 — Letter(11P) 진입 직전, 페이드로 자연 연결 */}
+      <DoyoonPaidStoryCut
+        src="/doyoon/paid-cuts/cut-p10-end-1.png"
+        alt="한도윤 — 분석 마무리"
+        text={
+          <>
+            분석은 여기까지예요.<br />
+            변수 보완, 리스크 제거, 매력 최적화…<br />
+            다 정리해 드렸어요.
+          </>
+        }
+        fadeTop
+        fadeBottom
+        topPad={160}
+        bottomPad={20}
+        bubbleTopPct={3}
+        bubbleOffsetY={-60}
+        widthPct={92}
+      />
+      <DoyoonPaidStoryCut
+        src="/doyoon/paid-cuts/cut-p10-end-2.png"
+        alt="한도윤 — 마음을 담은 한 통"
+        text={
+          <>
+            마지막은 데이터가 아니라<br />
+            제 마음을 담아 {d.user_name}님께<br />
+            한 통 남겨뒀어요.
+          </>
+        }
+        fadeTop
+        topPad={150}
+        bubbleTopPct={3}
+        bubbleOffsetY={-65}
+        widthPct={88}
+      />
     </section>
   );
 }

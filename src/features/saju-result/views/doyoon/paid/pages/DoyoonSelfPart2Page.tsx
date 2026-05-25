@@ -9,6 +9,7 @@ import {
 } from "../components/DoyoonSection";
 import { DoyoonSdWithBubble } from "../components/DoyoonSdWithBubble";
 import { DOYOON_TOKENS } from "../components/doyoonTokens";
+import { DoyoonPaidStoryCut } from "../components/DoyoonPaidStoryCut";
 
 interface DoyoonSelfPart2PageProps {
   data?: PaidChapterP2Doyoon;
@@ -111,6 +112,38 @@ export default function DoyoonSelfPart2Page({ data }: DoyoonSelfPart2PageProps) 
           flow="right"
         />
       </DoyoonSection>
+
+      {/* 3페이지 마지막 컷 페어 — Blocking(4P) 진입 직전. 페이드로 자연 연결 */}
+      <DoyoonPaidStoryCut
+        src="/doyoon/paid-cuts/cut-p3-end-1.png"
+        alt="한도윤 — 1차 분석 마쳤어요"
+        text={
+          <>
+            {d.user_name}님 데이터, 1차 분석 마쳤어요.<br />… 어때요, 본인 같으세요?
+          </>
+        }
+        fadeTop
+        fadeBottom
+        topPad={130}
+        bottomPad={20}
+        bubbleTopPct={3}
+        bubbleOffsetY={-30}
+        widthPct={84}
+      />
+      <DoyoonPaidStoryCut
+        src="/doyoon/paid-cuts/cut-p3-end-2.png"
+        alt="한도윤 — 다른 데이터를 보죠"
+        text={
+          <>
+            이번엔 다른 데이터를 보죠.<br />
+            {d.user_name}님 연애를 계속 무너뜨리는 변수가 따로 있어요.
+          </>
+        }
+        fadeTop
+        topPad={100}
+        bubbleTopPct={3}
+        bubbleOffsetY={-60}
+      />
     </section>
   );
 }

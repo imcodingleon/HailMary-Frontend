@@ -20,6 +20,8 @@ export function usePaidClosingScene() {
   const [isComplete, setIsComplete] = useState(false);
   const [crossFading, setCrossFading] = useState(false);
   const [flashWhite, setFlashWhite] = useState(false);
+  // final-cta 컷에서 자막 다 본 후 탭 → 자막 사라지고 같은 자리에 CTA 노출
+  const [ctaRevealed, setCtaRevealed] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -86,6 +88,7 @@ export function usePaidClosingScene() {
 
   const handleTap = () => {
     if (crossFading) return;
+    if (ctaRevealed) return; // CTA 노출 후엔 버튼 클릭만 받음
 
     if (step.type === "silent") {
       goToStep(stepIndex + 1);
@@ -102,8 +105,10 @@ export function usePaidClosingScene() {
       setLineIndex(lineIndex + 1);
       setDisplayedCount(0);
       setIsComplete(false);
-    } else if (stepIndex < PAID_CLOSING_STEPS.length - 1 && step.type !== "final-cta") {
-      // final-cta는 자동 진행 X — CTA 버튼으로 라우팅
+    } else if (step.type === "final-cta") {
+      // 마지막 컷: 자막 완료 + 탭 → 자막 사라지고 같은 자리에 CTA 등장
+      setCtaRevealed(true);
+    } else if (stepIndex < PAID_CLOSING_STEPS.length - 1) {
       goToStep(stepIndex + 1);
     }
   };
@@ -115,6 +120,7 @@ export function usePaidClosingScene() {
     isComplete,
     crossFading,
     flashWhite,
+    ctaRevealed,
     handleTap,
   };
 }

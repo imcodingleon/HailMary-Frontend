@@ -104,7 +104,7 @@ export const PAID_CLOSING_STEPS: PaidClosingStep[] = [
     bg: "/yeonwoo/closing-cuts/cut-10.png",
     speaker: "한도윤",
     lines: [
-      "그럼 이렇게 하죠. 손님의 지인들 연애를 통해 확인시켜 드릴 테니, 주변 친구들에게 제 명함을 전해주세요.",
+      "그럼 이렇게 하죠. 손님의 연애운 데이터를 통해 확인시켜 드릴 테니, 한번 비교해 보세요.",
     ],
     ctaLabel: "한도윤의 데이터 사주 보러가기",
   },

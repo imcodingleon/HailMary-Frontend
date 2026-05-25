@@ -7,6 +7,7 @@ import {
   DoyoonSection,
 } from "../components/DoyoonSection";
 import { DOYOON_TOKENS } from "../components/doyoonTokens";
+import { DoyoonPaidStoryCut } from "../components/DoyoonPaidStoryCut";
 
 interface DoyoonDestinedPart2PageProps {
   data?: PaidChapterP7Doyoon;
@@ -81,6 +82,40 @@ export default function DoyoonDestinedPart2Page({ data }: DoyoonDestinedPart2Pag
           flow="right"
         />
       </DoyoonSection>
+
+      {/* 8페이지 마지막 컷 페어 — Timing(9P) 진입 직전, 페이드로 자연 연결 */}
+      <DoyoonPaidStoryCut
+        src="/doyoon/paid-cuts/cut-p8-end-1.png"
+        alt="한도윤 — 가장 잘 맞는 사람 데이터"
+        text={
+          <>
+            {d.user_name}님과 가장 잘 맞는 사람 데이터<br />… 어떤 사람인지 그려지세요?
+          </>
+        }
+        fadeTop
+        fadeBottom
+        topPad={160}
+        bottomPad={20}
+        bubbleTopPct={3}
+        bubbleOffsetY={-60}
+        widthPct={92}
+      />
+      <DoyoonPaidStoryCut
+        src="/doyoon/paid-cuts/cut-p8-end-2.png"
+        alt="한도윤 — 12개월 확률 분포"
+        text={
+          <>
+            사람만 봐선 모자라요.<br />
+            시점에 따라 결과가 달라지거든요.<br />
+            12개월 분포, 보여드릴게요.
+          </>
+        }
+        fadeTop
+        topPad={150}
+        bubbleTopPct={3}
+        bubbleOffsetY={-95}
+        widthPct={88}
+      />
     </section>
   );
 }

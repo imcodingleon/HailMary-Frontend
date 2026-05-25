@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { DialogueBox } from "@/components/DialogueBox";
 import { FadeOverlay } from "@/components/FadeOverlay";
 import { usePaidClosingScene } from "./usePaidClosingScene";
-import { PAID_CLOSING_STEPS } from "./paidClosingSteps";
+import { DOYOON_PAID_CLOSING_STEPS } from "./paidClosingSteps";
 
 export function PaidClosingScene() {
   const router = useRouter();
@@ -16,17 +16,18 @@ export function PaidClosingScene() {
     isComplete,
     crossFading,
     flashWhite,
+    flashRed,
+    holdingForDialogue,
     ctaRevealed,
     handleTap,
   } = usePaidClosingScene();
 
   const handleFinalCta = () => {
-    // 도윤 무료 결과로 — 기존 세션 saju 데이터 그대로 사용
-    router.push("/saju/doyoon");
+    // 연우 무료 결과로 — 기존 세션 saju 데이터 그대로 사용
+    router.push("/saju/yeonwoo");
   };
 
-  // 다음 스텝 bg (크로스페이드 전환 중 위에 fadeIn)
-  const nextStep = PAID_CLOSING_STEPS[stepIndex + 1];
+  const nextStep = DOYOON_PAID_CLOSING_STEPS[stepIndex + 1];
 
   return (
     <div
@@ -52,9 +53,18 @@ export function PaidClosingScene() {
         />
       )}
 
-      {/* 자막 박스 — silent 컷에선 숨김 / final-cta + ctaRevealed면 CTA로 교체 */}
-      {step.type !== "silent" && !ctaRevealed && (
-        <div className="relative z-10 mb-20 mt-auto px-4">
+      {/* 자막 박스 — final-cta 컷에서 ctaRevealed=true가 되면 같은 자리에 CTA로 교체.
+          hold 중에는 박스 숨김 (핵심 이미지 시선 집중). */}
+      {!holdingForDialogue && !ctaRevealed && (
+        <div
+          className="relative z-10 mt-auto px-4 animate-[fadeIn_0.4s_ease-in]"
+          style={{
+            marginBottom:
+              step.type === "dramatic-dialogue" && step.dialogueBottomPx !== undefined
+                ? `${step.dialogueBottomPx}px`
+                : "80px",
+          }}
+        >
           <DialogueBox
             speaker={step.speaker}
             text={displayedText}
@@ -63,7 +73,7 @@ export function PaidClosingScene() {
         </div>
       )}
 
-      {/* CTA — 자막 박스가 차지하던 자리에 그대로 등장 + 메인으로 secondary */}
+      {/* CTA — 자막 박스가 차지하던 자리에 그대로 등장 (mb-20 동일) */}
       {ctaRevealed && step.type === "final-cta" && (
         <div
           className="relative z-10 mt-auto mb-20 px-4 animate-[fadeIn_0.5s_ease-in]"
@@ -91,6 +101,16 @@ export function PaidClosingScene() {
       )}
 
       <FadeOverlay visible={flashWhite} color="white" durationMs={280} easing="ease-out" />
+      {/* 붉은 플래시 — 연우 등장 컷 */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-40"
+        style={{
+          background: "rgba(208,44,52,0.55)",
+          opacity: flashRed ? 1 : 0,
+          transition: "opacity 380ms ease-out",
+        }}
+      />
     </div>
   );
 }
