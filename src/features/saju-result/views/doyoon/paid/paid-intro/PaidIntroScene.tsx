@@ -36,7 +36,8 @@ export function PaidIntroScene({ onCta }: PaidIntroSceneProps) {
         );
       })()}
 
-      {!crossFading && step.type === "dialogue" && (
+      {/* 대사 박스는 크로스페이드 중에도 unmount하지 않음 — 박스 자체 깜빡임 방지. */}
+      {step.type === "dialogue" && (
         <PaidIntroDialogueCut step={step} displayedText={displayedText} isComplete={isComplete} />
       )}
       {!crossFading && step.type === "cta" && (
