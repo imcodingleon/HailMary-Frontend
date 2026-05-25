@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getDeviceId, getSessionId, trackEvent } from "@/shared/utils/analytics";
 import EmailConfirmModal from "@/features/checkout/views/components/EmailConfirmModal";
+import { PaidIntroScene } from "@/features/saju-result/views/yeonwoo/paid/paid-intro/PaidIntroScene";
 
 type ConfirmStatus = "pending" | "success" | "error";
 
@@ -33,7 +34,7 @@ function SuccessBody() {
   const amount = params.get("amount") ?? "";
 
   // status: "verifying" 진입 검증 → "awaiting_confirm" 모달 노출 → "confirming" confirm 호출 중 → "success"/"error"
-  const [status, setStatus] = useState<ConfirmStatus | "awaiting_confirm" | "confirming" | "verifying">("verifying");
+  const [status, setStatus] = useState<ConfirmStatus | "awaiting_confirm" | "confirming" | "verifying" | "intro_play">("verifying");
   const [pending, setPending] = useState<PendingCheckout | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [data, setData] = useState<ConfirmedPayment | null>(null);
@@ -152,12 +153,17 @@ function SuccessBody() {
       })
       .then((d) => {
         setData(d);
-        setStatus("success");
         try { sessionStorage.removeItem("checkoutPending"); } catch {}
-        if (!redirectSentRef.current) {
-          redirectSentRef.current = true;
-          trackEvent("paid_result_redirect", { order_id: d.orderId, character_id: d.character });
-          router.replace(`/saju/paid/${encodeURIComponent(d.orderId)}/loading`);
+        // 연우는 인트로 씬 → CTA 클릭 시 로딩으로. 도윤은 바로 로딩.
+        if (d.character === "yeonwoo") {
+          setStatus("intro_play");
+        } else {
+          setStatus("success");
+          if (!redirectSentRef.current) {
+            redirectSentRef.current = true;
+            trackEvent("paid_result_redirect", { order_id: d.orderId, character_id: d.character });
+            router.replace(`/saju/paid/${encodeURIComponent(d.orderId)}/loading`);
+          }
         }
       })
       .catch((err: unknown) => {
@@ -174,6 +180,19 @@ function SuccessBody() {
       });
   }, [pending, paymentKey, orderId, amount, router]);
 
+
+  if (status === "intro_play" && data) {
+    return (
+      <PaidIntroScene
+        onCta={() => {
+          if (redirectSentRef.current) return;
+          redirectSentRef.current = true;
+          trackEvent("paid_result_redirect", { order_id: data.orderId, character_id: data.character });
+          router.replace(`/saju/paid/${encodeURIComponent(data.orderId)}/loading`);
+        }}
+      />
+    );
+  }
 
   return (
     <main className="flex min-h-[100dvh] flex-1 flex-col items-center justify-center gap-6 bg-white px-6 py-10 text-neutral-900">
