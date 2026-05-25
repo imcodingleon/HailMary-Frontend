@@ -131,6 +131,7 @@ export default function DoyoonProloguePage({ data }: DoyoonProloguePageProps) {
           excess={d.ohang_excess}
           lack={d.ohang_lack}
           ilgan={d.ilgan}
+          ilganHanjaProp={d.ilgan_card.name_han}
         />
         <DoyoonSBody>
           오행 5개 변수의 강도예요. 평균 대비 +1.7배 이상은 과다, -0.6배 이하는 부족으로 분류해요.{" "}
@@ -263,9 +264,10 @@ function PillarBox({
 }
 
 function OhangListDoyoon({
-  strength, excess, lack, ilgan,
+  strength, excess, lack, ilgan, ilganHanjaProp,
 }: {
-  strength: OhangStrength; excess: OhangKey; lack: OhangKey; ilgan: string;
+  strength: OhangStrength; excess: OhangKey; lack: OhangKey;
+  ilgan: string; ilganHanjaProp?: string;
 }) {
   const Y_TICKS = [100, 75, 50, 25, 0];
   const BAR_AREA_H = 154;
@@ -277,9 +279,11 @@ function OhangListDoyoon({
   const maxRatio = Math.max(...ratios);
   const denom = maxRatio > 0 ? maxRatio : 1;
 
+  // ilgan = "병화" (한글), ilganHanjaProp = "丙火" (한자, ilgan_card.name_han에서 전달)
+  // 백엔드 응답이 한글 + 한자 분리되어 있어 정규식 fallback 불필요. 안전 fallback은 그대로 유지.
   const ilganMatch = ilgan.match(/^([가-힣]+)\(?([一-鿿]+)?/);
   const ilganKor = ilganMatch?.[1] ?? ilgan;
-  const ilganHanja = ilganMatch?.[2] ?? "";
+  const ilganHanja = ilganHanjaProp ?? ilganMatch?.[2] ?? "";
   const elementKor = ilganKor.slice(-1);
   const elementKey = (Object.entries(OHANG_LABELS).find(
     ([, v]) => v.hangul === elementKor,
@@ -300,7 +304,8 @@ function OhangListDoyoon({
         >
           <div
             style={{
-              marginTop: 54, display: "flex", alignItems: "baseline", gap: 6, justifyContent: "center",
+              marginTop: 54, display: "flex", flexDirection: "column",
+              alignItems: "center", gap: 2,
             }}
           >
             <span
@@ -315,7 +320,8 @@ function OhangListDoyoon({
             {ilganHanja && (
               <span
                 style={{
-                  fontSize: 16, color: dayColor, opacity: 0.6, fontWeight: 700, whiteSpace: "nowrap",
+                  fontSize: 14, color: dayColor, opacity: 0.6, fontWeight: 600,
+                  whiteSpace: "nowrap", letterSpacing: "0.02em",
                 }}
               >
                 ({ilganKor})
