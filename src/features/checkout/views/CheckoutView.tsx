@@ -12,7 +12,6 @@ import { PriceSummary } from "./components/PriceSummary";
 import { CouponField } from "./components/CouponField";
 import { CheckoutCta } from "./components/CheckoutCta";
 import { ConsentRow } from "./components/ConsentRow";
-import EmailConfirmModal from "./components/EmailConfirmModal";
 
 interface CheckoutViewProps {
   character: CheckoutCharacter;
@@ -36,11 +35,9 @@ export function CheckoutView({ character }: CheckoutViewProps) {
     setOpenConsent,
     handleConsentDetail,
     isProcessing,
-    emailConfirmOpen,
     applyCoupon,
     handleBack,
     handleSubmit,
-    confirmEmailAndPay,
     devBypassPay,
   } = useCheckout(character);
 
@@ -124,13 +121,6 @@ export function CheckoutView({ character }: CheckoutViewProps) {
       <SiteFooter variant="light" />
 
       <LegalModal doc={openConsent} onClose={() => setOpenConsent(null)} />
-
-      {/* PayApp request 직전 이메일 재확인 — 확인 시 BE /request → payurl 리다이렉트 */}
-      <EmailConfirmModal
-        email={email.trim()}
-        open={emailConfirmOpen}
-        onConfirm={confirmEmailAndPay}
-      />
     </div>
   );
 }

@@ -26,7 +26,6 @@ interface DevBypassResponse {
 export function isDevBypassEnabled(): boolean {
   if (typeof window === "undefined") return false;
   const host = window.location.host;
-  // 운영 도메인은 결제 패스 절대 노출 X
   if (host === "dohwaseonsaju.com" || host === "www.dohwaseonsaju.com") return false;
   return true;
 }
@@ -48,13 +47,11 @@ export interface UseCheckoutReturn {
   setOpenConsent: (v: ConsentDoc | null) => void;
   handleConsentDetail: (doc: ConsentDoc) => void;
   isProcessing: boolean;
-  emailConfirmOpen: boolean;
   applyCoupon: () => void;
   handleBack: () => void;
-  handleSubmit: () => void;
-  /** 이메일 확인 모달 "확인" 콜백 — 실제 PayApp request → 리다이렉트 */
-  confirmEmailAndPay: (confirmedEmail: string) => Promise<void>;
-  /** staging/local 전용: 결제 단계 스킵 → BE bypass → loading으로 직진 */
+  /** 검증 → BE /request → payurl 리다이렉트 (모달 없음, 마찰 최소화). */
+  handleSubmit: () => Promise<void>;
+  /** staging/local 전용: 결제 단계 스킵 → BE bypass → success polling. */
   devBypassPay: () => Promise<void>;
 }
 
@@ -77,15 +74,10 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
   const [agreePayment, setAgreePayment] = useState(true);
   const [openConsent, setOpenConsent] = useState<ConsentDoc | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [emailConfirmOpen, setEmailConfirmOpen] = useState(false);
 
-  // PayApp 결제 페이지에서 뒤로가기로 돌아왔을 때 isProcessing/모달 reset.
-  // window.location.href 로 리다이렉트 → 같은 탭에서 결제 페이지로 → 뒤로가기 시 복귀.
+  // PayApp 결제 페이지에서 뒤로가기 복귀 시 isProcessing reset.
   useEffect(() => {
-    const reset = () => {
-      setIsProcessing(false);
-      setEmailConfirmOpen(false);
-    };
+    const reset = () => setIsProcessing(false);
     window.addEventListener("pageshow", reset);
     window.addEventListener("focus", reset);
     return () => {
@@ -171,8 +163,8 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     alert("쿠폰 적용은 정식 오픈 후 안내드릴게요.");
   }, [coupon, character]);
 
-  /** 결제 버튼 클릭 — 검증 통과하면 이메일 확인 모달 오픈. */
-  const handleSubmit = useCallback(() => {
+  /** 결제 버튼 클릭 — 검증 → BE /request → payurl 리다이렉트 (모달 없음). */
+  const handleSubmit = useCallback(async () => {
     trackEvent("checkout_pay_button_click", {
       character_id: character,
       amount: product.priceKrw,
@@ -199,72 +191,55 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
       return;
     }
     if (isProcessing) return;
-    setEmailConfirmOpen(true);
-  }, [email, agreeDataUsage, agreePayment, character, product, isProcessing]);
+    setIsProcessing(true);
 
-  /** 이메일 확인 모달 "확인" — BE /api/payments/request → payurl 받음 → 리다이렉트. */
-  const confirmEmailAndPay = useCallback(
-    async (confirmedEmail: string) => {
-      if (isProcessing) return;
-      setEmailConfirmOpen(false);
-      setIsProcessing(true);
+    const sajuRequestId =
+      typeof window !== "undefined"
+        ? localStorage.getItem(`${character}SajuRequestId`)
+        : null;
+    const sessionToken = sajuRequestId;
 
-      const sajuRequestId =
-        typeof window !== "undefined"
-          ? localStorage.getItem(`${character}SajuRequestId`)
-          : null;
-      // sessionToken은 무료 플로에서 발급되어 localStorage에 저장된 값.
-      // BE가 sessionToken → user_id 변환해서 결제 요청 처리. 누락이면 400.
-      const sessionToken =
-        typeof window !== "undefined"
-          ? localStorage.getItem(`${character}SajuRequestId`)
-          : null;
+    trackEvent("payment_initiated", {
+      character_id: character,
+      saju_request_id: sajuRequestId,
+      amount: product.priceKrw,
+    });
 
-      trackEvent("payment_initiated", {
-        character_id: character,
-        saju_request_id: sajuRequestId,
-        amount: product.priceKrw,
-      });
+    try {
+      const res = await api.post<RequestPaymentResponse>(
+        "/api/payments/request",
+        {
+          sessionToken,
+          character,
+          customerEmail: email.trim(),
+        },
+      );
 
       try {
-        const res = await api.post<RequestPaymentResponse>(
-          "/api/payments/request",
-          {
-            sessionToken,
+        sessionStorage.setItem(
+          "checkoutPending",
+          JSON.stringify({
             character,
-            customerEmail: confirmedEmail,
-          },
+            orderId: res.orderId,
+            amount: product.priceKrw,
+            email: email.trim(),
+          }),
         );
+      } catch {}
 
-        // Phase 5: /checkout/success 에서 polling 키로 사용
-        try {
-          sessionStorage.setItem(
-            "checkoutPending",
-            JSON.stringify({
-              character,
-              orderId: res.orderId,
-              amount: product.priceKrw,
-              email: confirmedEmail,
-            }),
-          );
-        } catch {}
+      window.location.href = res.payurl;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "결제를 시작하지 못했어요.";
+      trackEvent("payment_failed", {
+        character_id: character,
+        error_message: message,
+      });
+      alert(`결제를 시작하지 못했어요: ${message}`);
+      setIsProcessing(false);
+    }
+  }, [email, agreeDataUsage, agreePayment, character, product, isProcessing]);
 
-        // PayApp 결제 페이지로 리다이렉트
-        window.location.href = res.payurl;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "결제를 시작하지 못했어요.";
-        trackEvent("payment_failed", {
-          character_id: character,
-          error_message: message,
-        });
-        alert(`결제를 시작하지 못했어요: ${message}`);
-        setIsProcessing(false);
-      }
-    },
-    [character, product, isProcessing],
-  );
-
-  /** 결제 패스 (staging/local 전용) — BE bypass endpoint 호출 → loading 라우팅. */
+  /** 결제 패스 (staging/local 전용) — BE bypass endpoint 호출 → success polling. */
   const devBypassPay = useCallback(async () => {
     if (isProcessing) return;
     if (!isValidEmail(email)) {
@@ -286,7 +261,6 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
           customerEmail: email.trim(),
         },
       );
-      // success 페이지 폴링이 즉시 DONE 잡도록 sessionStorage에 orderId 박음
       try {
         sessionStorage.setItem(
           "checkoutPending",
@@ -324,11 +298,9 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     setOpenConsent,
     handleConsentDetail,
     isProcessing,
-    emailConfirmOpen,
     applyCoupon,
     handleBack,
     handleSubmit,
-    confirmEmailAndPay,
     devBypassPay,
   };
 }

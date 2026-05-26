@@ -7,6 +7,7 @@ import { trackEvent } from "@/shared/utils/analytics";
 import { api, ApiError } from "@/shared/utils/api";
 import { PaidIntroScene as YeonwooPaidIntroScene } from "@/features/saju-result/views/yeonwoo/paid/paid-intro/PaidIntroScene";
 import { PaidIntroScene as DoyoonPaidIntroScene } from "@/features/saju-result/views/doyoon/paid/paid-intro/PaidIntroScene";
+import EmailConfirmModal from "@/features/checkout/views/components/EmailConfirmModal";
 
 /**
  * PayApp 결제 페이지에서 returnurl 도착 시 진입.
@@ -50,6 +51,9 @@ function SuccessBody() {
   const [screen, setScreen] = useState<ScreenStatus>("polling");
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatusResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  // 결제 완료(DONE) 직후 이메일 재확인 모달. 닫히면 인트로 씬 진입.
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string>("");
   const viewSentRef = useRef(false);
   const redirectSentRef = useRef(false);
 
@@ -100,7 +104,14 @@ function SuccessBody() {
 
         if (res.status === "DONE") {
           setPaymentStatus(res);
-          setScreen("intro_play");
+          // 결제 완료 직후 이메일 재확인 모달 노출 → 확정 후 intro_play 진입
+          let initialEmail = "";
+          try {
+            const raw = sessionStorage.getItem("checkoutPending");
+            if (raw) initialEmail = (JSON.parse(raw) as PendingCheckout)?.email ?? "";
+          } catch {}
+          setPendingEmail(initialEmail);
+          setEmailModalOpen(true);
           return;
         }
         if (res.status === "CANCELED" || res.status === "ABORTED") {
@@ -144,6 +155,28 @@ function SuccessBody() {
     });
     try { sessionStorage.removeItem("checkoutPending"); } catch {}
     router.replace(`/saju/paid/${encodeURIComponent(paymentStatus.orderId)}/loading`);
+  };
+
+  // 이메일 확인 모달 콜백 — 입력 이메일이 기존과 다르면 BE update, 같으면 즉시 인트로 진입
+  const handleEmailConfirm = async (confirmedEmail: string) => {
+    if (!paymentStatus) return;
+    if (confirmedEmail !== pendingEmail) {
+      try {
+        await api.post("/api/payments/update-email", {
+          orderId: paymentStatus.orderId,
+          newEmail: confirmedEmail,
+        });
+        trackEvent("paid_email_updated", {
+          order_id: paymentStatus.orderId,
+          character_id: paymentStatus.character,
+        });
+      } catch (err) {
+        // 실패해도 인트로 진입 차단은 X — 사용자 경험 우선. 로깅만.
+        console.error("[update-email] failed", err);
+      }
+    }
+    setEmailModalOpen(false);
+    setScreen("intro_play");
   };
 
   if (screen === "intro_play" && paymentStatus) {
@@ -222,6 +255,13 @@ function SuccessBody() {
           </Link>
         </>
       )}
+
+      {/* 결제 완료 직후 이메일 확인 모달 (토스 패턴 회복). 닫히면 인트로 씬. */}
+      <EmailConfirmModal
+        email={pendingEmail}
+        open={emailModalOpen}
+        onConfirm={handleEmailConfirm}
+      />
     </main>
   );
 }
