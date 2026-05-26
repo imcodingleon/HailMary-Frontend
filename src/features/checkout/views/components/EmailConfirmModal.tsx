@@ -4,15 +4,14 @@ import { useEffect, useState } from "react";
 import { isValidEmail } from "@/shared/utils/validation";
 
 /**
- * 결제 완료 직후 노출되는 이메일 재확인 모달.
+ * PayApp 결제 페이지로 리다이렉트하기 직전 노출되는 이메일 재확인 모달.
  *
- * 토스 결제 승인 후 success 페이지에서 confirm API 호출 직전에 띄움.
  * 결과지 재접속 링크를 받을 이메일이 정확한지 한 번 더 확인.
- * "확인" → onConfirm(현재 표시 이메일) → 부모가 confirm 진행.
+ * "확인" → onConfirm(현재 표시 이메일) → 부모가 BE /api/payments/request 호출 → payurl 리다이렉트.
  * "수정" → 모달 내부에서 input 노출 → 새 이메일 검증 → "변경 확인" → onConfirm(새 이메일).
  *
- * ESC/배경 클릭으로 모달이 닫히면 결제 후 confirm 단계가 멈춰 사용자가 결과지를
- * 못 받음. 따라서 close 콜백을 노출하지 않고, 닫는 경로는 두 버튼만 허용.
+ * ESC/배경 클릭으로 모달이 닫히면 결제 단계가 멈춰 사용자가 결과지 링크를 못 받음.
+ * 따라서 close 콜백을 노출하지 않고, 닫는 경로는 두 버튼만 허용.
  */
 export default function EmailConfirmModal({
   email,
@@ -72,7 +71,7 @@ export default function EmailConfirmModal({
             letterSpacing: "0.05em",
           }}
         >
-          결제 완료 — 결과지 보낼 이메일
+          결과지 보낼 이메일 확인
         </h2>
 
         <p
@@ -83,11 +82,11 @@ export default function EmailConfirmModal({
             <>
               새 이메일을 입력해줘.
               <br />
-              이 주소로 결과지 링크를 보낼게.
+              결제 후 이 주소로 결과지 링크를 보낼게.
             </>
           ) : (
             <>
-              이 주소로 결과지 링크를 보낼게.
+              결제 후 이 주소로 결과지 링크를 보낼게.
               <br />
               맞아?
             </>
@@ -190,7 +189,7 @@ export default function EmailConfirmModal({
                   color: "#0a0a09",
                 }}
               >
-                맞아, 결과지 받을게
+                맞아, 결제 진행
               </button>
             </>
           )}

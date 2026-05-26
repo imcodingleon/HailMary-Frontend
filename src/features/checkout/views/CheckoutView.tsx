@@ -5,13 +5,14 @@ import { LegalModal } from "@/shared/components/LegalModal";
 import { SiteFooter } from "@/shared/components/SiteFooter";
 import { trackEvent } from "@/shared/utils/analytics";
 import type { CheckoutCharacter } from "../domain/checkoutProducts";
-import { useCheckout } from "../hooks/useCheckout";
+import { isDevBypassEnabled, useCheckout } from "../hooks/useCheckout";
 import { CheckoutHeader } from "./components/CheckoutHeader";
 import { EmailField } from "./components/EmailField";
 import { PriceSummary } from "./components/PriceSummary";
 import { CouponField } from "./components/CouponField";
 import { CheckoutCta } from "./components/CheckoutCta";
 import { ConsentRow } from "./components/ConsentRow";
+import EmailConfirmModal from "./components/EmailConfirmModal";
 
 interface CheckoutViewProps {
   character: CheckoutCharacter;
@@ -35,11 +36,15 @@ export function CheckoutView({ character }: CheckoutViewProps) {
     setOpenConsent,
     handleConsentDetail,
     isProcessing,
-    widgetsReady,
+    emailConfirmOpen,
     applyCoupon,
     handleBack,
     handleSubmit,
+    confirmEmailAndPay,
+    devBypassPay,
   } = useCheckout(character);
+
+  const devBypass = isDevBypassEnabled();
 
   useEffect(() => {
     const SENT_KEY = `hm_checkout_${character}_view_sent`;
@@ -77,17 +82,26 @@ export function CheckoutView({ character }: CheckoutViewProps) {
           onApply={applyCoupon}
         />
 
-        {/* 토스페이먼츠 v2 결제수단 위젯 */}
-        <div id="payment-method" />
-
-        {/* 토스페이먼츠 v2 이용약관 위젯 */}
-        <div id="agreement" />
+        {/* PayApp 결제: 인페이지 위젯 없음. 결제수단·약관은 PayApp 페이지가 처리.
+            우리 페이지의 동의(ConsentRow)는 우리 서비스의 개인정보·결제진행 동의 별도. */}
 
         <CheckoutCta
           onSubmit={handleSubmit}
           loading={isProcessing}
-          disabled={!widgetsReady}
+          disabled={false}
         />
+
+        {/* ⚠️ staging/local 전용 — 운영 도메인에서는 노출 X (isDevBypassEnabled). */}
+        {devBypass && (
+          <button
+            type="button"
+            onClick={devBypassPay}
+            disabled={isProcessing}
+            className="w-full rounded-md border border-dashed border-rose-400 bg-rose-50 px-4 py-2 text-[12px] font-medium text-rose-600 hover:bg-rose-100 disabled:opacity-40 cursor-pointer"
+          >
+            🛠 결제 패스 (테스트용 · staging/local 전용)
+          </button>
+        )}
 
         <div className="space-y-3 pt-2">
           <ConsentRow
@@ -110,6 +124,13 @@ export function CheckoutView({ character }: CheckoutViewProps) {
       <SiteFooter variant="light" />
 
       <LegalModal doc={openConsent} onClose={() => setOpenConsent(null)} />
+
+      {/* PayApp request 직전 이메일 재확인 — 확인 시 BE /request → payurl 리다이렉트 */}
+      <EmailConfirmModal
+        email={email.trim()}
+        open={emailConfirmOpen}
+        onConfirm={confirmEmailAndPay}
+      />
     </div>
   );
 }

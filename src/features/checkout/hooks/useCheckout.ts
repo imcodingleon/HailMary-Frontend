@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ANONYMOUS, loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { isValidEmail } from "@/shared/utils/validation";
 import { trackEvent } from "@/shared/utils/analytics";
+import { api } from "@/shared/utils/api";
 import {
   PRODUCTS,
   type CheckoutCharacter,
@@ -13,8 +13,23 @@ import {
 
 export type ConsentDoc = "data-usage" | "payment";
 
-type TossPaymentsInstance = Awaited<ReturnType<typeof loadTossPayments>>;
-type WidgetsInstance = ReturnType<TossPaymentsInstance["widgets"]>;
+interface RequestPaymentResponse {
+  orderId: string;
+  payurl: string;
+}
+
+interface DevBypassResponse {
+  orderId: string;
+}
+
+/** staging/local 환경 감지 — prod 도메인이 아니면 결제 패스 버튼 노출. */
+export function isDevBypassEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  const host = window.location.host;
+  // 운영 도메인은 결제 패스 절대 노출 X
+  if (host === "dohwaseonsaju.com" || host === "www.dohwaseonsaju.com") return false;
+  return true;
+}
 
 export interface UseCheckoutReturn {
   product: CheckoutProduct;
@@ -33,18 +48,14 @@ export interface UseCheckoutReturn {
   setOpenConsent: (v: ConsentDoc | null) => void;
   handleConsentDetail: (doc: ConsentDoc) => void;
   isProcessing: boolean;
-  widgetsReady: boolean;
+  emailConfirmOpen: boolean;
   applyCoupon: () => void;
   handleBack: () => void;
   handleSubmit: () => void;
-}
-
-function generateOrderId(character: CheckoutCharacter): string {
-  const uuid =
-    typeof crypto !== "undefined" && "randomUUID" in crypto
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  return `dohwa-${character}-${uuid}`;
+  /** 이메일 확인 모달 "확인" 콜백 — 실제 PayApp request → 리다이렉트 */
+  confirmEmailAndPay: (confirmedEmail: string) => Promise<void>;
+  /** staging/local 전용: 결제 단계 스킵 → BE bypass → loading으로 직진 */
+  devBypassPay: () => Promise<void>;
 }
 
 function scrollToField(id: string): void {
@@ -66,38 +77,15 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
   const [agreePayment, setAgreePayment] = useState(true);
   const [openConsent, setOpenConsent] = useState<ConsentDoc | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [widgets, setWidgets] = useState<WidgetsInstance | null>(null);
-  const [widgetsReady, setWidgetsReady] = useState(false);
+  const [emailConfirmOpen, setEmailConfirmOpen] = useState(false);
 
-  // 1단계: 결제위젯 인스턴스 생성 (마운트 시 1회)
+  // PayApp 결제 페이지에서 뒤로가기로 돌아왔을 때 isProcessing/모달 reset.
+  // window.location.href 로 리다이렉트 → 같은 탭에서 결제 페이지로 → 뒤로가기 시 복귀.
   useEffect(() => {
-    const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-    if (!clientKey) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const tossPayments = await loadTossPayments(clientKey);
-        if (cancelled) return;
-        const instance = tossPayments.widgets({ customerKey: ANONYMOUS });
-        setWidgets(instance);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "결제 위젯 초기화 실패";
-        trackEvent("payment_widget_init_failed", {
-          character_id: character,
-          error_message: message,
-        });
-      }
-    })();
-    return () => {
-      cancelled = true;
+    const reset = () => {
+      setIsProcessing(false);
+      setEmailConfirmOpen(false);
     };
-  }, [character]);
-
-  // 결제창에서 뒤로가기로 돌아왔을 때 isProcessing 상태 reset.
-  // requestPayment 가 토스로 redirect 하면 catch 도달 X → setIsProcessing(false) 미실행 →
-  // 뒤로가기 후 결제 버튼이 비활성으로 묶이는 회귀. pageshow 이벤트로 복원.
-  useEffect(() => {
-    const reset = () => setIsProcessing(false);
     window.addEventListener("pageshow", reset);
     window.addEventListener("focus", reset);
     return () => {
@@ -105,40 +93,6 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
       window.removeEventListener("focus", reset);
     };
   }, []);
-
-  // 2단계: 결제 금액 설정 + 결제수단/약관 위젯 렌더링
-  useEffect(() => {
-    if (widgets == null) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        await widgets.setAmount({
-          currency: "KRW",
-          value: product.priceKrw,
-        });
-        await Promise.all([
-          widgets.renderPaymentMethods({
-            selector: "#payment-method",
-            variantKey: "DEFAULT",
-          }),
-          widgets.renderAgreement({
-            selector: "#agreement",
-            variantKey: "AGREEMENT",
-          }),
-        ]);
-        if (!cancelled) setWidgetsReady(true);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : "결제 위젯 렌더링 실패";
-        trackEvent("payment_widget_render_failed", {
-          character_id: character,
-          error_message: message,
-        });
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [widgets, product.priceKrw, character]);
 
   const setEmail = useCallback((v: string) => {
     setEmailState(v);
@@ -217,7 +171,8 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     alert("쿠폰 적용은 정식 오픈 후 안내드릴게요.");
   }, [coupon, character]);
 
-  const handleSubmit = useCallback(async () => {
+  /** 결제 버튼 클릭 — 검증 통과하면 이메일 확인 모달 오픈. */
+  const handleSubmit = useCallback(() => {
     trackEvent("checkout_pay_button_click", {
       character_id: character,
       amount: product.priceKrw,
@@ -243,78 +198,114 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
       });
       return;
     }
-    if (widgets == null || !widgetsReady) {
-      alert("결제 위젯이 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.");
+    if (isProcessing) return;
+    setEmailConfirmOpen(true);
+  }, [email, agreeDataUsage, agreePayment, character, product, isProcessing]);
+
+  /** 이메일 확인 모달 "확인" — BE /api/payments/request → payurl 받음 → 리다이렉트. */
+  const confirmEmailAndPay = useCallback(
+    async (confirmedEmail: string) => {
+      if (isProcessing) return;
+      setEmailConfirmOpen(false);
+      setIsProcessing(true);
+
+      const sajuRequestId =
+        typeof window !== "undefined"
+          ? localStorage.getItem(`${character}SajuRequestId`)
+          : null;
+      // sessionToken은 무료 플로에서 발급되어 localStorage에 저장된 값.
+      // BE가 sessionToken → user_id 변환해서 결제 요청 처리. 누락이면 400.
+      const sessionToken =
+        typeof window !== "undefined"
+          ? localStorage.getItem(`${character}SajuRequestId`)
+          : null;
+
+      trackEvent("payment_initiated", {
+        character_id: character,
+        saju_request_id: sajuRequestId,
+        amount: product.priceKrw,
+      });
+
+      try {
+        const res = await api.post<RequestPaymentResponse>(
+          "/api/payments/request",
+          {
+            sessionToken,
+            character,
+            customerEmail: confirmedEmail,
+          },
+        );
+
+        // Phase 5: /checkout/success 에서 polling 키로 사용
+        try {
+          sessionStorage.setItem(
+            "checkoutPending",
+            JSON.stringify({
+              character,
+              orderId: res.orderId,
+              amount: product.priceKrw,
+              email: confirmedEmail,
+            }),
+          );
+        } catch {}
+
+        // PayApp 결제 페이지로 리다이렉트
+        window.location.href = res.payurl;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "결제를 시작하지 못했어요.";
+        trackEvent("payment_failed", {
+          character_id: character,
+          error_message: message,
+        });
+        alert(`결제를 시작하지 못했어요: ${message}`);
+        setIsProcessing(false);
+      }
+    },
+    [character, product, isProcessing],
+  );
+
+  /** 결제 패스 (staging/local 전용) — BE bypass endpoint 호출 → loading 라우팅. */
+  const devBypassPay = useCallback(async () => {
+    if (isProcessing) return;
+    if (!isValidEmail(email)) {
+      setEmailError("이메일 형식을 확인해 주세요.");
+      scrollToField("checkout-email");
       return;
     }
-    if (isProcessing) return;
     setIsProcessing(true);
-    const sajuRequestId =
-      typeof window !== "undefined"
-        ? localStorage.getItem(`${character}SajuRequestId`)
-        : null;
-    const orderId = generateOrderId(character);
-    // sessionToken: 무료 플로에서 발급되어 localStorage에 저장된 값.
-    // 백엔드 confirm 단계에서 user 식별에 사용된다. 누락이면 confirm 400.
     const sessionToken =
       typeof window !== "undefined"
         ? localStorage.getItem(`${character}SajuRequestId`)
         : null;
     try {
-      sessionStorage.setItem(
-        "checkoutPending",
-        JSON.stringify({
-          character,
-          orderId,
-          amount: product.priceKrw,
-          email: email.trim(),
+      const res = await api.post<DevBypassResponse>(
+        "/api/payments/dev/bypass",
+        {
           sessionToken,
-        }),
+          character,
+          customerEmail: email.trim(),
+        },
       );
-    } catch {}
-
-    trackEvent("payment_initiated", {
-      character_id: character,
-      saju_request_id: sajuRequestId,
-      amount: product.priceKrw,
-      order_id: orderId,
-    });
-
-    try {
-      await widgets.requestPayment({
-        orderId,
-        orderName: product.productLabel,
-        successUrl: `${window.location.origin}/checkout/success`,
-        failUrl: `${window.location.origin}/checkout/fail`,
-        customerEmail: email.trim(),
-      });
+      // success 페이지 폴링이 즉시 DONE 잡도록 sessionStorage에 orderId 박음
+      try {
+        sessionStorage.setItem(
+          "checkoutPending",
+          JSON.stringify({
+            character,
+            orderId: res.orderId,
+            amount: product.priceKrw,
+            email: email.trim(),
+          }),
+        );
+      } catch {}
+      trackEvent("payment_dev_bypass", { character_id: character, order_id: res.orderId });
+      router.replace("/checkout/success");
     } catch (err) {
-      const message = err instanceof Error ? err.message : "결제를 시작하지 못했어요.";
-      const errorCode =
-        err && typeof err === "object" && "code" in err
-          ? String((err as { code: unknown }).code)
-          : "UNKNOWN";
-      trackEvent("payment_failed", {
-        character_id: character,
-        order_id: orderId,
-        error_code: errorCode,
-        error_message: message,
-      });
-      if (!message.includes("USER_CANCEL") && !message.includes("취소")) {
-        alert(`결제를 시작하지 못했어요: ${message}`);
-      }
+      const message = err instanceof Error ? err.message : "결제 패스 실패";
+      alert(`결제 패스 실패: ${message}`);
       setIsProcessing(false);
     }
-  }, [
-    email,
-    agreeDataUsage,
-    agreePayment,
-    character,
-    product,
-    isProcessing,
-    widgets,
-    widgetsReady,
-  ]);
+  }, [character, email, isProcessing, product, router]);
 
   return {
     product,
@@ -333,9 +324,11 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     setOpenConsent,
     handleConsentDetail,
     isProcessing,
-    widgetsReady,
+    emailConfirmOpen,
     applyCoupon,
     handleBack,
     handleSubmit,
+    confirmEmailAndPay,
+    devBypassPay,
   };
 }
