@@ -7,7 +7,14 @@ import { TopNav } from "./components/TopNav";
 import { HeroSection } from "./components/HeroSection";
 import { ContentCarousel } from "./components/ContentCarousel";
 
-export function MainView() {
+interface MainViewProps {
+  /** 코인 플래그 ON일 때만 코인 표면(TopNav 잔액 칩·히어로 비용 힌트) 노출. app-level 주입, main feature는 coin import 금지. */
+  coinEnabled?: boolean;
+  /** 보유 코인. null = 조회 전/실패. */
+  coinBalance?: number | null;
+}
+
+export function MainView({ coinEnabled = false, coinBalance = null }: MainViewProps) {
   const { handleCardClick } = useMain();
   return (
     <div
@@ -19,12 +26,13 @@ export function MainView() {
         paddingBottom: "calc(67px + env(safe-area-inset-bottom))",
       }}
     >
-      <TopNav />
+      <TopNav coinEnabled={coinEnabled} coinBalance={coinBalance} />
       <main className="flex-1 pb-8">
-        <HeroSection card={HERO_CARD} onClick={handleCardClick} />
+        <HeroSection card={HERO_CARD} onClick={handleCardClick} coinEnabled={coinEnabled} />
         <ContentCarousel cards={SECONDARY_CARDS} onCardClick={handleCardClick} />
       </main>
-      <SiteFooter />
+      {/* 통합 푸터 — 사업자정보 상시 노출 + 실 법적 페이지 링크 + 코인 충전 진입(flag 무관). 홈 전용 구성. */}
+      <SiteFooter variant="dark" legalLinksVariant="pages" showChargeLink />
     </div>
   );
 }

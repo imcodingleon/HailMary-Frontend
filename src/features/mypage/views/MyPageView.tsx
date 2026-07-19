@@ -13,7 +13,12 @@ function genderKo(g: string): string {
   return g === "male" ? "남성" : g === "female" ? "여성" : "";
 }
 
-export function MyPageView() {
+interface MyPageViewProps {
+  /** 코인 플래그 ON일 때만 "코인 충전" 메뉴행 노출. app-level 주입(mypage feature는 coin import 금지). */
+  coinEnabled?: boolean;
+}
+
+export function MyPageView({ coinEnabled = false }: MyPageViewProps) {
   const router = useRouter();
   const { isAuthenticated, profile, refreshMe, logout, deleteAccount } = useAuth();
   const [legalDoc, setLegalDoc] = useState<LegalDoc | null>(null);
@@ -122,6 +127,16 @@ export function MyPageView() {
               label="리포트 보관함"
               onClick={() => router.push("/archive/")}
             />
+            {coinEnabled && (
+              <>
+                <Divider />
+                <MenuRow
+                  icon={<CoinIcon />}
+                  label="코인 충전"
+                  onClick={() => router.push("/charge/")}
+                />
+              </>
+            )}
           </div>
 
           <div className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
@@ -238,6 +253,15 @@ function ArchiveIcon() {
       <rect x="3" y="4" width="18" height="4" rx="1" />
       <path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8" />
       <path d="M10 12h4" />
+    </svg>
+  );
+}
+
+function CoinIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9.5 15.5c.5.7 1.4 1 2.5 1 1.7 0 3-.8 3-2s-1.3-1.6-3-2-3-.8-3-2 1.3-2 3-2c1.1 0 2 .3 2.5 1" strokeLinecap="round" />
     </svg>
   );
 }

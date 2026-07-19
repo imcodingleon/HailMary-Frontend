@@ -57,7 +57,7 @@ export function ContentCarousel({ cards, onCardClick }: ContentCarouselProps) {
         >
           {cards.map((card) =>
             card.variant === "coming-soon" ? (
-              <ComingSoonCard key={card.id} />
+              <ComingSoonCard key={card.id} label={card.title} icon={card.icon} />
             ) : (
               <ContentCard key={card.id} card={card} onClick={onCardClick} />
             ),
