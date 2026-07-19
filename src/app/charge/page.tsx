@@ -16,13 +16,6 @@ const CHARGE_PRODUCTS = [
   { krw: 10000, coins: 1150, bonus: 150 },
 ];
 
-// 코인 사용처 (서비스 상세 — 무엇을 판매하는지).
-const COIN_USAGE = [
-  { name: "AI 연애운 정밀 리포트", cost: 490, desc: "강연우·한도윤 캐릭터의 연애 사주 정밀 해석 리포트 1건" },
-  { name: "사주 채팅 (사주 기반 1턴)", cost: 5, desc: "사주 데이터를 반영한 AI 채팅 응답 1회" },
-  { name: "사주 채팅 (일반 1턴)", cost: 1, desc: "일반 AI 채팅 응답 1회" },
-];
-
 const won = (n: number) => n.toLocaleString("ko-KR");
 
 export default function ChargePage() {
@@ -69,33 +62,6 @@ export default function ChargePage() {
             결제 수단: 신용·체크카드(NHN KCP), 카카오페이 — 결제대행사 포트원(코리아포트원㈜)을
             통해 처리됩니다.
           </p>
-        </section>
-
-        {/* 서비스 상세 — 무엇을 판매하는지 */}
-        <section aria-label="코인 사용처" className="mb-8">
-          <h2 className="mb-3 text-[16px] font-semibold text-neutral-900">
-            코인으로 이용하는 서비스
-          </h2>
-          <ul className="space-y-2.5">
-            {COIN_USAGE.map((u) => (
-              <li
-                key={u.name}
-                className="rounded-xl border border-neutral-300 bg-white px-4 py-3.5"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[14.5px] font-semibold text-neutral-900">
-                    {u.name}
-                  </span>
-                  <span className="text-[13.5px] font-medium text-neutral-700">
-                    {u.cost} 코인
-                  </span>
-                </div>
-                <p className="mt-1 text-[12.5px] leading-relaxed text-neutral-600">
-                  {u.desc}
-                </p>
-              </li>
-            ))}
-          </ul>
         </section>
 
         {/* 유효기간·환불 요약 + 상세 링크 */}
