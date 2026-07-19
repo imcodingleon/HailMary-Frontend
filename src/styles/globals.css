@@ -38,6 +38,14 @@
   --color-yeonwoo-text: #d8d6d0;
   --color-yeonwoo-text-sub: #b0aea4;
   --color-yeonwoo-text-mute: #888;
+
+  /* 채팅앱 셸(2.0 P2) — 하단 4탭 네비 토큰. SOURCE: "7. 도화선 채팅 서비스 Test" app/globals.css 미러.
+     seonhwanggeum(#e8c9a0)은 기존 yeonwoo-gold와 동일 값 — 재사용. */
+  --color-meokheuk: #1e1a16;
+  --color-dohwahong: #d73f59;
+  --color-simyagal: #2e2218;
+  --color-hwaseonji: #f0ebe3;
+  --color-seonhwanggeum: #e8c9a0;
 }
 
 @keyframes shine {

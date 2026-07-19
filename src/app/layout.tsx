@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 import AmplitudeProvider from "./AmplitudeProvider";
 import QaAuthGuard from "@/shared/components/QaAuthGuard";
-import { BottomNav } from "@/shared/components/BottomNav";
+import { AppBottomNav } from "@/shared/components/AppBottomNav";
 import { WelcomeCoinModalHost } from "@/features/coin";
 
 const SITE_URL = "https://dohwaseonsaju.com";
@@ -58,8 +58,9 @@ export default function RootLayout({
       <body className="mx-auto flex min-h-full max-w-md flex-col">
         <AmplitudeProvider />
         <QaAuthGuard>{children}</QaAuthGuard>
-        {/* 홈·보관함에서만 노출되는 하단 네비 (컴포넌트 내부에서 경로 판별·자동 숨김) */}
-        <BottomNav />
+        {/* 채팅앱 4탭 하단 네비 (도화선/연락처/채팅/충전) — 4탭 라우트 + 보관함에서만 노출,
+            딥플로우(인트로/캐릭터선택/사주/체크아웃 등)에서는 컴포넌트 내부에서 자동 숨김 */}
+        <AppBottomNav />
         {/* 신규 가입 시 웰컴 코인 팝업 (coin OFF면 무동작) */}
         <WelcomeCoinModalHost />
       </body>
