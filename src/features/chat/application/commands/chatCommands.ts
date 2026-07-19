@@ -4,7 +4,7 @@ import { atom, type Getter, type Setter } from 'jotai';
 import type { ChatIntent, ChatIntentType } from '@/features/chat/domain/intent/chatIntent';
 import type { Message } from '@/features/chat/domain/model/message';
 import type { ChatRoom } from '@/features/chat/domain/model/chatRoom';
-import { chatApi } from '@/features/chat/infrastructure/chatApi';
+import { chatApi, ChatHttpError } from '@/features/chat/infrastructure/chatApi';
 import { paymentApi } from '@/features/chat/infrastructure/paymentApi';
 import { analytics } from '@/features/chat/infrastructure/analytics';
 import {
@@ -97,6 +97,8 @@ const sendMessage: Command = async ({ get, set, characterId, intent }) => {
   await new Promise<void>((resolve) => {
     let replyId: string | null = null;
     let acc = '';
+    // 실 BE usage 이벤트로 받은 권위 잔량(P4-2a). 목업은 항상 null → 기존 로컬 차감 유지.
+    let usageBalance: number | null = null;
 
     const complete = (): void => {
       // 분석(H10) + 토큰 차감 + 상태 복귀 — 성공 종료 시 1회.
@@ -107,7 +109,7 @@ const sendMessage: Command = async ({ get, set, characterId, intent }) => {
       );
       const wallet = get(walletAtom);
       set(walletAtom, {
-        balance: Math.max(0, wallet.balance - cost),
+        balance: usageBalance ?? Math.max(0, wallet.balance - cost),
         history: [
           ...wallet.history,
           { id: makeId(), type: 'spend', amount: cost, mode: current.mode, at: Date.now() },
@@ -123,6 +125,7 @@ const sendMessage: Command = async ({ get, set, characterId, intent }) => {
         mode: current.mode,
         history: current.messages, // 모드와 무관하게 그대로(기억·세계관 공유)
         userMessage: text,
+        roomId: current.roomId ?? null,
       },
       {
         onDelta(t) {
@@ -158,9 +161,16 @@ const sendMessage: Command = async ({ get, set, characterId, intent }) => {
           // 추천 답변 갱신 — 캐릭터별 유저 답변 후보 교체 (INFO tail).
           set(suggestionsAtom, { ...get(suggestionsAtom), [characterId]: list });
         },
+        onUsage(balance) {
+          // BE 권위 잔량 — complete()의 로컬 차감 대신 이 값을 사용(중복 차감 방지).
+          usageBalance = balance;
+        },
         onDone: complete,
         onError(code) {
-          set(chatStatusAtom, code === 'OUT_OF_TOKEN' ? 'OUT_OF_TOKEN' : 'ERROR');
+          set(
+            chatStatusAtom,
+            code === 'OUT_OF_TOKEN' ? 'OUT_OF_TOKEN' : code === 'UNAUTHORIZED' ? 'UNAUTHORIZED' : 'ERROR',
+          );
           resolve();
         },
       },
@@ -214,25 +224,67 @@ export const dispatchChatAtom = atom(
   },
 );
 
-/** 방 진입 시 초기화: 활성 방 지정 + (없으면) 인사 시드 + 안 읽음 리셋. */
-export const initRoomAtom = atom(null, (get, set, characterId: string) => {
+/**
+ * 방 진입 시 초기화: 활성 방 지정 + (없으면) 인사 시드 + 안 읽음 리셋.
+ *
+ * 목업(CHAT_API_BASE 미설정)은 아래 첫 분기 그대로 — 기존 동작과 완전히 동일(동기, 네트워크 0).
+ * 실연동은 BE가 이력의 권위원 — roomId 없는(=미하이드레이션) 방이면 매 진입마다
+ * ensureRoom(get-or-create) + fetchHistory로 덮어써 chatRoomsAtom 초기 목업 시드를 대체한다.
+ */
+export const initRoomAtom = atom(null, async (get, set, characterId: string) => {
   set(activeCharacterIdAtom, characterId);
   set(chatStatusAtom, 'IDLE');
 
+  if (!chatApi.isReal) {
+    const rooms = get(chatRoomsAtom);
+    const existing = rooms[characterId];
+    const room: ChatRoom = existing ?? {
+      characterId,
+      messages: [
+        { id: makeId(), role: 'character', type: 'text', content: chatApi.greet(characterId) },
+      ],
+      mode: 'casual',
+      lastMessage: chatApi.greet(characterId),
+      unreadCount: 0,
+      lastAt: Date.now(),
+    };
+    // 진입 시 안 읽음 리셋
+    set(chatRoomsAtom, { ...rooms, [characterId]: { ...room, unreadCount: 0 } });
+    return;
+  }
+
+  // ── 실연동 ──
   const rooms = get(chatRoomsAtom);
   const existing = rooms[characterId];
+  if (existing?.roomId != null) {
+    // 이미 이번 세션에 하이드레이션된 방 — 재진입 시 재조회 없이 안 읽음만 리셋.
+    set(chatRoomsAtom, { ...rooms, [characterId]: { ...existing, unreadCount: 0 } });
+    return;
+  }
 
-  const room: ChatRoom = existing ?? {
-    characterId,
-    messages: [
-      { id: makeId(), role: 'character', type: 'text', content: chatApi.greet(characterId) },
-    ],
-    mode: 'casual',
-    lastMessage: chatApi.greet(characterId),
-    unreadCount: 0,
-    lastAt: Date.now(),
-  };
-
-  // 진입 시 안 읽음 리셋
-  set(chatRoomsAtom, { ...rooms, [characterId]: { ...room, unreadCount: 0 } });
+  // 하이드레이션 대기 중 전송 가능(canSendAtom은 status==='IDLE'에서만 허용)해지는 경합 방지.
+  set(chatStatusAtom, 'LOADING_RESPONSE');
+  try {
+    const { roomId, greetingMessages } = await chatApi.ensureRoom(characterId);
+    let messages = greetingMessages;
+    if (roomId != null) {
+      const history = await chatApi.fetchHistory(roomId);
+      if (history.length > 0) messages = history;
+    }
+    const latest = get(chatRoomsAtom); // 비동기 대기 중 다른 갱신이 있었을 수 있어 재조회
+    const room: ChatRoom = {
+      characterId,
+      roomId,
+      messages,
+      mode: latest[characterId]?.mode ?? 'casual',
+      lastMessage: messages[messages.length - 1]?.content ?? '',
+      unreadCount: 0,
+      lastAt: Date.now(),
+    };
+    set(chatRoomsAtom, { ...latest, [characterId]: room });
+    set(chatStatusAtom, 'IDLE');
+  } catch (e) {
+    // 로그인 필요(401)는 구분된 상태로 — 나머지는 일반 에러(재시도 유도는 후속 단계).
+    set(chatStatusAtom, e instanceof ChatHttpError && e.status === 401 ? 'UNAUTHORIZED' : 'ERROR');
+  }
 });

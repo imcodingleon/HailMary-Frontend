@@ -9,7 +9,8 @@ export type ChatStatus =
   | 'LOADING_RESPONSE'
   | 'STREAMING' // 첫 delta 도착 ~ done. (CHAT_SSOT.md SSE 계약)
   | 'ERROR'
-  | 'OUT_OF_TOKEN';
+  | 'OUT_OF_TOKEN'
+  | 'UNAUTHORIZED'; // 실 BE 401 — 로그인 필요 (P4-2a: 상태만, 로그인 모달은 P4-2b)
 
 /** 상태머신 정식 형태(문서/후속 단계용). 런타임은 status + mode를 분리 보관. */
 export type ChatState =
@@ -17,6 +18,7 @@ export type ChatState =
   | { status: 'LOADING_RESPONSE'; mode: ChatMode }
   | { status: 'STREAMING'; mode: ChatMode }
   | { status: 'ERROR'; mode: ChatMode }
-  | { status: 'OUT_OF_TOKEN'; mode: ChatMode };
+  | { status: 'OUT_OF_TOKEN'; mode: ChatMode }
+  | { status: 'UNAUTHORIZED'; mode: ChatMode };
 
 export const DEFAULT_MODE: ChatMode = 'casual';

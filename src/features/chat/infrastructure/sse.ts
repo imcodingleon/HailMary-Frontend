@@ -10,7 +10,10 @@ export interface SseFrame {
 
 export interface SseCallbacks {
   onFrame(frame: SseFrame): void;
-  onTransportError(code: 'NETWORK' | 'OUT_OF_TOKEN' | 'HTTP_ERROR', status?: number): void;
+  onTransportError(
+    code: 'NETWORK' | 'OUT_OF_TOKEN' | 'UNAUTHORIZED' | 'HTTP_ERROR',
+    status?: number,
+  ): void;
   onClose(): void;
 }
 
@@ -48,7 +51,13 @@ export function streamSse(
         signal: controller.signal,
       });
       if (!res.ok || !res.body) {
-        cb.onTransportError(res.status === 402 ? 'OUT_OF_TOKEN' : 'HTTP_ERROR', res.status);
+        const code =
+          res.status === 401
+            ? 'UNAUTHORIZED'
+            : res.status === 402
+              ? 'OUT_OF_TOKEN'
+              : 'HTTP_ERROR';
+        cb.onTransportError(code, res.status);
         return;
       }
       const reader = res.body.getReader();
