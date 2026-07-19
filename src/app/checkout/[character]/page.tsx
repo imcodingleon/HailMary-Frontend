@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { CheckoutView } from "@/features/checkout";
 import { isCheckoutCharacter } from "@/features/checkout/domain/checkoutProducts";
+import { CheckoutPageClient } from "./CheckoutPageClient";
 
 export function generateStaticParams() {
   return [{ character: "yeonwoo" }, { character: "doyoon" }];
@@ -15,5 +15,5 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   if (!isCheckoutCharacter(character)) {
     notFound();
   }
-  return <CheckoutView character={character} />;
+  return <CheckoutPageClient character={character} />;
 }

@@ -12,13 +12,28 @@ import { PriceSummary } from "./components/PriceSummary";
 import { CouponField } from "./components/CouponField";
 import { CheckoutCta } from "./components/CheckoutCta";
 import { KakaoPayButton } from "./components/KakaoPayButton";
+import { CoinCta } from "./components/CoinCta";
 import { ConsentRow } from "./components/ConsentRow";
+
+// 연애운 결과지 코인 해금 비용 — BE `settings.love_report_coin_cost`(490)와 동기화된 표시값.
+const LOVE_REPORT_COIN_COST = 490;
 
 interface CheckoutViewProps {
   character: CheckoutCharacter;
+  /** coin feature 플래그 — page가 `isCoinEnabled()`로 주입(feature 간 import 회피). ON이면 원화 CTA 대신 코인 CTA. */
+  coinEnabled?: boolean;
+  /** 보유 코인 — page가 `useCoinBalance()`로 주입. null = 조회 전/실패. */
+  coinBalance?: number | null;
+  /** 코인 잔액 조회 진행 중 여부. */
+  coinBalanceLoading?: boolean;
 }
 
-export function CheckoutView({ character }: CheckoutViewProps) {
+export function CheckoutView({
+  character,
+  coinEnabled = false,
+  coinBalance = null,
+  coinBalanceLoading = false,
+}: CheckoutViewProps) {
   const {
     product,
     email,
@@ -29,6 +44,7 @@ export function CheckoutView({ character }: CheckoutViewProps) {
     setCoupon,
     handleCouponBlur,
     couponApplied,
+    coinShort,
     isTestAccount,
     kakaopayAvailable,
     couponMessage,
@@ -46,6 +62,7 @@ export function CheckoutView({ character }: CheckoutViewProps) {
     handleBack,
     handleSubmit,
     devBypassPay,
+    payWithCoins,
   } = useCheckout(character);
 
   const devBypass = isDevBypassEnabled();
@@ -101,13 +118,23 @@ export function CheckoutView({ character }: CheckoutViewProps) {
             우리 페이지의 동의(ConsentRow)는 우리 서비스의 개인정보·결제진행 동의 별도. */}
 
         {couponApplied ? (
-          // 쿠폰 무료발급 — 결제수단 무관 단일 버튼.
+          // 쿠폰 무료발급 — 결제수단 무관 단일 버튼. 코인 플래그보다 우선(쿠폰=무료 확정).
           <CheckoutCta
             onSubmit={() => handleSubmit()}
             loading={isProcessing}
             disabled={false}
             label="무료로 받기"
             loadingLabel="처리 중…"
+          />
+        ) : coinEnabled ? (
+          // 코인 플래그 ON — 원화 CTA(카카오페이/PayApp) 대신 코인 CTA 단일 노출(원화 대체).
+          <CoinCta
+            cost={LOVE_REPORT_COIN_COST}
+            balance={coinBalance}
+            balanceLoading={coinBalanceLoading}
+            insufficient={coinShort}
+            loading={isProcessing}
+            onPay={payWithCoins}
           />
         ) : kakaopayAvailable ? (
           // 카카오페이(포트원) + PayApp(카드·간편결제) 공존.
