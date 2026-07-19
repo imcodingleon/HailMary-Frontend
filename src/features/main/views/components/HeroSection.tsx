@@ -3,18 +3,12 @@
 import Image from "next/image";
 import type { ContentCard } from "../../domain/contentCards";
 
-// AI 연애운 정밀 리포트 코인 비용 — BE settings.love_report_coin_cost(490)와 동기화.
-// 힌트 칩 표기용 상수. 실 결제 비용 판단은 checkout feature 소관(여기선 표시만).
-const LOVE_REPORT_COIN_HINT = 490;
-
 interface HeroSectionProps {
   card: ContentCard;
   onClick: (card: ContentCard) => void;
-  /** 코인 플래그 ON일 때 코인 비용 힌트 칩 노출. */
-  coinEnabled?: boolean;
 }
 
-export function HeroSection({ card, onClick, coinEnabled = false }: HeroSectionProps) {
+export function HeroSection({ card, onClick }: HeroSectionProps) {
   if (!card.poster) return null;
   return (
     <section className="px-6 pt-4">
@@ -52,20 +46,6 @@ export function HeroSection({ card, onClick, coinEnabled = false }: HeroSectionP
         >
           {card.tag}
         </span>
-        {/* 코인 비용 힌트 — coin ON에서만, 태그와 대칭되는 우측 상단 */}
-        {coinEnabled && (
-          <span
-            className="absolute right-5 top-5 z-20 inline-block rounded-lg border px-3 py-1 text-[11px] font-medium tracking-wide"
-            style={{
-              background: "rgba(15,8,30,0.65)",
-              borderColor: "rgba(232,201,160,0.4)",
-              color: "var(--color-yeonwoo-gold)",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            {LOVE_REPORT_COIN_HINT}코인
-          </span>
-        )}
       </button>
     </section>
   );

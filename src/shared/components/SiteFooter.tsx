@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { LegalModal, type LegalDoc } from "./LegalModal";
 
 export type SiteFooterVariant = "dark" | "light";
@@ -9,13 +8,6 @@ export type SiteFooterVariant = "dark" | "light";
 interface SiteFooterProps {
   /** "dark" (기본): 어두운 배경 + 밝은 텍스트. "light": 연한 회색 배경 + 어두운 텍스트. */
   variant?: SiteFooterVariant;
-  /**
-   * "modal" (기본, 기존 동작 유지): 이용약관/개인정보처리방침을 LegalModal로 노출.
-   * "pages": 실제 정적 페이지(/legal/[doc]/)로 링크 + 환불정책 추가. PG 심사(크롤러 감지)용 — app 홈 전용.
-   */
-  legalLinksVariant?: "modal" | "pages";
-  /** true면 "코인 충전" → /charge/ 링크를 법적 링크 행에 추가 노출(flag 무관, 구조 링크). */
-  showChargeLink?: boolean;
 }
 
 interface FooterTheme {
@@ -31,8 +23,7 @@ interface FooterTheme {
 
 const THEMES: Record<SiteFooterVariant, FooterTheme> = {
   dark: {
-    // 홈(base-900 #0a0518)과 이어지도록 우주 보라-블랙 톤. neutral-800(회색)이면 seam이 생김.
-    footerBg: "bg-[#0a0518]",
+    footerBg: "bg-neutral-800",
     body: "text-neutral-300",
     label: "text-neutral-100",
     separator: "text-neutral-500",
@@ -53,11 +44,7 @@ const THEMES: Record<SiteFooterVariant, FooterTheme> = {
   },
 };
 
-export function SiteFooter({
-  variant = "dark",
-  legalLinksVariant = "modal",
-  showChargeLink = false,
-}: SiteFooterProps) {
+export function SiteFooter({ variant = "dark" }: SiteFooterProps) {
   const [openDoc, setOpenDoc] = useState<LegalDoc | null>(null);
   const t = THEMES[variant];
   return (
@@ -106,56 +93,24 @@ export function SiteFooter({
         </p>
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
-        {showChargeLink && (
-          <>
-            <Link href="/charge/" className="underline">
-              코인 충전
-            </Link>
-            <span aria-hidden className={t.separator}>
-              |
-            </span>
-          </>
-        )}
-        {legalLinksVariant === "pages" ? (
-          <>
-            <Link href="/legal/terms/" className="underline">
-              이용약관
-            </Link>
-            <span aria-hidden className={t.separator}>
-              |
-            </span>
-            <Link href="/legal/privacy/" className="underline">
-              개인정보처리방침
-            </Link>
-            <span aria-hidden className={t.separator}>
-              |
-            </span>
-            <Link href="/legal/refund/" className="underline">
-              환불 정책
-            </Link>
-          </>
-        ) : (
-          <>
-            <button
-              type="button"
-              onClick={() => setOpenDoc("terms")}
-              className="underline"
-            >
-              이용약관
-            </button>
-            <span aria-hidden className={t.separator}>
-              |
-            </span>
-            <button
-              type="button"
-              onClick={() => setOpenDoc("privacy")}
-              className="underline"
-            >
-              개인정보처리방침
-            </button>
-          </>
-        )}
+      <div className="mt-5 flex items-center justify-center gap-3">
+        <button
+          type="button"
+          onClick={() => setOpenDoc("terms")}
+          className="underline"
+        >
+          이용약관
+        </button>
+        <span aria-hidden className={t.separator}>
+          |
+        </span>
+        <button
+          type="button"
+          onClick={() => setOpenDoc("privacy")}
+          className="underline"
+        >
+          개인정보처리방침
+        </button>
       </div>
 
       <p className={`mt-3 ${t.copyright}`}>

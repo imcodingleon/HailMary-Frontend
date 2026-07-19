@@ -11,8 +11,6 @@ export interface ContentCard {
   microCopy?: string;
   poster?: string;
   route?: string;
-  /** variant "coming-soon" 카드의 플레이스홀더 아이콘(emoji). 미지정 시 🔒. */
-  icon?: string;
 }
 
 export const SECONDARY_CARDS: ContentCard[] = [
@@ -30,13 +28,6 @@ export const SECONDARY_CARDS: ContentCard[] = [
     variant: "coming-soon",
     title: "사주 총운 컨텐츠 준비중",
     tag: "준비 중",
-  },
-  {
-    id: "coming-soon-chat",
-    variant: "coming-soon",
-    title: "AI 사주 채팅 · 준비중",
-    tag: "준비 중",
-    icon: "💬",
   },
 ];
 
