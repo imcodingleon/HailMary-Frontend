@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { isValidEmail } from "@/shared/utils/validation";
 import { getDeviceId, getSessionId, trackEvent } from "@/shared/utils/analytics";
-import { api } from "@/shared/utils/api";
+import { api, ApiError } from "@/shared/utils/api";
 import { env } from "@/lib/env";
 import { getAccountIdFromToken } from "@/lib/authAccount";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -44,6 +44,30 @@ interface RedeemCouponResponse {
   orderId: string;
 }
 
+interface SpendCoinsResponse {
+  orderId: string;
+}
+
+/** 연애운 결과지 코인 해금 — BE가 sessionToken으로 리포트의 user_id를 확인한 뒤
+ *  코인 490개를 차감하고 발급한다. 잔액 부족이면 402(coin_short)로 응답. */
+async function unlockLoveReportWithCoins(params: {
+  sessionToken: string | null;
+  character: CheckoutCharacter;
+  customerEmail: string;
+}): Promise<SpendCoinsResponse> {
+  return api.post<SpendCoinsResponse>(
+    "/api/coins/spend/love-report",
+    {
+      sessionToken: params.sessionToken,
+      character: params.character,
+      customerEmail: params.customerEmail,
+      ...getAnalyticsIds(),
+    },
+    // 로그인 필수 엔드포인트 — 계정 JWT 첨부.
+    { auth: "account" },
+  );
+}
+
 /** 결제 패스 버튼 노출 여부 — localhost 한정 allowlist.
  *  prod 전환(2026-06-05): 기존 블록리스트(운영 도메인만 차단)는 staging·새 도메인에서
  *  fail-open이라 폐기. 배포된 모든 도메인에서 숨기고 로컬 개발에서만 노출.
@@ -65,6 +89,9 @@ export interface UseCheckoutReturn {
   handleCouponBlur: () => void;
   /** 쿠폰 검증 통과 여부 — true면 0원 무료 발급 플로로 전환. */
   couponApplied: boolean;
+  /** 코인 결제 시도가 402(잔액 부족)로 실패했는지 — true면 UI가 "충전하기" 유도.
+   *  코인 잔액 자체는 여기서 들고 있지 않는다(코인 feature import 금지 — page가 주입). */
+  coinShort: boolean;
   /** 카드사 심사용 테스트 계정 로그인 상태 — 결제 0원 + UI 안내 분기. */
   isTestAccount: boolean;
   /** 카카오페이(포트원) 결제 옵션 노출 여부. true면 카카오페이 버튼 + PayApp 버튼 공존. */
@@ -88,6 +115,9 @@ export interface UseCheckoutReturn {
   handleSubmit: (method?: PayMethod) => Promise<void>;
   /** staging/local 전용: 결제 단계 스킵 → BE bypass → success polling. */
   devBypassPay: () => Promise<void>;
+  /** 코인으로 연애운 결과지 해금. 성공 시 쿠폰/무료발급과 동일한 success 폴링 진입.
+   *  402(잔액 부족)는 alert 없이 coinShort=true로만 표면화(UI는 Task 4에서 인라인 렌더). */
+  payWithCoins: () => Promise<void>;
 }
 
 // BE 결제 요청 3종(request/redeem/bypass)에 Amplitude 식별자를 동봉 — BE가 Payment에
@@ -147,6 +177,7 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [coupon, setCouponState] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
+  const [coinShort, setCoinShort] = useState(false);
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
   const [couponChecking, setCouponChecking] = useState(false);
   const [agreeDataUsage, setAgreeDataUsage] = useState(true);
@@ -538,6 +569,89 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     }
   }, [character, email, isProcessing, product, router]);
 
+  /** 코인으로 연애운 결과지 해금 — 쿠폰 무료발급 경로를 미러(code 필드만 제거).
+   *  성공: savePendingCheckout(amount:0) + 동일 success 폴링 진입.
+   *  402(잔액 부족): alert 없이 coinShort=true만 세팅 — Task 4 UI가 인라인 "충전하기"로 안내. */
+  const payWithCoins = useCallback(async () => {
+    trackEvent("checkout_pay_button_click", {
+      character_id: character,
+      pay_method: "coin",
+      amount: product.priceKrw,
+      email_filled: email.trim().length > 0,
+      agree_data_usage: agreeDataUsage,
+      agree_payment: agreePayment,
+    });
+    if (!isValidEmail(email)) {
+      setEmailError("이메일 형식을 확인해 주세요.");
+      scrollToField("checkout-email");
+      trackEvent("checkout_validation_failed", {
+        character_id: character,
+        reason: "email_invalid",
+      });
+      return;
+    }
+    if (!agreeDataUsage || !agreePayment) {
+      scrollToField(!agreeDataUsage ? "agree-data-usage" : "agree-payment");
+      alert("결제 진행에는 두 가지 동의가 모두 필요합니다.");
+      trackEvent("checkout_validation_failed", {
+        character_id: character,
+        reason: "consent_missing",
+      });
+      return;
+    }
+    if (isProcessing) return;
+    setCoinShort(false);
+    setIsProcessing(true);
+
+    const sajuRequestId =
+      typeof window !== "undefined"
+        ? localStorage.getItem(`${character}SajuRequestId`)
+        : null;
+    const sessionToken = sajuRequestId;
+
+    try {
+      const res = await unlockLoveReportWithCoins({
+        sessionToken,
+        character,
+        customerEmail: email.trim(),
+      });
+      savePendingCheckout({
+        character,
+        orderId: res.orderId,
+        amount: 0,
+        email: email.trim(),
+      });
+      trackEvent("coin_love_report_unlocked", {
+        character_id: character,
+        order_id: res.orderId,
+      });
+      router.replace("/checkout/success");
+    } catch (err) {
+      // 402 = 코인 잔액 부족. alert 없이 플래그만 세팅 — Task 4 UI가 인라인으로 "충전하기" 유도.
+      if (err instanceof ApiError && err.status === 402) {
+        setCoinShort(true);
+        trackEvent("coin_love_report_insufficient", { character_id: character });
+        setIsProcessing(false);
+        return;
+      }
+      const message = err instanceof Error ? err.message : "코인 결제에 실패했어요.";
+      trackEvent("coin_love_report_failed", {
+        character_id: character,
+        error_message: message,
+      });
+      alert(`코인 결제에 실패했어요: ${message}`);
+      setIsProcessing(false);
+    }
+  }, [
+    email,
+    agreeDataUsage,
+    agreePayment,
+    character,
+    product,
+    isProcessing,
+    router,
+  ]);
+
   return {
     product,
     email,
@@ -548,6 +662,7 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     setCoupon,
     handleCouponBlur,
     couponApplied,
+    coinShort,
     isTestAccount,
     kakaopayAvailable,
     couponMessage,
@@ -565,5 +680,6 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     handleBack,
     handleSubmit,
     devBypassPay,
+    payWithCoins,
   };
 }
