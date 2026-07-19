@@ -34,7 +34,9 @@ export function CoinCta({
     return (
       <div className="space-y-2">
         <p className="text-center text-[12px]" style={{ color: "#96733B" }}>
-          보유 {known ? balance.toLocaleString() : 0}코인 · 필요 {cost.toLocaleString()}코인
+          {known
+            ? `보유 ${balance.toLocaleString()}코인 · 필요 ${cost.toLocaleString()}코인`
+            : `보유 확인 중 · 필요 ${cost.toLocaleString()}코인`}
         </p>
         <Link
           href="/charge"
@@ -43,6 +45,25 @@ export function CoinCta({
         >
           코인이 부족해요 · 충전하기
         </Link>
+      </div>
+    );
+  }
+
+  // 잔액 미확인(비로그인 또는 조회 실패) & 조회 진행 중도 아님 — 코인 결제는 로그인 전제라
+  // 여기서 onPay(payWithCoins)를 호출해봐야 BE가 401로 거부한다. 앱에 별도 /login 페이지
+  // 라우트가 없고(로그인은 화면별 LoginPromptModal로만 트리거되며, 그 배선은 이 컴포넌트의
+  // 스코프 밖) 없는 라우트를 지어낼 수도 없으므로, 버튼을 비활성화하고 상태를 정직하게 알린다.
+  if (!known && !balanceLoading) {
+    return (
+      <div className="space-y-2">
+        <button
+          type="button"
+          disabled
+          className="flex h-12 w-full cursor-not-allowed items-center justify-center rounded-md text-[15px] font-semibold shadow-sm opacity-50"
+          style={{ background: "#E8C9A0", color: "#1a1715" }}
+        >
+          로그인이 필요해요
+        </button>
       </div>
     );
   }
