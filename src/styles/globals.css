@@ -249,3 +249,42 @@ body:has([data-kkebi-scene]) {
   transform: scale(0.97);
   transition: transform 0.1s;
 }
+
+/* ============================================================ */
+/* 채팅앱 셸(2.0 P2) — app-bg / app-surface / app-header / app-nav      */
+/* SOURCE 미러: "7. 도화선 채팅 서비스 Test" app/globals.css. 추가 전용   */
+/* (기존 토큰/클래스 변경·삭제 없음). 색은 위 @theme 팔레트 토큰만 사용. */
+/* ============================================================ */
+:root {
+  /* 먹흑 운문 배경(9:16). 없으면 --color-meokheuk 단색 fallback */
+  --app-bg-image: url("/decor/app-bg.png");
+}
+
+/* 먹흑 운문 앱 배경 — 연락처·채팅·충전 등 채팅앱 탭 화면 전용(다른 곳 미적용).
+   배경은 앱 컨테이너(섹션) 자체에 얹는다 — 모바일 셸(max-w-md) 안쪽에만 칠해진다. */
+.app-bg {
+  background-color: var(--color-meokheuk); /* 이미지 없으면 이 단색이 fallback */
+  background-image: var(--app-bg-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 헤더·네비 공용 surface — 반투명 심야갈 + blur로 배경 문양이 은은히 비침. */
+.app-surface {
+  background-color: var(--color-simyagal); /* backdrop-filter 미지원 시 불투명 심야갈 fallback */
+  background-color: color-mix(in srgb, var(--color-simyagal) 85%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 상단 헤더 — 선황금 아주 옅은 하단 구분선. */
+.app-header {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-seonhwanggeum) 12%, transparent);
+}
+
+/* 하단 네비 — 옅은 상단 구분선 + 위로 은은한 그림자. */
+.app-nav {
+  border-top: 1px solid color-mix(in srgb, var(--color-seonhwanggeum) 12%, transparent);
+  box-shadow: 0 -8px 20px -12px rgba(0, 0, 0, 0.6);
+}
