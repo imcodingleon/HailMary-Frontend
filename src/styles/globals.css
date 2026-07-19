@@ -46,6 +46,11 @@
   --color-simyagal: #2e2218;
   --color-hwaseonji: #f0ebe3;
   --color-seonhwanggeum: #e8c9a0;
+
+  /* P3 — 채팅 FE 이식. SOURCE: "7. 도화선 채팅 서비스 Test" app/globals.css 토큰 미러(추가 전용). */
+  --font-title: "Hahmlet", "Noto Serif KR", serif;
+  --font-body: "Noto Sans KR", sans-serif;
+  --radius-pill: 999px;
 }
 
 @keyframes shine {
@@ -303,4 +308,67 @@ body:has([data-kkebi-scene]) {
 
 .rounded-card {
   border-radius: 20px;
+}
+
+/* ============================================================ */
+/* P3 — 채팅 FE 이식. SOURCE 미러: "7. 도화선 채팅 서비스 Test" app/globals.css */
+/* .plaque / .plaque-btn / .plaque-fill / .thread-fallback / .card-hover  */
+/* 추가 전용(기존 클래스 변경 없음). --shadow-card는 TARGET에 없어           */
+/* .card-surface와 동일 값(0 6px 16px -8px rgba(0,0,0,.55))으로 인라인.    */
+/* ============================================================ */
+
+/* 전통 편액(현판) 프레임 — 대화 시작하기 버튼 · 호감도 바 공통 디자인 언어.
+   선황금 얇은 프레임 + 살짝 이너 라인. 색면(도화홍)·무늬(PlaqueOrnaments)는 각 컴포넌트에서 조합. */
+.plaque {
+  position: relative;
+  border: 1px solid var(--color-seonhwanggeum); /* 선황금 얇은 프레임 */
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--color-seonhwanggeum) 28%, transparent); /* 살짝 이너 라인 */
+}
+
+/* 대화 시작하기 버튼 — hover/press 시 은은한 도화홍 글로우.
+   통이미지(투명 배경 편액)라 사각 box-shadow 대신 drop-shadow로 실루엣(알파) 형태를 따라 번지게 한다. */
+.plaque-btn {
+  transition: filter 200ms ease, transform 200ms ease;
+}
+@media (hover: hover) {
+  .plaque-btn:hover:not(:disabled) {
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--color-dohwahong) 65%, transparent));
+  }
+}
+.plaque-btn:active:not(:disabled) {
+  transform: scale(0.99);
+  filter: drop-shadow(0 0 7px color-mix(in srgb, var(--color-dohwahong) 55%, transparent));
+}
+
+/* 호감도 바 채움 — 채움 끝에 은은한 도화홍 글로우(부모 overflow-hidden이 바 안쪽으로 번지게 클립). */
+.plaque-fill {
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--color-dohwahong) 60%, transparent);
+  transition: width 300ms ease;
+}
+
+/* 헤더 하단 붉은 실 구분선 fallback — 이미지 없을 때 선황금 얇은 수평 라인(양끝 페이드). 색은 토큰만. */
+.thread-fallback {
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--color-seonhwanggeum) 70%, transparent),
+    transparent
+  );
+}
+
+/* 카드 기본 입체감 — 전 환경에서 미세 그림자. */
+.card-hover {
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.55);
+}
+/* 카드 hover — 확대 + 캐릭터 색 글로우(--glow) + 기본 그림자 유지. hover 지원 환경에서만(터치 제외). */
+@media (hover: hover) {
+  .card-hover {
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .card-hover:hover {
+    transform: scale(1.03);
+    box-shadow:
+      0 0 24px -2px var(--glow, var(--color-dohwahong)),
+      0 6px 16px -8px rgba(0, 0, 0, 0.55);
+  }
 }

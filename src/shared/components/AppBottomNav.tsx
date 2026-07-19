@@ -93,23 +93,31 @@ const TABS: readonly Tab[] = [
   { href: "/charge", label: "충전", icon: NAV_ICON.charge, Icon: ChargeIcon },
 ];
 
-// 4탭 라우트 + 보관함에서만 노출. 인트로/캐릭터선택/사주플로우/체크아웃 등
-// 딥플로우 화면에서는 자동 숨김 — 기존 shared/components/BottomNav.tsx의 shouldShow 패턴을 그대로 따름.
+// 4탭 라우트 + 보관함 + 캐릭터 상세에서 노출(SOURCE와 동일 — /room·/affinity는 풀스크린이라 미노출).
+// 인트로/캐릭터선택/사주플로우/체크아웃 등 딥플로우 화면에서는 자동 숨김 — 기존
+// shared/components/BottomNav.tsx의 shouldShow 패턴을 그대로 따름.
+// ❗/character/는 동적 id 세그먼트(/character/yeonu/)라 exact match(SHOW_ROUTES.includes)로는
+//   절대 매치되지 않는다 — prefix 매치를 별도로 추가.
 const SHOW_ROUTES = ["/", "/friends/", "/chat/", "/charge/", "/archive/"] as const;
+const SHOW_PREFIX_ROUTES = ["/character/"] as const;
 
 function shouldShow(pathname: string): boolean {
   const p = pathname.endsWith("/") ? pathname : `${pathname}/`;
-  return SHOW_ROUTES.includes(p as (typeof SHOW_ROUTES)[number]);
+  if (SHOW_ROUTES.includes(p as (typeof SHOW_ROUTES)[number])) return true;
+  return SHOW_PREFIX_ROUTES.some((prefix) => p.startsWith(prefix));
 }
 
 // 하단 여백 spacer가 필요한 라우트만 별도 관리. 홈(MainView)·보관함(ArchiveView)은 1.0부터
 // 옛 고정 네비(67px) 몫의 paddingBottom을 이미 자체적으로 갖고 있어(건드리지 않음) 여기서 spacer를
 // 또 추가하면 화면 맨 아래에 여백이 이중으로 쌓인다 — 그래서 이 둘은 제외.
+// 캐릭터 상세는 하단에 sticky "대화 시작하기" CTA가 있어 고정 네비에 가리지 않도록 spacer 필요(prefix 매치).
 const SPACER_ROUTES = ["/friends/", "/chat/", "/charge/"] as const;
+const SPACER_PREFIX_ROUTES = ["/character/"] as const;
 
 function needsSpacer(pathname: string): boolean {
   const p = pathname.endsWith("/") ? pathname : `${pathname}/`;
-  return SPACER_ROUTES.includes(p as (typeof SPACER_ROUTES)[number]);
+  if (SPACER_ROUTES.includes(p as (typeof SPACER_ROUTES)[number])) return true;
+  return SPACER_PREFIX_ROUTES.some((prefix) => p.startsWith(prefix));
 }
 
 // 네비 실측 높이(SOURCE py-2.5 + icon 24 + gap 4 + label 11px 라인 근사) — 옛 1.0 BottomNav와
