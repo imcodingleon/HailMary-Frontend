@@ -2,6 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 import { authStore } from "@/lib/authStore";
+import { signupSignal } from "@/lib/signupSignal";
 import { env } from "@/lib/env";
 import { api, ApiError } from "@/shared/utils/api";
 import { trackEvent } from "@/shared/utils/analytics";
@@ -156,6 +157,8 @@ export function useAuth(): UseAuthResult {
         provider,
         is_new_account: raw.is_new_account,
       });
+      // 신규 가입이면 범용 신호 발화 — coin 등 다른 feature가 구독(직접 결합 없음).
+      if (raw.is_new_account) signupSignal.trigger();
       return { returnTo: pending.returnTo || "/" };
     },
     [],
@@ -171,6 +174,7 @@ export function useAuth(): UseAuthResult {
       authStore.set(raw.access_token);
       setProfile(normalizeProfile(raw.profile));
       trackEvent("login_complete", { provider: "test", is_new_account: raw.is_new_account });
+      if (raw.is_new_account) signupSignal.trigger();
     },
     [],
   );

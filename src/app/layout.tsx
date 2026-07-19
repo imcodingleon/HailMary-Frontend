@@ -3,6 +3,7 @@ import "@/styles/globals.css";
 import AmplitudeProvider from "./AmplitudeProvider";
 import QaAuthGuard from "@/shared/components/QaAuthGuard";
 import { BottomNav } from "@/shared/components/BottomNav";
+import { WelcomeCoinModalHost } from "@/features/coin";
 
 const SITE_URL = "https://dohwaseonsaju.com";
 
@@ -59,6 +60,8 @@ export default function RootLayout({
         <QaAuthGuard>{children}</QaAuthGuard>
         {/* 홈·보관함에서만 노출되는 하단 네비 (컴포넌트 내부에서 경로 판별·자동 숨김) */}
         <BottomNav />
+        {/* 신규 가입 시 웰컴 코인 팝업 (coin OFF면 무동작) */}
+        <WelcomeCoinModalHost />
       </body>
     </html>
   );
