@@ -11,6 +11,7 @@
 import type { Message, SajuBlock } from '@/features/chat/domain/model/message';
 import type { SceneInfo } from '@/features/chat/domain/model/sceneInfo';
 import type { ChatMode } from '@/features/chat/domain/state/chatState';
+import type { SajuProfileFormInput } from '@/features/chat/domain/model/sajuProfileInput';
 import { extractInfo, extractSuggestions } from '@/features/chat/domain/service/parseScript';
 import { authStore } from '@/lib/authStore';
 import { personas } from './persona';
@@ -84,6 +85,36 @@ interface BeOpenRoomResponse {
 }
 interface BeMessagesPageResponse {
   messages: BeChatMessage[];
+}
+// GET/POST /api/chat/profile 응답 (app/domains/chat/application/response/saju_profile_response.py 1:1).
+interface BeSajuProfileResponse {
+  has_profile: boolean;
+  ilgan?: string;
+  ilju?: string;
+  ohang?: Record<string, number>;
+  ohang_excess?: string;
+  ohang_lack?: string;
+}
+
+/** 사주 확인 모달(H3) — 일간·오행 요약(리빌용). 개인정보(생년월일시) 미포함. */
+export interface SajuProfile {
+  hasProfile: boolean;
+  ilgan: string;
+  ilju: string;
+  ohang: Record<string, number>;
+  ohangExcess: string;
+  ohangLack: string;
+}
+
+function mapBeSajuProfile(d: BeSajuProfileResponse): SajuProfile {
+  return {
+    hasProfile: d.has_profile,
+    ilgan: d.ilgan ?? '',
+    ilju: d.ilju ?? '',
+    ohang: d.ohang ?? {},
+    ohangExcess: d.ohang_excess ?? '',
+    ohangLack: d.ohang_lack ?? '',
+  };
 }
 
 function mapBeMessage(m: BeChatMessage): Message {
@@ -289,6 +320,34 @@ export const chatApi = {
   async fetchHistory(roomId: number): Promise<Message[]> {
     if (!CHAT_API_BASE) return [];
     return fetchHistoryReal(CHAT_API_BASE, roomId);
+  },
+
+  /**
+   * 사주 프로필(생년월일시) 보유 여부 조회 (H3, CHAT_SSOT.md §7.1 "진입 시 확인 모달").
+   * 목업 모드: 네트워크 호출 없이 항상 보유 취급 → 모달 미노출(P4-2b 게이트는 application 레이어가 isReal로 분기).
+   */
+  async fetchProfile(): Promise<SajuProfile> {
+    if (!CHAT_API_BASE) {
+      return { hasProfile: true, ilgan: '', ilju: '', ohang: {}, ohangExcess: '', ohangLack: '' };
+    }
+    const data = await chatFetch<BeSajuProfileResponse>(`${CHAT_API_BASE}/api/chat/profile`);
+    return mapBeSajuProfile(data);
+  },
+
+  /** 확인 모달 제출 → 생년월일시 저장(BE가 사주 계산·캐시). 목업 모드는 호출되지 않아야 함(방어적 501). */
+  async saveProfile(input: SajuProfileFormInput): Promise<SajuProfile> {
+    if (!CHAT_API_BASE) throw new ChatHttpError(501);
+    const data = await chatFetch<BeSajuProfileResponse>(`${CHAT_API_BASE}/api/chat/profile`, {
+      method: 'POST',
+      body: JSON.stringify({
+        birth_date: input.birthDate,
+        birth_time: input.birthTimeUnknown ? null : input.birthTime,
+        birth_time_unknown: input.birthTimeUnknown,
+        calendar: input.calendar,
+        gender: input.gender,
+      }),
+    });
+    return mapBeSajuProfile(data);
   },
 
   /** 메시지 전송 → 스트리밍 콜백. NEXT_PUBLIC_CHAT_API_URL 설정 시 실 BE, 미설정 시 목업. */
