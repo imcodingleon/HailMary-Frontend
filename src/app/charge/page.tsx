@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AppLegalFooter } from "@/shared/components/AppLegalFooter";
+import { SiteFooter } from "@/shared/components/SiteFooter";
 import { ChargeBalanceCard } from "./ChargeBalanceCard";
 
 export const metadata: Metadata = {
@@ -117,7 +117,7 @@ export default function ChargePage() {
           </section>
         </main>
       </section>
-      <AppLegalFooter />
+      <SiteFooter legalLinksAsPages showChargeLink />
     </>
   );
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { MainView } from "@/features/main";
-import { AppLegalFooter } from "@/shared/components/AppLegalFooter";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -34,8 +33,6 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <MainView />
-      {/* PG 심사: 사업자정보 + 약관/환불 링크 상시 노출 (크롤러 감지용 실제 링크) */}
-      <AppLegalFooter />
     </>
   );
 }

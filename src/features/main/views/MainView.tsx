@@ -24,7 +24,7 @@ export function MainView() {
         <HeroSection card={HERO_CARD} onClick={handleCardClick} />
         <ContentCarousel cards={SECONDARY_CARDS} onCardClick={handleCardClick} />
       </main>
-      <SiteFooter />
+      <SiteFooter legalLinksAsPages showChargeLink />
     </div>
   );
 }
