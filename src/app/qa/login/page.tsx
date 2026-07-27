@@ -39,10 +39,10 @@ function QaLoginBody() {
         return;
       }
       qaToken.set(res.access_token);
-      // QA 진입 디폴트는 /select (캐릭터 선택 → 각 캐릭터 정식 flow:
-      // 설문 → 무료 결과 → 결제 → 유료 결과). 연우/도윤 모두 QA 검증.
+      // QA 진입 디폴트는 홈("/") — 2.0 app 레인은 홈(도화선 탭)에서 하단 4탭으로
+      // 연애운·깨비·채팅·충전 전 동선이 갈라진다. (1.0 시절 /select 직행은 폐기.)
       // ?next= 쿼리로 명시 지정 시 그쪽 우선 (예: /qa/test 빠른 테스트).
-      const next = searchParams.get("next") || "/select";
+      const next = searchParams.get("next") || "/";
       router.replace(next);
     } catch (err) {
       if (err instanceof ApiError) {
