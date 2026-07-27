@@ -14,6 +14,9 @@ interface CoinCtaProps {
   /** payWithCoins 진행 중(useCheckout의 공용 isProcessing). */
   loading: boolean;
   onPay: () => void;
+  /** 비로그인이라 잔액을 모르는 상태(balance===null && !balanceLoading)에서 CTA 탭 시 호출 —
+   *  로그인 필수 게이트를 연다. 로그인 후에도 자동결제는 안 함(사용자가 다시 탭). */
+  onRequireLogin: () => void;
 }
 
 /** 코인 결제 CTA — 원화 CTA(CheckoutCta/KakaoPayButton)와 동일한 형태(h-12, rounded-md, shadow-sm)에
@@ -25,6 +28,7 @@ export function CoinCta({
   insufficient,
   loading,
   onPay,
+  onRequireLogin,
 }: CoinCtaProps) {
   const known = balance !== null;
   // coinShort(402)이 켜지면 balance가 아직 갱신 전이어도 부족 UI 우선.
@@ -49,20 +53,18 @@ export function CoinCta({
     );
   }
 
-  // 잔액 미확인(비로그인 또는 조회 실패) & 조회 진행 중도 아님 — 코인 결제는 로그인 전제라
-  // 여기서 onPay(payWithCoins)를 호출해봐야 BE가 401로 거부한다. 앱에 별도 /login 페이지
-  // 라우트가 없고(로그인은 화면별 LoginPromptModal로만 트리거되며, 그 배선은 이 컴포넌트의
-  // 스코프 밖) 없는 라우트를 지어낼 수도 없으므로, 버튼을 비활성화하고 상태를 정직하게 알린다.
+  // 잔액 미확인(비로그인 또는 조회 실패) & 조회 진행 중도 아님 — 코인 결제는 로그인 전제.
+  // 탭하면 로그인 필수 게이트(LoginPromptModal mode="required")를 열어 실제로 로그인시킨다.
   if (!known && !balanceLoading) {
     return (
       <div className="space-y-2">
         <button
           type="button"
-          disabled
-          className="flex h-12 w-full cursor-not-allowed items-center justify-center rounded-md text-[15px] font-semibold shadow-sm opacity-50"
+          onClick={onRequireLogin}
+          className="flex h-12 w-full cursor-pointer items-center justify-center rounded-md text-[15px] font-semibold shadow-sm transition-opacity hover:opacity-90 active:opacity-80"
           style={{ background: "#E8C9A0", color: "#1a1715" }}
         >
-          로그인이 필요해요
+          로그인하고 코인으로 보기
         </button>
       </div>
     );

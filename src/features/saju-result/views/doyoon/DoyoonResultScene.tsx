@@ -44,6 +44,8 @@ import StickyCheckoutCta from "../shared/StickyCheckoutCta";
 
 import { DOYOON_REVIEWS } from "./reviews-doyoon";
 import { trackEvent } from "@/shared/utils/analytics";
+import { LoginPromptModal, useLoginGate } from "@/features/auth";
+import { isCoinEnabled } from "@/features/coin";
 
 const SURFACE = "#FDF5EA";
 
@@ -52,6 +54,12 @@ export default function DoyoonResultScene() {
   const data = useDoyoonSajuData();
   const firstName = useFirstName("doyoon");
   const displayName = firstName ?? "당신";
+
+  // 결제하기 진입 시 로그인 필수 게이트(코인 모드 ON일 때만). X → 무료 결과 화면에 그대로 머무름.
+  // returnTo=/checkout/doyoon/ — 로그인 후에도 자동결제 없이 체크아웃에서 다시 탭해야 진행.
+  const checkoutLoginGate = useLoginGate("doyoon_result_checkout", "/checkout/doyoon/", {
+    required: true,
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [showCta, setShowCta] = useState(false);
@@ -232,9 +240,15 @@ export default function DoyoonResultScene() {
         characterId="doyoon"
         onCheckout={() => {
           trackEvent("pay_cta_click", { character_id: "doyoon" });
-          router.push("/checkout/doyoon");
+          // 코인 모드 OFF(1.0 무영향) — 기존과 동일하게 바로 체크아웃(익명 원화 결제 유지).
+          if (!isCoinEnabled()) {
+            router.push("/checkout/doyoon");
+            return;
+          }
+          checkoutLoginGate.run(() => router.push("/checkout/doyoon"));
         }}
       />
+      <LoginPromptModal {...checkoutLoginGate.modal} />
     </>
   );
 }

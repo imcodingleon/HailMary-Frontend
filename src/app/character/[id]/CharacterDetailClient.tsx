@@ -6,6 +6,7 @@
 import { useRouter } from 'next/navigation';
 import { useCharacterDetail } from '@/features/chat/application/hooks/useCharacterDetail';
 import { useAffinity } from '@/features/chat/application/hooks/useAffinity';
+import { chatApi } from '@/features/chat/infrastructure/chatApi';
 import CharacterSlot from '@/features/chat/ui/CharacterSlot';
 import CharacterImage from '@/features/chat/ui/CharacterImage';
 import AffinityGauge from '@/features/chat/ui/AffinityGauge';
@@ -13,6 +14,7 @@ import ThumbnailStrip from '@/features/chat/ui/ThumbnailStrip';
 import IconImg from '@/features/chat/ui/IconImg';
 import { iconAsset } from '@/features/chat/ui/iconAsset';
 import { decorAsset } from '@/features/chat/ui/decorAsset';
+import { LoginPromptModal, useLoginGate } from '@/features/auth';
 
 function BackGlyph({ className }: { className?: string }) {
   // TODO(asset): 뒤로가기 커스텀 아이콘 교체 — /icons/back.png 예정 (현재 lucide 스타일 인라인 글리프 유지)
@@ -27,6 +29,9 @@ export function CharacterDetailClient({ id }: { id: string }) {
   const router = useRouter();
   const { character, lockedSlot, quoteText, storyText, isSampleCopy } = useCharacterDetail(id);
   const { profile: affinity } = useAffinity(id);
+  // 대화 시작하기 → 로그인 필수 게이트. 실연동(chatApi.isReal)일 때만 — 목업은 기존처럼 익명 진입.
+  // X → 캐릭터 상세에 그대로 머무름(방 이동 안 함).
+  const chatLoginGate = useLoginGate('character_detail', `/room/${id}/`, { required: true });
 
   if (!character && !lockedSlot) {
     return (
@@ -151,7 +156,13 @@ export function CharacterDetailClient({ id }: { id: string }) {
           type="button"
           disabled={isPreview}
           onClick={() => {
-            if (!isPreview) router.push(`/room/${id}`);
+            if (isPreview) return;
+            // 목업 모드(chatApi.isReal=false)는 기존처럼 익명 바로 진입 — 1.0/데모 무영향.
+            if (!chatApi.isReal) {
+              router.push(`/room/${id}`);
+              return;
+            }
+            chatLoginGate.run(() => router.push(`/room/${id}`));
           }}
           className="plaque-btn relative block w-full text-hwaseonji disabled:opacity-50"
         >
@@ -168,6 +179,8 @@ export function CharacterDetailClient({ id }: { id: string }) {
           </span>
         </button>
       </div>
+
+      <LoginPromptModal {...chatLoginGate.modal} />
     </section>
   );
 }

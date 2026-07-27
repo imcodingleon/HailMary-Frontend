@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useIsomorphicLayoutEffect } from "@/shared/hooks/useIsomorphicLayoutEffect";
 import { DOYOON_CUTS, type Cut } from "@/features/saju/domain/cuts-doyoon";
@@ -19,7 +19,7 @@ import { FadeOverlay } from "@/components/FadeOverlay";
 import { SceneProgressBar } from "@/components/SceneProgressBar";
 import { NavIconButton } from "@/shared/components/NavIconButton";
 import { ConfirmModal } from "@/shared/components/ConfirmModal";
-import { LoginPromptModal, useAuth, useLoginGate } from "@/features/auth";
+import { useAuth } from "@/features/auth";
 import { HomeIcon, UsersIcon } from "@/features/saju/views/shared/StoryNavIcons";
 
 type PendingNav = "home" | "consultant" | null;
@@ -40,8 +40,6 @@ export default function DoyoonSajuScene() {
   const [pendingNav, setPendingNav] = useState<PendingNav>(null);
   const { savedInfo, surveyAnswers, setSurveyAnswers, submitInfo, finalizeSurvey } =
     useCharacterSajuFlow({ storageKeyPrefix: "doyoon" });
-  // 설문(정보 입력) 시작 시 로그인 유도(비로그인 1회). 로그인 후 ?step=info로 설문 컷에 복귀.
-  const loginGate = useLoginGate("doyoon", "/saju/doyoon/?step=info");
   // 로그인 시 계정 마지막 사용값으로 입력폼 prefill (HM-FE-129).
   const { profile, refreshMe } = useAuth();
   useEffect(() => { void refreshMe(); }, [refreshMe]);
@@ -95,15 +93,6 @@ export default function DoyoonSajuScene() {
     if (idx >= 0) resumeTo(idx);
     window.history.replaceState(null, "", window.location.pathname); // 마커 제거 → 재점프 방지
   }, []);
-
-  // 설문(정보 입력 폼) 진입 시 1회 로그인 유도. 비로그인만(게이트 내부 판정), 코어 플로 불변.
-  const gatePromptedRef = useRef(false);
-  useEffect(() => {
-    if (cut.type !== "info-form" || gatePromptedRef.current) return;
-    gatePromptedRef.current = true;
-    loginGate.run(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cut.type]);
 
   const handleCta = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -324,8 +313,6 @@ export default function DoyoonSajuScene() {
           setPendingNav(null);
         }}
       />
-
-      <LoginPromptModal {...loginGate.modal} />
     </div>
   );
 }

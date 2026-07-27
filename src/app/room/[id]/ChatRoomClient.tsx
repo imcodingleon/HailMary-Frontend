@@ -35,9 +35,13 @@ export function ChatRoomClient({ id }: { id: string }) {
   const characterName = character?.name ?? id;
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // ── (1) 로그인 게이트 — 실연동 + 미로그인일 때만. 목업은 isReal=false라 run() 자체가 호출되지 않는다. ──
+  // ── (1) 로그인 게이트 — 실연동 + 미로그인일 때만. 목업은 isReal=false라 run() 자체가 호출되지 않는다.
+  // required — X를 눌러도 채팅방에 남지 않고 연락처(/friends/)로 되돌린다(로그인 없이 채팅 진입 차단). ──
   const { isAuthenticated, profile } = useAuth();
-  const loginGate = useLoginGate('chat_room', `/room/${id}`);
+  const loginGate = useLoginGate('chat_room', `/room/${id}/`, {
+    required: true,
+    onCancel: () => router.push('/friends/'),
+  });
   const loginPromptedRef = useRef(false);
   useEffect(() => {
     if (!chatApi.isReal || loginPromptedRef.current) return;

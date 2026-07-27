@@ -8,9 +8,11 @@ type Props = {
   // HM-FE-91: true일 때 CTA 비활성("6월 초 오픈 예정") + onClick 차단.
   // 6월 초 유료 결제 라이브 시 disabled={false} 한 줄 토글로 복원.
   disabled?: boolean;
+  /** 지정 시 내부 trackEvent+router.push 대신 이 콜백을 호출 (로그인 필수 게이트 등 부모가 흐름을 가로챌 때). */
+  onCheckout?: () => void;
 };
 
-export function StickyCheckoutCta({ visible = true, disabled = false }: Props = {}) {
+export function StickyCheckoutCta({ visible = true, disabled = false, onCheckout }: Props = {}) {
   const router = useRouter();
 
   return (
@@ -57,6 +59,10 @@ export function StickyCheckoutCta({ visible = true, disabled = false }: Props = 
         onClick={() => {
           if (disabled) {
             trackEvent("pay_cta_blocked", { character_id: "yeonwoo" });
+            return;
+          }
+          if (onCheckout) {
+            onCheckout();
             return;
           }
           trackEvent("pay_cta_click", { character_id: "yeonwoo" });

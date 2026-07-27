@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { trackEvent } from "@/shared/utils/analytics";
+import { LoginPromptModal, useLoginGate } from "@/features/auth";
+import { isCoinEnabled } from "@/features/coin";
 import { useYeonwooSajuData } from "../../hooks/useYeonwooSajuData";
 import { HeroSection } from "./sections/HeroSection";
 import { SceneOpeningSection } from "./sections/SceneOpeningSection";
@@ -31,7 +34,14 @@ import { StickyCheckoutCta } from "./sections/StickyCheckoutCta";
 const SURFACE = "#141311";
 
 export default function YeonwooResultScene() {
+  const router = useRouter();
   const data = useYeonwooSajuData();
+
+  // 결제하기 진입 시 로그인 필수 게이트(코인 모드 ON일 때만). X → 무료 결과 화면에 그대로 머무름.
+  // returnTo=/checkout/yeonwoo/ — 로그인 후에도 자동결제 없이 체크아웃에서 다시 탭해야 진행.
+  const checkoutLoginGate = useLoginGate("yeonwoo_result_checkout", "/checkout/yeonwoo/", {
+    required: true,
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [showCta, setShowCta] = useState(false);
@@ -153,7 +163,20 @@ export default function YeonwooResultScene() {
         <RealReviewsSection />
       </div>
       {/* 2026-06-05 세션 유실 hotfix(?order_id= 3중 복구) prod 검증 후 CTA 재개방 */}
-      <StickyCheckoutCta visible={showCta} disabled={false} />
+      <StickyCheckoutCta
+        visible={showCta}
+        disabled={false}
+        onCheckout={() => {
+          trackEvent("pay_cta_click", { character_id: "yeonwoo" });
+          // 코인 모드 OFF(1.0 무영향) — 기존과 동일하게 바로 체크아웃(익명 원화 결제 유지).
+          if (!isCoinEnabled()) {
+            router.push("/checkout/yeonwoo");
+            return;
+          }
+          checkoutLoginGate.run(() => router.push("/checkout/yeonwoo"));
+        }}
+      />
+      <LoginPromptModal {...checkoutLoginGate.modal} />
     </>
   );
 }

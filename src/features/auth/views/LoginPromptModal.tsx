@@ -8,13 +8,16 @@ import type { AuthProvider } from "../domain/types";
 
 interface LoginPromptModalProps {
   open: boolean;
-  /** '나중에 하기' 또는 배경 탭 — 팝업만 닫고 원래 플로 계속. */
+  /** X 닫기 또는 Esc — 팝업만 닫고 원래 플로 계속(advisory) 또는 취소 콜백(required)은 호출부(useLoginGate)가 처리. */
   onClose: () => void;
   /** 로그인 왕복 후 복귀할 경로. 미지정 시 현재 경로. */
   returnTo?: string;
   /** 어디서 띄웠는지 (kkebi/yeonwoo/doyoon) — 트래킹/문구 분기용. */
   source?: string;
-  /** 깨비 기본 멘트 대신 쓸 문구 (캐릭터별 미세 조정 여지). 미지정 시 헤딩 없음. */
+  /** "required"(코인 시대 결제·채팅 진입 차단) | "advisory"(기존 권유형, 기본값). 문구 기본값 분기에만 쓰인다 —
+   *  닫기(X) 이후 실제로 진행을 막을지 말지는 useLoginGate가 onClose 콜백으로 결정한다. */
+  mode?: "required" | "advisory";
+  /** 깨비 기본 멘트 대신 쓸 문구 (캐릭터별 미세 조정 여지). 미지정 시 mode별 기본 문구. */
   title?: string;
   description?: string;
 }
@@ -23,14 +26,20 @@ const KKEBI_IMG = "/kkebi/images/corner-m2.png";
 
 // 깨비 말투 — 사주정보 저장 가치 제안 (부담 줄이는 가벼운 톤). 헤딩 없이 멘트만.
 // 줄바꿈은 max-xs 폭(280px)에서 단어가 안 잘리도록 의도적으로 끊음.
-const DEFAULT_DESC =
+const ADVISORY_DEFAULT_DESC =
   "로그인해두면 깨비가 네 이름이랑\n태어난 날을 기억해뒀다가,\n다음엔 알아서 꺼내줄게.\n받은 결과지도 보관함에 모아둘게.";
+
+// 코인 시대 필수 로그인(결제/채팅 진입 차단) 기본 문구.
+const REQUIRED_DEFAULT_TITLE = "로그인이 필요해요";
+const REQUIRED_DEFAULT_DESC =
+  "코인으로 이용하는 서비스예요.\n로그인하면 코인 잔액과 받은 결과지를\n계정에 안전하게 보관해드려요.";
 
 export function LoginPromptModal({
   open,
   onClose,
   returnTo,
   source,
+  mode = "advisory",
   title,
   description,
 }: LoginPromptModalProps) {
@@ -65,6 +74,10 @@ export function LoginPromptModal({
     onClose();
   };
 
+  const resolvedTitle = title ?? (mode === "required" ? REQUIRED_DEFAULT_TITLE : undefined);
+  const resolvedDescription =
+    description ?? (mode === "required" ? REQUIRED_DEFAULT_DESC : ADVISORY_DEFAULT_DESC);
+
   const handleTestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (testSubmitting) return;
@@ -84,14 +97,27 @@ export function LoginPromptModal({
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-6"
-      // 배경(딤) 클릭으로는 닫지 않는다 — 권유 팝업이 실수 탭으로 사라지면(닫힘=통과 처리)
-      // 로그인 유도 취지가 무력화됨. 닫기는 '나중에 하기' 버튼으로만(명시적 의사).
+      // 배경(딤) 클릭으로는 닫지 않는다 — 실수 탭으로 사라지면 advisory는 통과 처리,
+      // required는 재노출 없이 이탈로 이어져 취지가 무력화됨. 닫기는 카드 우상단 X로만(명시적 의사).
       onClick={(e) => e.stopPropagation()}
     >
       <div
         className="relative w-full max-w-xs rounded-2xl bg-white px-5 pb-6 pt-[76px] shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 닫기(X) — '나중에 하기' 텍스트 버튼을 대체. required 모드에서도 명시적 닫기 수단은 유지하되,
+            실제 진행 허용 여부(onClose의 의미)는 useLoginGate가 결정한다. */}
+        <button
+          type="button"
+          onClick={handleDismiss}
+          aria-label="닫기"
+          className="absolute right-3 top-3 z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+            <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </button>
+
         {/* 깨비 — 카드 상단에 살짝 걸치게 (크기 키우되 넘침 비율 유지) */}
         <img
           src={KKEBI_IMG}
@@ -101,11 +127,11 @@ export function LoginPromptModal({
         />
 
         <div className="flex flex-col items-center gap-2 text-center">
-          {title && (
-            <h2 className="text-[16px] font-bold text-neutral-900">{title}</h2>
+          {resolvedTitle && (
+            <h2 className="text-[16px] font-bold text-neutral-900">{resolvedTitle}</h2>
           )}
           <p className="whitespace-pre-line text-[13.5px] leading-relaxed text-neutral-700">
-            {description ?? DEFAULT_DESC}
+            {resolvedDescription}
           </p>
         </div>
 
@@ -183,14 +209,6 @@ export function LoginPromptModal({
                 테스트 계정으로 시작하기
               </button>
             ))}
-
-          <button
-            type="button"
-            onClick={handleDismiss}
-            className="mt-1 cursor-pointer py-1 text-[13px] text-neutral-400 transition-colors hover:text-neutral-600"
-          >
-            나중에 하기
-          </button>
         </div>
       </div>
     </div>

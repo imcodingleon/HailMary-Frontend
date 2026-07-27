@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { LoginPromptModal } from "@/features/auth";
 import { LegalModal } from "@/shared/components/LegalModal";
 import { SiteFooter } from "@/shared/components/SiteFooter";
 import { trackEvent } from "@/shared/utils/analytics";
@@ -63,6 +64,8 @@ export function CheckoutView({
     handleSubmit,
     devBypassPay,
     payWithCoins,
+    requireCoinLogin,
+    loginModal,
   } = useCheckout(character);
 
   const devBypass = isDevBypassEnabled();
@@ -135,6 +138,7 @@ export function CheckoutView({
             insufficient={coinShort}
             loading={isProcessing}
             onPay={payWithCoins}
+            onRequireLogin={requireCoinLogin}
           />
         ) : kakaopayAvailable ? (
           // 카카오페이(포트원) + PayApp(카드·간편결제) 공존.
@@ -202,6 +206,7 @@ export function CheckoutView({
       <SiteFooter variant="light" />
 
       <LegalModal doc={openConsent} onClose={() => setOpenConsent(null)} />
+      <LoginPromptModal {...loginModal} />
     </div>
   );
 }

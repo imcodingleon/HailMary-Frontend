@@ -8,6 +8,7 @@ import { api, ApiError } from "@/shared/utils/api";
 import { env } from "@/lib/env";
 import { getAccountIdFromToken } from "@/lib/authAccount";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useLoginGate, type LoginGateModalProps } from "@/features/auth/hooks/useLoginGate";
 import {
   makePortoneOrderId,
   requestPortonePayment,
@@ -118,6 +119,11 @@ export interface UseCheckoutReturn {
   /** 코인으로 연애운 결과지 해금. 성공 시 쿠폰/무료발급과 동일한 success 폴링 진입.
    *  402(잔액 부족)는 alert 없이 coinShort=true로만 표면화(UI는 Task 4에서 인라인 렌더). */
   payWithCoins: () => Promise<void>;
+  /** 코인 CTA가 "비로그인이라 잔액을 모름" 상태일 때 탭하면 호출 — 로그인 필수 게이트를 연다.
+   *  로그인 후에도 자동결제는 하지 않는다(returnTo=현재 체크아웃, 사용자가 다시 탭). */
+  requireCoinLogin: () => void;
+  /** requireCoinLogin이 여는 필수 로그인 모달 — CheckoutView가 <LoginPromptModal {...loginModal} />로 렌더. */
+  loginModal: LoginGateModalProps;
 }
 
 // BE 결제 요청 3종(request/redeem/bypass)에 Amplitude 식별자를 동봉 — BE가 Payment에
@@ -159,6 +165,14 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
   const router = useRouter();
   const product = PRODUCTS[character];
   const { profile, refreshMe } = useAuth();
+  // 코인 CTA 비로그인 상태("잔액 모름") 탭 → 로그인 필수 게이트. X는 체크아웃에 그대로 머무름(진행 안 함).
+  const coinLoginGate = useLoginGate(`checkout_coin_${character}`, `/checkout/${character}/`, {
+    required: true,
+  });
+  const requireCoinLogin = useCallback(() => {
+    // proceed는 의도적으로 no-op — 로그인 완료 후 자동결제 금지, 사용자가 코인 버튼을 다시 탭해야 한다.
+    coinLoginGate.run(() => {});
+  }, [coinLoginGate]);
   // 테스트 계정(provider=test)으로 로그인 시 → 결제 UI를 "테스트" 문구로 전환.
   const isTestAccount = profile?.provider === "test";
   // 카카오페이(포트원) 결제 옵션 노출 여부: enabled + (전체개방 OR 테스트계정).
@@ -681,5 +695,7 @@ export function useCheckout(character: CheckoutCharacter): UseCheckoutReturn {
     handleSubmit,
     devBypassPay,
     payWithCoins,
+    requireCoinLogin,
+    loginModal: coinLoginGate.modal,
   };
 }
